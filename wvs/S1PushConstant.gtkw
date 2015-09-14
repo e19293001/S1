@@ -1,0 +1,56 @@
+[*]
+[*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
+[*] Sun Jul 26 15:56:50 2015
+[*]
+[dumpfile] "/home/e19293001/codes/projects/verilog/s1/S1/sim.vcd"
+[dumpfile_mtime] "Sun Jul 26 15:54:59 2015"
+[dumpfile_size] 94759
+[savefile] "/home/e19293001/codes/projects/verilog/s1/S1/S1PushConstant.gtkw"
+[timestart] 4
+[size] 1305 592
+[pos] 27 30
+*-2.449769 15 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TestS1.
+[sst_width] 54
+[signals_width] 282
+[sst_expanded] 0
+[sst_vpaned_height] 144
+@28
+TestS1.dut.clk
+@22
+TestS1.dut.outputAddress[11:0]
+TestS1.dut.outputWdata[15:0]
+@28
+TestS1.dut.outputWnR
+TestS1.dut.outputSelect
+@22
+TestS1.dut.inputRdata[15:0]
+@28
+TestS1.dut.inputValid
+@200
+-
+@820
+TestS1.dut.regStatestr[1024:1]
+TestS1.dut.combAddressSelectstr[1024:1]
+@28
+TestS1.dut.combOutputAddressEn
+@22
+TestS1.dut.inputRdata[15:0]
+TestS1.dut.regInstruction[15:0]
+@28
+TestS1.dut.w_push
+TestS1.dut.enValueA
+@22
+TestS1.dut.regValueA[15:0]
+@28
+TestS1.dut.regValueSelect
+@22
+TestS1.dut.regStackPtr[11:0]
+@28
+TestS1.dut.enPrgCntr
+@29
+TestS1.dut.PrgCntrInD
+@22
+TestS1.dut.regPrgCntr[11:0]
+[pattern_trace] 1
+[pattern_trace] 0

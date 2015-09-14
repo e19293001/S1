@@ -1,0 +1,48 @@
+\documentclass{article}
+%\usepackage{tikz-timing}[2009/12/09]
+\usepackage{tikz-timing}[2011/01/09]
+\usetikztiminglibrary[new={char=Q,reset char=R}]{counters}
+%\usetikztiminglibrary[simple]{advnodes}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength{\PreviewBorder}{5mm}
+\pagestyle{empty}
+\begin{document}
+\definecolor{bgblue}{rgb}{0.5,0.9,0.9}
+\definecolor{bgred}{rgb}{1,0.6,0.6}
+\definecolor{fgblue}{rgb}{0,0,0.6}
+\definecolor{bgred}{rgb}{0.6,,0}
+\begin{tikztimingtable} [
+%    table/grid,
+    timing/slope=0.15,
+    timing/coldist=2pt,
+    xscale=2.05,yscale=1.1,
+    semithick
+]
+  \scriptsize clk & 17{C} \\ 
+  outputAddress & 5U 4D{0x0000} 6U 2D{} \\
+  outputWdata & 17U \\
+  outputWnR & LLLLLLLLLLLLLLLLL  \\
+  outputSelect & 5L 4H 6L 2H \\
+  inputRdata & 7U 2D{0xFB00} 8U \\
+  inputValid & LLLLLLLHH N(B) LLLLLLLL \\
+  \\
+  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 2D{\scriptsize $P\_DECODE$} 2D{\scriptsize $P\_EXECUTE$} 4D{$P\_FETCH$} \\
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 4D{$NONE$} 4D{$PC$} \\ 
+  combOutputAddressEn & LLLHHLLLLLLLLHHLL \\
+  enInstruction & LLLLLLLHH 8L \\
+  regInstruction & 9U 4D{0xFB00} 4U \\
+  w\_zsp & 9L 4H 4L \\
+%  enValueA & 13L 2H 10L \\
+%  regValueA & 15U 10D{0xFAB2} \\
+  \\
+  enStackPtr & 9L 2H 6L \\
+  regStackPtr & 11D{0xFFFC} 6D{0x0000} \\
+%  enBasePtr & 15L 2H 4L \\
+%  regBasePtr & 17D{0xFFF5} 4D{0xABCD} \\
+  enPrgCntr & 13L 2H 2L \\
+  regPrgCntr & 15D{0x00} 2D{0x01} \\
+  \extracode
+\end{tikztimingtable}
+
+\end{document}

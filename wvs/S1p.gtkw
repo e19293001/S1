@@ -1,0 +1,105 @@
+[*]
+[*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
+[*] Thu Aug 27 23:49:12 2015
+[*]
+[dumpfile] "/home/e19293001/codes/projects/verilog/s1/S1/sim.vcd"
+[dumpfile_mtime] "Thu Aug 27 23:48:05 2015"
+[dumpfile_size] 95163
+[savefile] "/home/e19293001/codes/projects/verilog/s1/S1/S1p.gtkw"
+[timestart] 13
+[size] 1367 739
+[pos] -1 -1
+*-3.000000 33 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TestS1.
+[sst_width] 54
+[signals_width] 349
+[sst_expanded] 0
+[sst_vpaned_height] 197
+@22
+TestS1.dut.outputAddress[11:0]
+TestS1.dut.outputWdata[15:0]
+@28
+TestS1.dut.outputWnR
+TestS1.dut.outputSelect
+@22
+TestS1.dut.inputRdata[15:0]
+@28
+TestS1.dut.inputValid
+@200
+-
+@820
+TestS1.dut.regStatestr[1024:1]
+@821
+TestS1.dut.combAddressSelectstr[1024:1]
+@28
+TestS1.dut.combOutputAddressEn
+TestS1.dut.enInstruction
+@22
+TestS1.dut.regInstruction[15:0]
+@28
+TestS1.dut.w_push
+TestS1.dut.enValueA
+@22
+TestS1.dut.regValueA[15:0]
+@200
+-
+@22
+TestS1.dut.nextStackPtr[11:0]
+@28
+TestS1.dut.enStackPtr
+@22
+TestS1.dut.regStackPtr[11:0]
+@28
+TestS1.dut.enPrgCntr
+@22
+TestS1.dut.regPrgCntr[11:0]
+@200
+-
+@28
+TestS1.dut.clk
+TestS1.dut.rstn
+@200
+-
+@28
+TestS1.dut.w_halt
+@200
+-
+@28
+TestS1.dut.StackPtrDnI
+@22
+TestS1.dut.alu[16:0]
+@28
+TestS1.dut.combAddressSelect[2:0]
+@22
+TestS1.dut.combOutputWData[15:0]
+@28
+TestS1.dut.enValueB
+TestS1.dut.eoDecode
+TestS1.dut.eoExecute
+TestS1.dut.eoFetch
+TestS1.dut.PrgCntrInD
+@22
+TestS1.dut.nextState[3:0]
+@28
+TestS1.dut.outputHalt
+TestS1.dut.r_decode
+TestS1.dut.r_executePrv
+TestS1.dut.r_fetchPrv
+@22
+TestS1.dut.regState[3:0]
+TestS1.dut.regValueB[15:0]
+@28
+TestS1.dut.w_execute
+TestS1.dut.regValueSelect
+TestS1.dut.w_add
+TestS1.dut.w_decode
+TestS1.dut.w_decodeEn
+TestS1.dut.w_fetch
+TestS1.dut.w_fetchEn
+TestS1.dut.w_idle
+TestS1.dut.w_pop
+TestS1.dut.w_push_constant
+TestS1.dut.w_pwc
+TestS1.dut.w_stav
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,55 @@
+\documentclass{article}
+%\usepackage{tikz-timing}[2009/12/09]
+\usepackage{tikz-timing}[2011/01/09]
+\usetikztiminglibrary[new={char=Q,reset char=R}]{counters}
+%\usetikztiminglibrary[simple]{advnodes}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength{\PreviewBorder}{5mm}
+\pagestyle{empty}
+\begin{document}
+\definecolor{bgblue}{rgb}{0.5,0.9,0.9}
+\definecolor{bgred}{rgb}{1,0.6,0.6}
+\definecolor{fgblue}{rgb}{0,0,0.6}
+\definecolor{bgred}{rgb}{0.6,,0}
+\begin{tikztimingtable} [
+%    table/grid,
+    timing/slope=0.15,
+    timing/coldist=2pt,
+    xscale=2.05,yscale=1.1,
+    semithick
+]
+  \scriptsize clk & 21{C} \\ 
+  outputAddress & 5U 4D{0x00} 4U 4D{0xFFE} 4U \\
+  outputWdata & 13U 4D{0xAAAA} 4U\\
+  outputWnR & LLLLLLLLLLLLLHHHHLL LL \\
+  outputSelect & LLLLLHHHH LLLL HHHH LL HH \\
+  inputRdata & 7U 2D{0x1AAA} 12U \\
+  inputValid & LLLLLLL HH LLLLLL HH 4L \\
+  \\
+  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 2D{\scriptsize $P\_DECODE$} 6D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 2D{\scriptsize $NONE$} 6D{$PUSH$} 4D{$PC$} \\
+  combOutputAddressEn & LLLHHLLLLLLHHLLLLHHLL \\
+  enInstruction & LLLLLLLHH 12L \\
+  regInstruction & 9U 12D{0x1AAA} \\
+  w\_pc & LLLLLLLLLHHHHHHHHLLLL \\
+  \\
+  enStackPtr & 11L HH 8L \\
+  regStackPtr & 13D{0xFFF} 8D{0xFFE} \\
+  enPrgCntr & 15L HH 4L \\
+  regPrgCntr & 17D{0x00} 4D{0x01} \\
+  \extracode
+%  \draw [orange,semithick]
+%  (A.mid) ellipse (.1 and .2)
+%  (B.mid) ellipse (.1 and .2);
+%  \draw [orange,semithick,->]
+%  ($ (A.mid) - (0,.2) $)
+%  parabola [bend pos=0.3]
+%  ($ (B.mid) + (0,.2) $);
+%
+%  \draw [orange,semithick]
+%  (C.mid) ellipse (.2 and .6);
+
+\end{tikztimingtable}
+
+\end{document}

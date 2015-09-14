@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{tikz-timing}[2009/12/09]
+\usetikztiminglibrary[new={char=Q,reset char=R}]{counters}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength{\PreviewBorder}{5mm}
+\pagestyle{empty}
+\begin{document}
+\definecolor{bgblue}{rgb}{0.5,0.9,0.9}
+\definecolor{bgred}{rgb}{1,0.6,0.6}
+\definecolor{fgblue}{rgb}{0,0,0.6}
+\definecolor{bgred}{rgb}{0.6,,0}
+\begin{tikztimingtable} [
+    timing/slope=0.15,
+    timing/coldist=2pt,
+    xscale=2.05,yscale=1.1,
+    semithick
+]
+  \scriptsize clk & 100{C} \\
+  state & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} \\
+  %w\_fetch & LLLHHHHHHHH \\
+  AddressSelect & 3D{0} 10D{1} \\
+  outputSelect & LLLLLHHHHLL \\
+  inputValid & LLLLLLLHHLL \\
+  inputRdata & 7U 2D{0xdead} 7U \\
+  regInstruction & 9D{0} 2D{0xdead} 9D{0} \\
+  \extracode
+\end{tikztimingtable}
+\end{document}
