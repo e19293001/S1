@@ -11,7 +11,14 @@ TSTDIR=tst
 #TEST=$(TSTDIR)/TestS1jnz.v
 #TEST=$(TSTDIR)/TestS1jodd.v
 #TEST=$(TSTDIR)/TestS1jzon.v
-TEST=$(TSTDIR)/TestS1jzop.v
+#TEST=$(TSTDIR)/TestS1jzop.v
+
+#TEST=$(TSTDIR)/TestS1add.v
+#TEST=$(TSTDIR)/TestS1ld.v
+#TEST=$(TSTDIR)/TestS1ret.v
+#TEST=$(TSTDIR)/TestS1stav.v
+#TEST=$(TSTDIR)/TestS1stva.v
+TEST=$(TSTDIR)/TestS1sub.v
 
 #TEST=$(TSTDIR)/TestS1pc.v
 #UTILS=testFile.v
