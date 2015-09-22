@@ -6,6 +6,5 @@ module TestS1;
       file2mem("stm/jn.txt");
       reset_dut();
    end
-
 endmodule
 
