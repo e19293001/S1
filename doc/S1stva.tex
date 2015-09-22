@@ -31,15 +31,15 @@
   combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 6D{$POP$} 6D{$VALUEB$} 4D{$PC$} \\ 
   combOutputAddressEn & LLLHHLLLLHHLLLLHHLLLLHHLLLLHHLL \\
   enInstruction & LLLLLLLHHLLLLL 17L \\
-  regInstruction & 9U 18D{0xF300} 4U \\
+  regInstruction & 9U 18D{0xF400} 4U \\
   w\_stva & 9L 18H 4L \\
   enValueA & 13L 2H 16L \\
   regValueA & 15U 16D{0x0003} \\
   enValueB & 19L 2H 10L \\
   regValueB & 21U 10D{0x0004} \\
   \\
-  enStackPtr & 9L 2H 4L 2H 4L 2H 8L \\
-  regStackPtr & 11D{0xFFFC} 6D{0xFFFD} 6D{0xFFFE} 8D{0xFFFD} \\
+  enStackPtr & 13L 2H 4L 2H 10L \\
+  regStackPtr & 15D{0xFFFC} 6D{0xFFFD} 10D{0xFFFE}  \\
   enPrgCntr & 27L HH 2L \\
   regPrgCntr & 29D{0x00} 2D{0x0001} \\
   \extracode
