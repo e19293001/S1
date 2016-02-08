@@ -1,5 +1,0 @@
-cxternals: s1Assembler.o
-
-s1Assembler.o: s1Assembler.c
-	gcc -c -fpic $^ $(coptions)
-	gcc -shared -o s1Assembler.vpi $@ -lvpi $(coptions)
