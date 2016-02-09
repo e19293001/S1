@@ -1,0 +1,4 @@
+p 10
+pwc 7
+pc 9
+halt
