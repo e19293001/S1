@@ -1,5 +1,4 @@
 #include "TernarySearchTrie.h"
-#include "QueueTernarySearchTrie.h"
 
 tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr);
 

@@ -9,6 +9,7 @@ parserData* ParserNew(char *s) {
   ret->tm = TokenManagerNew(s);
   ret->currentToken.next = NULL;
   ret->previousToken.next = NULL;
+  ret->addrCntr = 0;
 
   return ret;
 }
@@ -21,31 +22,37 @@ void ParserStart(parserData *t) {
     printf("expecting EOF. token is: %s\n", tokenImage[_parser->currentToken.kind]);
     exit(-1);
   }
+  printf("address counter: %0d\n", _parser->addrCntr++);
 }
 
 void program() {
   if (_parser->currentToken.kind == PUSH) {
     push();
     program();
+    _parser->addrCntr++;
   }
   else if (_parser->currentToken.kind == PUSHC) {
     pushc();
     program();
+    _parser->addrCntr++;
   }
   else if (_parser->currentToken.kind == PUSHWC) {
 //    printf("call pushwc\n");
     pushwc();
     program();
+    _parser->addrCntr++;
   }
   else if (_parser->currentToken.kind == HALT) {
 //    printf("call halt\n");
     halt();
     program();
+    _parser->addrCntr++;
   }
   else if (_parser->currentToken.kind == DWORD) {
 //    printf("call dword\n");
     dword();
     program();
+    _parser->addrCntr++;
   }
   else if (_parser->currentToken.kind == _EOF) {
     // do nothing
