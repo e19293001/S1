@@ -31,7 +31,7 @@ s1Assembler.vpi: s1Assembler.c
 val:
 #	valgrind -v vvp -M. -ms1Assembler $(main).vvp
 #	valgrind --leak-check=full --show-reachable=yes -v vvp -M. -ms1Assembler $(main).vvp 
-	valgrind --leak-check=full --show-reachable=yes ./bin/testParser
+	valgrind --leak-check=full --show-reachable=yes -v ./bin/testParser
 
 testParser: $(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)/tokenmanager.o
 	gcc $^ -o bin/testParser $(COPTS)
@@ -50,3 +50,6 @@ $(obj)/tokenmanager.o: tokenmanager.c tokenmanager.h
 
 runTest:
 	./bin/testParser
+
+gdb:
+	gdb ./bin/testParser

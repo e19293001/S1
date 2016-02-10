@@ -1,0 +1,7 @@
+p x
+pwc y
+pc z
+halt
+x: dw 0
+y: dw 0
+z: dw 2

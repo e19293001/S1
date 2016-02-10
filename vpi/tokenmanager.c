@@ -18,10 +18,12 @@ const char *tokenImage[] = {
 
 TokenManager* TokenManagerNew(char *inFileName) {
   TokenManager *ret = malloc(sizeof(TokenManager));
+  //printf("opening: %s\n", inFileName);
   if ((ret->inFile = fopen(inFileName, "r")) == NULL) {
     printf("could not open file: %s\n", inFileName);
     exit(-1);
   }
+  //printf("ret->inFile: %0d\n", ret->inFile);
   ret->currentChar = '\n';
   ret->currentColumnNumber = 0;
   ret->currentLineNumber = 0;
@@ -176,6 +178,8 @@ Token TokenManagerGetNextToken(TokenManager **t) {
 }
 
 void TokenManagerDelete(TokenManager* t) {
+//  printf("deleting t->infile: %0d\n", t->inFile);
   fclose(t->inFile);
   free(t);
 }
+

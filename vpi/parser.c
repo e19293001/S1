@@ -10,6 +10,43 @@ parserData* ParserNew(char *s) {
   ret->currentToken.next = NULL;
   ret->previousToken.next = NULL;
   ret->addrCntr = 0;
+  ret->filename = calloc(strlen(s)+1, sizeof(char));
+  strncpy(ret->filename, s, strlen(s));
+
+  return ret;
+}
+
+tstrie* ParseSymbols() {
+  tstrie* ret = NULL;
+  parserData *lparser;
+
+  lparser = ParserNew(_parser->filename);
+  lparser->currentToken = TokenManagerGetNextToken(&lparser->tm);
+  do {
+    ParserSymbolsAdvance(&lparser);
+    if (lparser->currentToken.kind == ID) {
+      Token tkLabel;
+      Token tkUnsigned;
+      printf("found label: %s\n", lparser->currentToken.image);
+      tkLabel = lparser->currentToken;
+      ParserSymbolsAdvance(&lparser);
+      if (lparser->currentToken.kind == COLON) {
+        ParserSymbolsAdvance(&lparser);
+        if (lparser->currentToken.kind == DWORD) {
+          printf("  found dword: %s\n", lparser->currentToken.image);
+          ParserSymbolsAdvance(&lparser);
+          if (lparser->currentToken.kind == UNSIGNED) {
+            printf("    found unsigned: %s\n", lparser->currentToken.image);
+            tkUnsigned = lparser->currentToken;
+            printf("    tkLabel.image: %s\n", tkLabel.image);
+            ret = tstInsert(ret, tkLabel.image, tkUnsigned.image);
+          }
+        }
+      }
+    }
+  } while (lparser->currentToken.kind != _EOF);
+
+  ParserDelete(lparser);
 
   return ret;
 }
@@ -17,6 +54,7 @@ parserData* ParserNew(char *s) {
 void ParserStart(parserData *t) {
   _parser = t;
   _parser->currentToken = TokenManagerGetNextToken(&_parser->tm);
+  _parser->st = ParseSymbols();
   program();
   if (_parser->currentToken.kind != _EOF) {
     printf("expecting EOF. token is: %s\n", tokenImage[_parser->currentToken.kind]);
@@ -54,6 +92,11 @@ void program() {
     program();
     _parser->addrCntr++;
   }
+  else if (_parser->currentToken.kind == ID) {
+//    printf("call label\n");
+    label();
+    program();
+  }
   else if (_parser->currentToken.kind == _EOF) {
     // do nothing
   }
@@ -61,6 +104,11 @@ void program() {
     printf("error unknown token %s\n", tokenImage[_parser->currentToken.kind]);
     return;
   }
+}
+
+void label() {
+  consume(ID);
+  consume(COLON);
 }
 
 void push() {
@@ -74,16 +122,16 @@ void push() {
 void pushc() {
 //  if (_parser->currentToken.kind == PUSHC) {
     consume(PUSHC);
-    consume(UNSIGNED);
-    //expression();
+    //consume(UNSIGNED);
+    expression();
 //  }
 }
 
 void pushwc() {
 //  if (_parser->currentToken.kind == PUSHWC) {
     consume(PUSHWC);
-    consume(UNSIGNED);
-    //expression();
+    //consume(UNSIGNED);
+    expression();
 //  }
 }
 
@@ -96,8 +144,6 @@ void halt() {
 void dword() {
   if (_parser->currentToken.kind == DWORD) {
     consume(DWORD);
-    consume(COLON);
-    consume(ID);
     consume(UNSIGNED);
   }
 }
@@ -110,7 +156,7 @@ void expression() {
   else if (_parser->currentToken.kind == ID) {
     Token tkn = _parser->currentToken;
     consume(ID);
-    _parser->st = tstInsert(_parser->st, tkn.image, 0);
+//    _parser->st = tstInsert(_parser->st, tkn.image, 0);
     tstDump(_parser->st);
   }
   else {
@@ -123,6 +169,16 @@ Token ParserGetToken() {
   Token ret;
 
   return ret;
+}
+
+void ParserSymbolsAdvance(parserData **t) {
+  (*t)->previousToken = (*t)->currentToken;
+  if ((*t)->currentToken.next != NULL) {
+    (*t)->currentToken = *((*t)->currentToken.next);
+  }
+  else {
+    (*t)->currentToken = TokenManagerGetNextToken(&((*t)->tm));
+  }
 }
 
 void ParserAdvance() {
@@ -151,6 +207,7 @@ void consume(int expected) {
 
 void ParserDelete(parserData *t) {
   TokenManagerDelete(t->tm);
+  free(t->filename);
   tstDelete(t->st);
   free(t);
 }
