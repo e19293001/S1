@@ -4,14 +4,16 @@
 #include "tokenmanager.h"
 #include "TernarySearchTrie.h"
 
-//typedef struct symtab {
-//  tstrie *trieRootNode;
-//} symtab;
+typedef struct symtab {
+  tstrie *trieRootNode;
+  int address;
+  int data;
+} symtab;
 
 typedef struct parserData {
   TokenManager *tm;
-//  symtab* st;
-  tstrie *st;
+  symtab* st;
+//  tstrie *st;
   Token currentToken;
   Token previousToken;
   unsigned int addrCntr;
@@ -23,25 +25,25 @@ parserData *_parser;
 parserData* ParserNew(char *s);
 void ParserConsume();
 Token ParserGetToken();
-void ParserAdvance();
+void ParserAdvance(parserData **lparser);
 void ParserSymbolsAdvance(parserData **t);
 void ParserDelete(parserData *t);
 void ParserStart(parserData *t);
 
 int ParserImageExists();
 
-tstrie* ParseSymbols();
+tstrie* ParseSymbols(char *s);
 
-void program();
-void push();
-void pushc();
-void pushwc();
-void halt();
-void dword();
-void expression();
-void label();
+void program(parserData **lparser);
+void push(parserData **lparser);
+void pushc(parserData **lparser);
+void pushwc(parserData **lparser);
+void halt(parserData **lparser);
+void dword(parserData **lparser);
+void expression(parserData **lparser);
+void label(parserData **lparser);
 
-void consume(int expected);
+void consume(parserData **lparser, int expected);
 
 parserData* ParserCopy(parserData t);
 

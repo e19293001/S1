@@ -150,17 +150,17 @@ void tstCopy(tstrie *src, tstrie **dst) {
 }
 
 void tstDelete(tstrie *t) {
-  printf("[ tstDelete ]\n");
+    printf("[ tstDelete ]\n");
   if (t != NULL) {
-    if (t->left != NULL) {
+    //if (t->left != NULL) {
       tstDelete(t->left);
-    }
-    if (t->middle != NULL) {
+    //}
+    //if (t->middle != NULL) {
       tstDelete(t->middle);
-    }
-    if (t->right != NULL) {
+    //}
+    //if (t->right != NULL) {
       tstDelete(t->right);
-    }
+    //}
     free(t->data);
     free(t);
   }
