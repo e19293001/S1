@@ -1,0 +1,25 @@
+p x
+a1:
+pwc y
+pc z
+_b1skldjf:
+p x
+a12:
+pwc y
+pc z
+b1skldjf:
+p x
+_a1:
+pwc y
+pc z
+b_1skldjf:
+p x
+a123:
+pwc y
+pc z
+_2b1skldjf:
+halt
+x: dw 0
+y: dw 0
+z: dw 2
+_sldfj: dw 129

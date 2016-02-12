@@ -25,8 +25,8 @@ parserData *_parser;
 parserData* ParserNew(char *s);
 void ParserConsume();
 Token ParserGetToken();
-void ParserAdvance(parserData **lparser);
-void ParserSymbolsAdvance(parserData **t);
+void ParserAdvance(parserData *lparser);
+void ParserSymbolsAdvance(parserData *t);
 void ParserDelete(parserData *t);
 void ParserStart(parserData *t);
 
@@ -34,16 +34,16 @@ int ParserImageExists();
 
 tstrie* ParseSymbols(char *s);
 
-void program(parserData **lparser);
-void push(parserData **lparser);
-void pushc(parserData **lparser);
-void pushwc(parserData **lparser);
-void halt(parserData **lparser);
-void dword(parserData **lparser);
-void expression(parserData **lparser);
-void label(parserData **lparser);
+void program(parserData *lparser);
+void push(parserData *lparser);
+void pushc(parserData *lparser);
+void pushwc(parserData *lparser);
+void halt(parserData *lparser);
+void dword(parserData *lparser);
+void expression(parserData *lparser);
+void label(parserData *lparser);
 
-void consume(parserData **lparser, int expected);
+void consume(parserData *lparser, int expected);
 
 parserData* ParserCopy(parserData t);
 
