@@ -5,9 +5,15 @@
 #include <stdio.h>
 #include <string.h>
 
+typedef struct symData {
+  char* name;
+  char* data;
+  char* address;
+} symData;
+
 typedef struct tstrie {
   char item;
-  char* data;
+  symData *symD;
   struct tstrie* left;
   struct tstrie* middle;
   struct tstrie* right;
@@ -15,8 +21,8 @@ typedef struct tstrie {
 
 tstrie* tstNew(char i);
 tstrie* tstSearch(tstrie *t, char *s);
-tstrie* tstInsertR(tstrie *t, char *s, char *val, int i, int cntr);
-tstrie* tstInsert(tstrie *t, char *s, char *val);
+tstrie* tstInsertR(tstrie *t, char *s, symData *val, int i, int cntr);
+tstrie* tstInsert(tstrie *t, char *s, symData *val);
 void tstCopy(tstrie *src, tstrie **dst);
 void tstDelete(tstrie *t);
 void tstDump_(tstrie *t, int cnt);

@@ -53,7 +53,7 @@ void getNextChar(TokenManager **t) {
       int sz;
       sz = strlen(tm->inputLine);
       tm->inputLine[sz-1] = '\0';
-      printf("[%s]\n", tm->inputLine);
+//      printf("[%s]\n", tm->inputLine);
       tm->inputLine[sz-1] = '\n';
       tm->currentColumnNumber = 0;
       tm->currentLineNumber++;
