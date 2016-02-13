@@ -3,16 +3,21 @@
 
 #include "tokenmanager.h"
 #include "TernarySearchTrie.h"
+#include "codegenerator.h"
 
-typedef struct symtab {
-  tstrie *trieRootNode;
-  int address;
-  int data;
-} symtab;
+//typedef struct symtab {
+//  tstrie *trieRootNode;
+//  int address;
+//  int data;
+//  int numOfDwords;
+//} symtab;
 
 typedef struct parserData {
   TokenManager *tm;
-  symtab* st;
+  tstrie *trieRootNode;
+//  symtab* st;
+  symData *st;
+  codeGen *cg;
 //  tstrie *st;
   Token currentToken;
   Token previousToken;
@@ -32,7 +37,7 @@ void ParserStart(parserData *t);
 
 int ParserImageExists();
 
-tstrie* ParseSymbols(char *s);
+tstrie* ParseSymbols(char *s, symData* st);
 
 void program(parserData *lparser);
 void push(parserData *lparser);

@@ -2,10 +2,19 @@
 
 parserData* ParserNew(char *s) {
   parserData *ret;
+  char *str;
 
   ret = malloc(sizeof(parserData));
-  ret->st = malloc(sizeof(symtab));
-  ret->st->trieRootNode = NULL;
+
+  str = calloc(strlen(s)+1, sizeof(char));
+
+  strncpy(str, s, strlen(s));
+  str[strlen(s) - 3] = 'a';
+  str[strlen(s) - 2] = 's';
+  str[strlen(s) - 1] = 'm';
+
+  ret->trieRootNode = NULL;
+  ret->cg = codeGenNew(str);
 
   ret->tm = TokenManagerNew(s);
   ret->currentToken.next = NULL;
@@ -14,11 +23,14 @@ parserData* ParserNew(char *s) {
   ret->filename = calloc(strlen(s)+1, sizeof(char));
   strncpy(ret->filename, s, strlen(s));
 
+  free(str);
+
   return ret;
 }
 
-tstrie* ParseSymbols(char *s) {
+tstrie* ParseSymbols(char *s, symData* st) {
   tstrie* ret = NULL;
+//  symData* ret = st;
   parserData *lparser;
 
   int progcntr = 0;
@@ -27,10 +39,7 @@ tstrie* ParseSymbols(char *s) {
   lparser->currentToken = TokenManagerGetNextToken(&lparser->tm);
   do {
     if (lparser->currentToken.kind == ID) {
-      char num[256];
-      memset(num, 0, 256);
-      sprintf(num, "%d", progcntr);
-      printf("label found: %s address: %0d\n", lparser->currentToken.image, progcntr);
+//      printf("label found: %s address: %0d\n", lparser->currentToken.image, progcntr);
       if (tstSearch(ret, lparser->currentToken.image) != NULL) {
         printf("ERROR label already used or declared: %s\n", lparser->currentToken.image);
         if (ret != NULL) {
@@ -41,7 +50,13 @@ tstrie* ParseSymbols(char *s) {
         return NULL;
       }
       else {
-        ret = tstInsert(ret, lparser->currentToken.image, num);
+        char num[256];
+        memset(num, 0, 256);
+        sprintf(num, "%03d", progcntr);
+        st->address = num;
+
+        ret = tstInsert(ret, lparser->currentToken.image, st);
+//        ret = tstInsert(ret, lparser->currentToken.image, num);
       }
       ParserSymbolsAdvance(lparser); // ID
       ParserSymbolsAdvance(lparser); // COLON
@@ -50,6 +65,7 @@ tstrie* ParseSymbols(char *s) {
       ParserSymbolsAdvance(lparser);
       ParserSymbolsAdvance(lparser); // unsigned
       progcntr++;
+      st->numOfDwords++;
     }
     else if (lparser->currentToken.kind == PUSHC ||
              lparser->currentToken.kind == PUSH ||
@@ -73,15 +89,25 @@ tstrie* ParseSymbols(char *s) {
 }
 
 void ParserStart(parserData *t) {
-//  _parser = t;
-//  _parser->currentToken = TokenManagerGetNextToken(&_parser->tm);
-//  _parser->st->trieRootNode = ParseSymbols();
+  int indexDwords;
+  printf("[ ParserNew ] input file: %s\n", t->filename);
 
-  if ((t->st->trieRootNode = ParseSymbols(t->filename)) == NULL) {
+  { // for debugging only
+    char *c;
+    c = calloc(strlen(t->filename)+1, sizeof(char));
+    strncpy(c,t->filename, strlen(t->filename));
+    c[strlen(t->filename) - 3] = 'a';
+    c[strlen(t->filename) - 2] = 's';
+    c[strlen(t->filename) - 1] = 'm';
+    printf("[ ParserNew ] output file: %s\n", c);
+    free(c);
+  }
+
+  if ((ParseSymbols(t->filename, t->st)) == NULL) {
+    printf("error in parsing symbols\n");
     return;
   }
 
-//  t->st->trieRootNode = ParseSymbols(t->filename);
   t->currentToken = TokenManagerGetNextToken(&t->tm);
   program(t);
   if (t->currentToken.kind != _EOF) {
@@ -89,6 +115,12 @@ void ParserStart(parserData *t) {
     exit(-1);
   }
   printf("address counter: %0d\n", t->addrCntr++);
+  printf("t->st->numOfDwords: %0d\n", t->st->numOfDwords);
+  t->cg->opcode = "0000";
+  t->cg->address = t->addrCntr;
+  for(indexDwords = 0; indexDwords < t->st->numOfDwords; indexDwords++) {
+    codeGenEmmitInstruction(t->cg, cgTypeDWORD);
+  }
 }
 
 void program(parserData *lparser) {
@@ -103,25 +135,25 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
   }
   else if (lparser->currentToken.kind == PUSHWC) {
-//    printf("call pushwc\n");
+    //    printf("call pushwc\n");
     pushwc(lparser);
     program(lparser);
     lparser->addrCntr++;
   }
   else if (lparser->currentToken.kind == HALT) {
-//    printf("call halt\n");
+    //    printf("call halt\n");
     halt(lparser);
     program(lparser);
     lparser->addrCntr++;
   }
   else if (lparser->currentToken.kind == DWORD) {
-//    printf("call dword\n");
+    //    printf("call dword\n");
     dword(lparser);
     program(lparser);
     lparser->addrCntr++;
   }
   else if (lparser->currentToken.kind == ID) {
-//    printf("call label\n");
+    //    printf("call label\n");
     label(lparser);
     program(lparser);
   }
@@ -140,8 +172,13 @@ void label(parserData *lparser) {
 }
 
 void push(parserData *lparser) {
+  Token ltoken;
   consume(lparser, PUSH);
+  ltoken = lparser->currentToken;
   expression(lparser);
+  lparser->cg->opcode = "A";
+  lparser->cg->address = lparser->addrCntr;
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSH);
 }
 
 void pushc(parserData *lparser) {
@@ -169,15 +206,18 @@ void dword(parserData *lparser) {
 
 void expression(parserData *lparser) {
   if (lparser->currentToken.kind == UNSIGNED) {
+    lparser->cg->operand = lparser->currentToken.image;
     consume(lparser, UNSIGNED);
   }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
+    tstrie *ltstrie;
     consume(lparser, ID);
-    if (tstSearch(lparser->st->trieRootNode, tkn.image) == NULL) {
+    if ((ltstrie = tstSearch(lparser->st->trieRootNode, tkn.image)) == NULL) {
       printf("unknown symbol: %s\n", tkn.image);
       exit(-1);
     }
+    lparser->cg->operand = ltstrie->data;
   }
   else {
     printf("error: Unknown token found: %s\n", tokenImage[lparser->currentToken.kind]);
@@ -215,7 +255,7 @@ void ParserAdvance(parserData *lparser) {
 void consume(parserData *lparser, int expected) {
   if (lparser->currentToken.kind == expected) {
     ParserAdvance(lparser);
-//    printf("consume: %s\n", tokenImage[expected]);
+    //    printf("consume: %s\n", tokenImage[expected]);
   }
   else {
     printf("consume: %s\n", tokenImage[expected]);
@@ -226,20 +266,12 @@ void consume(parserData *lparser, int expected) {
 }
 
 void ParserDelete(parserData *t) {
+//  printf("[ ParserDelete ]\n");
   TokenManagerDelete(t->tm);
   free(t->filename);
-  tstDump(t->st->trieRootNode);
+//  tstDump(t->st->trieRootNode);
   tstDelete(t->st->trieRootNode);
   free(t->st);
+  codeGenDelete(t->cg);
   free(t);
 }
-
-// int ParserImageExists(Token t, parserData *lparser) { 
-//   if (tstSearch(lparser->st->trieRootNode, lparser->currentToken.image) == NULL) {
-//     return 0;
-//   }
-//   else {
-//     return 1;
-//   }
-// }
-

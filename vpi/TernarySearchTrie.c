@@ -12,10 +12,10 @@ void printspace(int cnt) {
 tstrie* tstNew(char i) {
   tstrie* ret;
 
-  printf("[ tstNew ] creating...\n");
+//  printf("[ tstNew ] creating...\n");
   ret = malloc(sizeof(tstrie));
   ret->item = i;
-  ret->data = NULL;
+  ret->symD = NULL;
   //ret->data = calloc(strlen(d), sizeof(char));
   //strncpy(ret->data, d, strlen(d));
   //ret->dat
@@ -31,34 +31,35 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
   char val = s[i];
   int x;
 
-  for (x = 0; x < cntr+1; x++) {
-    printf(" ");
-  }
+//  for (x = 0; x < cntr+1; x++) {
+//    printf(" ");
+//  }
+  
 //  (t == NULL) ? 
 //    printf("val: %c t is null\n", val) :
 //    printf("val: %c t->item: %c ", val, t->item);
   
   if (t == NULL) {
-    printf("t is null\n");
+//    printf("t is null\n");
     return NULL;
   }
   if (val < t->item) {
-    printf("current: val: %c t->item: %c ", val, t->item);
-    printf("[ turning left.\n");
+//    printf("current: val: %c t->item: %c ", val, t->item);
+//    printf("[ turning left.\n");
     return tstSearchR(t->left, s, i, cntr+1);
   }
   if (val > t->item) {
-    printf("current: val: %c t->item: %c ", val, t->item);
-    printf("[ turning right.\n");
+//    printf("current: val: %c t->item: %c ", val, t->item);
+//    printf("[ turning right.\n");
     return tstSearchR(t->right, s, i, cntr+1);
   }
   if (i < strlen(s)-1) {
-    printf("current: val: %c t->item: %c ", val, t->item);
-    printf("[ going to middle.\n");
+//    printf("current: val: %c t->item: %c ", val, t->item);
+//    printf("[ going to middle.\n");
     return tstSearchR(t->middle, s, i+1, cntr+1);
   }
 
-  printf("returning... current: val: %c t->item: %c\n", val, t->item);
+//  printf("returning... current: val: %c t->item: %c\n", val, t->item);
 
   return t;
 }
@@ -66,17 +67,17 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
 tstrie* tstSearch(tstrie *t, char *s) {
   tstrie *ret;
 
-  printf("--- [ searching for: %s\n", s);
+//  printf("--- [ searching for: %s\n", s);
   ret = tstSearchR(t, s, 0, 0);
 
   return ret;
 }
 
-tstrie* tstInsertR(tstrie *t, char *s, char* val, int i, int cntr) {
+tstrie* tstInsertR(tstrie *t, char *s, symData* val, int i, int cntr) {
   char charindxd = s[i];
 //  tstrie *ret = t;
   printspace(cntr);
-  printf("[ tstInsert ] s: %s val: %s i: %0d cntr: %0d\n", s, val, i, cntr);
+//  printf("[ tstInsert ] s: %s val: %s i: %0d cntr: %0d\n", s, val, i, cntr);
   //printf("++++++++++++++++++++++++++++++++++++++\n");
   if (t == NULL) {
 //    printf("t is NULL ");
@@ -100,22 +101,25 @@ tstrie* tstInsertR(tstrie *t, char *s, char* val, int i, int cntr) {
     t->middle = tstInsertR(t->middle, s, val, i+1, cntr+1);
   }
   else {
-    printf("[ assigning value: %s\n", val);
+//    printf("[ assigning value: %s\n", val);
     //t->data = val;
-    t->data = calloc(strlen(val)+1, sizeof(char));
-    strncpy(t->data, val, strlen(val));
+    t->symD = malloc(sizeof(symData));
+    t->symD->data = calloc(strlen(val->data)+1, sizeof(char));
+    t->symD->address = calloc(strlen(val->address)+1, sizeof(char));
+    strncpy(t->data, val->data, strlen(val->data));
+    strncpy(t->address, val->address, strlen(val->address));
   }
 //  printf("returning %c\n", ret->item);
   return t;
 }
 
-tstrie* tstInsert(tstrie *t, char *s, char *val) {
+tstrie* tstInsert(tstrie *t, char *s, symData *val) {
   tstrie *ret;
 
-  printf("++++++++++++++++++++++++++++++++++++++ start\n");
-  printf("inserting [%s] with val: %s\n", s, val);
+//  printf("++++++++++++++++++++++++++++++++++++++ start\n");
+//  printf("inserting [%s] with val: %s\n", s, val);
   ret = tstInsertR(t, s, val, 0, 0);
-  printf("++++++++++++++++++++++++++++++++++++++ end\n");
+//  printf("++++++++++++++++++++++++++++++++++++++ end\n");
 
   return ret;
 }
@@ -150,14 +154,21 @@ void tstCopy(tstrie *src, tstrie **dst) {
 }
 
 void tstDelete(tstrie *t) {
-  //printf("[ tstDelete ]\n");
+//  printf("[ tstDelete ]\n");
   if (t != NULL) {
     tstDelete(t->left);
     tstDelete(t->middle);
     tstDelete(t->right);
-    free(t->data);
+    if (t->symD != NULL) {
+      free(t->symD->data);
+      free(t->symD->address);
+      free(t->symD);
+    }
     free(t);
   }
+//  else {
+//    printf("[ tstDelete ] t is null\n");
+//  }
 }
 
 
@@ -169,10 +180,11 @@ void tstDump(tstrie *t) {
 }
 
 void tstDump_(tstrie *t, int cnt) {
-  if (t == NULL) {
-    printf("null here.\n");
-  }
-  else {
+//  if (t == NULL) {
+//    printf("null here.\n");
+//  }
+//  else {
+  if (t != NULL) {
     printspace(cnt);
     printf("->%c--%s\n", t->item, (t->data == NULL) ? "blank" : t->data);
     printspace(cnt);
