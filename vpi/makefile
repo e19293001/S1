@@ -31,7 +31,7 @@ s1Assembler.vpi: s1Assembler.c
 val:
 #	valgrind -v vvp -M. -ms1Assembler $(main).vvp
 #	valgrind --leak-check=full --show-reachable=yes -v vvp -M. -ms1Assembler $(main).vvp 
-	valgrind --leak-check=full --show-reachable=yes -v ./bin/testParser
+	valgrind --leak-check=full --show-reachable=yes --track-origins=yes -v ./bin/testParser
 
 testParser: $(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)/tokenmanager.o $(obj)/codegenerator.o
 	gcc $^ -o bin/testParser $(COPTS)

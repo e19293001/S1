@@ -16,7 +16,7 @@ typedef struct parserData {
   TokenManager *tm;
   tstrie *trieRootNode;
 //  symtab* st;
-  symData *st;
+//  symData *st;
   codeGen *cg;
 //  tstrie *st;
   Token currentToken;
@@ -37,8 +37,7 @@ void ParserStart(parserData *t);
 
 int ParserImageExists();
 
-tstrie* ParseSymbols(char *s, symData* st);
-
+tstrie* ParseSymbols(char *s);
 void program(parserData *lparser);
 void push(parserData *lparser);
 void pushc(parserData *lparser);

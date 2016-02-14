@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "TernarySearchTrie.h"
+
 typedef enum {
   cgTypeDWORD,
   cgTypePUSH
@@ -12,9 +14,12 @@ typedef enum {
 typedef struct codeGen {
   FILE *fp;
 //  int type;
-  char *opcode;
-  char *operand;
-  int address;
+
+//  char *opcode;
+//  char *operand;
+//  int address;
+  symData *symD;
+
   char *filename;
 } codeGen;
 

@@ -6,10 +6,15 @@
 #include <string.h>
 
 typedef struct symData {
-  char* name;
-  char* data;
-  char* address;
+  char name[512];
+  char data[512];
+  char address[512];
 } symData;
+
+symData* symDataNew();
+void symDataDump(symData* sd);
+void symDataDelete(symData *t);
+symData* symDataCopy(symData *dst);
 
 typedef struct tstrie {
   char item;

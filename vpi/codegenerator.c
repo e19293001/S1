@@ -3,12 +3,12 @@
 void codeGenEmmitInstruction(codeGen *cg, int cgt) {
   // if cg->type . . .
   if (cgt == cgTypeDWORD) {
-    fprintf(cg->fp, "+%04d %s\n", cg->address, cg->opcode);
-    printf("+%04d %s\n", cg->address, cg->opcode);
+    fprintf(cg->fp, "+%04d %s\n", cg->symD->address, cg->symD->name);
+    printf("+%04d %s\n", cg->symD->address, cg->symD->name);
   }
   else if (cgt == cgTypePUSH) {
-    printf("+%04d %s%s\n", cg->address, cg->opcode, cg->operand);
-    fprintf(cg->fp, "+%04d %s%s\n", cg->address, cg->operand, cg->opcode);
+    printf("+%04d %s%s\n", cg->symD->address, cg->symD->name, cg->symD->name);
+    fprintf(cg->fp, "+%04d %s%s\n", cg->symD->address, cg->symD->name, cg->symD->name);
   }
 }
 

@@ -2,6 +2,50 @@
 
 tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr);
 
+symData* symDataNew() {
+  symData *ret;
+
+  ret = malloc(sizeof(symData));
+  memset(ret->name, '\0', 512);
+  memset(ret->data, '\0', 512);
+  memset(ret->address, '\0', 512);
+
+  return ret;
+}
+
+void symDataDump(symData* sd) {
+  if (sd != NULL) {
+    printf("[ symDataDump ] name: %s\n", sd->name);
+    printf("[ symDataDump ] data: %s\n", sd->data);
+    printf("[ symDataDump ] address: %s\n", sd->address);
+  }
+  else {
+    printf("[ symDataDump ] sd is NULL\n");
+  }
+}
+
+void symDataDelete(symData* t) {
+  if (t != NULL) {
+    free(t);
+  }
+}
+
+symData* symDataCopy(symData *dst) {
+  symData *src;
+  if (dst == NULL) {
+    return NULL;
+  }
+  else {
+//    printf("[ symDataCopy ]\n");
+    src = symDataNew();
+    strcpy(src->name, dst->name);
+    strcpy(src->data, dst->data);
+    strcpy(src->address, dst->address);
+  }
+
+  return src;
+}
+
 void printspace(int cnt) {
   int x;
   for (x = 0; x < cnt+1; x++) {
@@ -64,6 +108,7 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
   return t;
 }
 
+//tstrie* tstSearch(tstrie *t, char *s) {
 tstrie* tstSearch(tstrie *t, char *s) {
   tstrie *ret;
 
@@ -76,8 +121,9 @@ tstrie* tstSearch(tstrie *t, char *s) {
 tstrie* tstInsertR(tstrie *t, char *s, symData* val, int i, int cntr) {
   char charindxd = s[i];
 //  tstrie *ret = t;
-  printspace(cntr);
-//  printf("[ tstInsert ] s: %s val: %s i: %0d cntr: %0d\n", s, val, i, cntr);
+//  printspace(cntr);
+//  printf("[ tstInsert ] s: %s i: %0d cntr: %0d\n", s, i, cntr);
+//  symDataDump(val);
   //printf("++++++++++++++++++++++++++++++++++++++\n");
   if (t == NULL) {
 //    printf("t is NULL ");
@@ -101,13 +147,10 @@ tstrie* tstInsertR(tstrie *t, char *s, symData* val, int i, int cntr) {
     t->middle = tstInsertR(t->middle, s, val, i+1, cntr+1);
   }
   else {
-//    printf("[ assigning value: %s\n", val);
-    //t->data = val;
-    t->symD = malloc(sizeof(symData));
-    t->symD->data = calloc(strlen(val->data)+1, sizeof(char));
-    t->symD->address = calloc(strlen(val->address)+1, sizeof(char));
-    strncpy(t->data, val->data, strlen(val->data));
-    strncpy(t->address, val->address, strlen(val->address));
+//    printf("[ assigning value: \n");
+    if ((t->symD = symDataCopy(val)) == NULL) {
+      printf("WARNING: symD is NULL. must allocate val in tstInsert()\n");
+    }    
   }
 //  printf("returning %c\n", ret->item);
   return t;
@@ -159,11 +202,12 @@ void tstDelete(tstrie *t) {
     tstDelete(t->left);
     tstDelete(t->middle);
     tstDelete(t->right);
-    if (t->symD != NULL) {
-      free(t->symD->data);
-      free(t->symD->address);
-      free(t->symD);
-    }
+//    if (t->symD != NULL) {
+//      free(t->symD->data);
+//      free(t->symD->address);
+//      free(t->symD);
+//    }
+    symDataDelete(t->symD);
     free(t);
   }
 //  else {
@@ -173,10 +217,15 @@ void tstDelete(tstrie *t) {
 
 
 void tstDump(tstrie *t) {
-  printf("[\n");
-  tstDump_(t, 0);
-  printf("]");
-  printf("\n");
+  if (t == NULL) {
+    printf("[ tstDump ] t is NULL\n");
+  }
+  else {
+    printf("[\n");
+    tstDump_(t, 0);
+    printf("]");
+    printf("\n");
+  }
 }
 
 void tstDump_(tstrie *t, int cnt) {
@@ -186,10 +235,12 @@ void tstDump_(tstrie *t, int cnt) {
 //  else {
   if (t != NULL) {
     printspace(cnt);
-    printf("->%c--%s\n", t->item, (t->data == NULL) ? "blank" : t->data);
-    printspace(cnt);
+//    printf("->%c--%s\n", t->item, (t->data == NULL) ? "blank" : t->data);
+//    printf("->%c--%s\n", t->item, (t->symD->data == NULL) ? "blank" : t->symD->data);
+//    symDataDump(t->symD);
+//    printspace(cnt);
     if (t->left != NULL) {
-      printf(" turning left\n");
+//      printf(" turning left\n");
       tstDump_(t->left, cnt+1);
     }
     else {
