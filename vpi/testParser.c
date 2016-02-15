@@ -41,12 +41,31 @@ void TestParser0004() { // test for code generator to test for labels pointing t
   ParserDelete(parser);
 }
 
+void TestParser0005() { // test for code generator to test for labels pointing to halt
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0005.txt";
+  parser = ParserNew(data);
+  ParserStart(parser);
+  ParserDelete(parser);
+}
+
+void TestParser0006() { // test for code generator to test for labels pointing to pushc
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0006.txt";
+  parser = ParserNew(data);
+  ParserStart(parser);
+  ParserDelete(parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
 //
 //  TestParser0002(); // test for duplicate labels
 //  TestParser0003(); // test for labels with underscore character
-  TestParser0004(); // test for code generator
+
+  TestParser0004(); // test for code generator dword
+//  TestParser0005(); // test for code generator halt
+//  TestParser0006(); // test for code generator pushc
   return 0;
 }

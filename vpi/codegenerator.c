@@ -7,8 +7,9 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt) {
     printf("+%s %s\n", cg->symD->address, cg->symD->name);
   }
   else if (cgt == cgTypePUSH) {
-    printf("+%s %s%s\n", cg->symD->address, cg->symD->name, cg->symD->name);
-    fprintf(cg->fp, "+%s %s%s\n", cg->symD->address, cg->symD->name, cg->symD->name);
+    printf("+%s 0%s\n", cg->symD->address, cg->symD->name);
+//    printf("+%s %s%s\n", cg->symD->address, cg->symD->name, cg->symD->name);
+//    fprintf(cg->fp, "+%s %s%s\n", cg->symD->address, cg->symD->name, cg->symD->name);
   }
 }
 
@@ -17,6 +18,7 @@ codeGen *codeGenNew(char *s) {
   ret = malloc(sizeof(codeGen));
   ret->filename = calloc(strlen(s)+1, sizeof(char));
   strncpy(ret->filename, s, strlen(s));
+  ret->symD = NULL;
   if ((ret->fp = fopen(s, "w")) == NULL) {
     printf("[ codeGenNew ] can not open file: %s\n", s);
   }

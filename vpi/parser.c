@@ -50,7 +50,7 @@ tstrie* ParseSymbols(char *s) {
       symD = symDataNew();
       strncpy(symD->name, idToken.image, strlen(idToken.image));
       strcpy(symD->address, "address");
-      sprintf(symD->address, "%0d\n", progcntr);
+      sprintf(symD->address, "%04d\n", progcntr);
 //      ret = tstInsert(ret, idToken.image, symD);
 
       ParserSymbolsAdvance(lparser); // id
@@ -68,6 +68,25 @@ tstrie* ParseSymbols(char *s) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
+      else if (lparser->currentToken.kind == HALT) {
+        Token haltToken;
+        haltToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // halt
+
+        strncpy(symD->data, haltToken.image, strlen(haltToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == PUSHC) {
+        Token haltToken;
+        haltToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // halt
+
+        strncpy(symD->data, haltToken.image, strlen(haltToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      
       symDataDelete(symD);
     }
     else if (lparser->currentToken.kind == PUSHC ||
@@ -112,8 +131,6 @@ void ParserStart(parserData *t) {
     return;
   }
 
-//  tstDump(t->trieRootNode);
-
   t->currentToken = TokenManagerGetNextToken(&t->tm);
   program(t);
   if (t->currentToken.kind != _EOF) {
@@ -121,12 +138,6 @@ void ParserStart(parserData *t) {
     exit(-1);
   }
   printf("address counter: %0d\n", t->addrCntr++);
-//  printf("t->st->numOfDwords: %0d\n", t->st->numOfDwords);
-//  t->cg->opcode = "0000";
-//  t->cg->address = t->addrCntr;
-//  for(indexDwords = 0; indexDwords < t->st->numOfDwords; indexDwords++) {
-//    codeGenEmmitInstruction(t->cg, cgTypeDWORD);
-//  }
 }
 
 void program(parserData *lparser) {
@@ -179,11 +190,17 @@ void label(parserData *lparser) {
 
 void push(parserData *lparser) {
   Token ltoken;
+  symData *symD;
   consume(lparser, PUSH);
   ltoken = lparser->currentToken;
-  printf("push ");
-  expression(lparser);
-
+  //printf("push ");
+  if ((symD = expression(lparser)) == NULL) {
+    printf("[ push ] error: returned NULL\n");
+  }
+  printf("push data: %s address: %s\n", symD->data, symD->address);
+  lparser->cg->symD = symDataCopy(symD);
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSH);
+  symDataDelete(lparser->cg->symD);
 }
 
 void pushc(parserData *lparser) {
@@ -197,9 +214,7 @@ void pushwc(parserData *lparser) {
 }
 
 void halt(parserData *lparser) {
-  if (lparser->currentToken.kind == HALT) {
-    consume(lparser, HALT);
-  }
+  consume(lparser, HALT);
 }
 
 void dword(parserData *lparser) {
@@ -210,15 +225,20 @@ void dword(parserData *lparser) {
   }
 }
 
-void expression(parserData *lparser) {
+symData* expression(parserData *lparser) {
+  symData* ret;
+  
   if (lparser->currentToken.kind == UNSIGNED) {
+    Token tkn = lparser->currentToken;
+    ret = symDataNew();
+    strncpy(ret->data, tkn.image, sizeof(tkn.image));
 //    lparser->cg->operand = lparser->currentToken.image;
     consume(lparser, UNSIGNED);
   }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
     tstrie *ltstrie;
-    symData *lsymD;
+//    symData *lsymD;
     consume(lparser, ID);
     if ((ltstrie = tstSearch(lparser->trieRootNode, tkn.image)) == NULL) {
       printf("unknown symbol: %s\n", tkn.image);
@@ -228,12 +248,14 @@ void expression(parserData *lparser) {
       printf("ID found:\n");
       symDataDump(ltstrie->symD);
     }
-    lsymD = ltstrie->symD;
+    ret = ltstrie->symD;
   }
   else {
     printf("error: Unknown token found: %s\n", tokenImage[lparser->currentToken.kind]);
-    return;
+    return NULL;
   }
+
+  return ret;
 }
 
 Token ParserGetToken() {

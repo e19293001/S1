@@ -18,6 +18,8 @@ typedef struct parserData {
 
 parserData *_parser;
 
+void symD2cg(codeGen *cg, symData *symD);
+
 parserData* ParserNew(char *s);
 void ParserConsume();
 Token ParserGetToken();
@@ -35,7 +37,7 @@ void pushc(parserData *lparser);
 void pushwc(parserData *lparser);
 void halt(parserData *lparser);
 void dword(parserData *lparser);
-void expression(parserData *lparser);
+symData* expression(parserData *lparser);
 void label(parserData *lparser);
 
 void consume(parserData *lparser, int expected);
