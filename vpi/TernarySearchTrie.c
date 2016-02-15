@@ -33,6 +33,7 @@ void symDataDelete(symData* t) {
 symData* symDataCopy(symData *dst) {
   symData *src;
   if (dst == NULL) {
+    printf("[ symDataCopy ] WARNING: copying NULL symData.\n");
     return NULL;
   }
   else {
@@ -73,7 +74,7 @@ tstrie* tstNew(char i) {
 
 tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
   char val = s[i];
-  int x;
+//  int x;
 
 //  for (x = 0; x < cntr+1; x++) {
 //    printf(" ");
@@ -148,9 +149,13 @@ tstrie* tstInsertR(tstrie *t, char *s, symData* val, int i, int cntr) {
   }
   else {
 //    printf("[ assigning value: \n");
-    if ((t->symD = symDataCopy(val)) == NULL) {
-      printf("WARNING: symD is NULL. must allocate val in tstInsert()\n");
-    }    
+    if (t->symD == NULL) {
+      t->symD = symDataCopy(val);
+    }
+    else {
+      free(t->symD); // free first before creating another one.
+      t->symD = symDataCopy(val);
+    }
   }
 //  printf("returning %c\n", ret->item);
   return t;

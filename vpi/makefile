@@ -33,13 +33,16 @@ val:
 #	valgrind --leak-check=full --show-reachable=yes -v vvp -M. -ms1Assembler $(main).vvp 
 	valgrind --leak-check=full --show-reachable=yes --track-origins=yes -v ./bin/testParser
 
-testParser: $(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)/tokenmanager.o $(obj)/codegenerator.o
+testParser: $(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)/tokenmanager.o $(obj)/codegenerator.o $(obj)/memlist.o
 	gcc $^ -o bin/testParser $(COPTS)
 
 $(obj)/testParser.o: testParser.c
 	gcc -c $< -o $@ $(COPTS)
 
 $(obj)/codegenerator.o: codegenerator.c codegenerator.h
+	gcc -c $< -o $@ $(COPTS)
+
+$(obj)/memlist.o: memlist.c memlist.h
 	gcc -c $< -o $@ $(COPTS)
 
 $(obj)/parser.o: parser.c parser.h

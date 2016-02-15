@@ -1,5 +1,2 @@
 p x
-p label
-label:
-halt
-x: dw 0
+x: dw 98

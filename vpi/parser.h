@@ -4,21 +4,12 @@
 #include "tokenmanager.h"
 #include "TernarySearchTrie.h"
 #include "codegenerator.h"
-
-//typedef struct symtab {
-//  tstrie *trieRootNode;
-//  int address;
-//  int data;
-//  int numOfDwords;
-//} symtab;
+#include "memlist.h"
 
 typedef struct parserData {
   TokenManager *tm;
   tstrie *trieRootNode;
-//  symtab* st;
-//  symData *st;
   codeGen *cg;
-//  tstrie *st;
   Token currentToken;
   Token previousToken;
   unsigned int addrCntr;

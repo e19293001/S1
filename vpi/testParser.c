@@ -33,7 +33,7 @@ void TestParser0003() { // test for labels with underscore character
   ParserDelete(parser);
 }
 
-void TestParser0004() { // test for code generator
+void TestParser0004() { // test for code generator to test for labels pointing to dwords
   parserData *parser;
   char data[] = "tst/test_parser_pattern0004.txt";
   parser = ParserNew(data);
