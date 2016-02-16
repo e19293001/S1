@@ -45,7 +45,7 @@ void getNextChar(TokenManager **t) {
   if (tm->currentChar == '\n' ||
       tm->currentChar == '\r') {
     if ((fgets(tm->inputLine, 512, tm->inFile)) == NULL) {
-      printf("reached end of file\n");
+//      printf("reached end of file\n");
       tm->currentChar = EOF;
       return;
     }

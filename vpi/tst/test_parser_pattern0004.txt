@@ -1,2 +1,5 @@
+p a1
+a1:
 p x
+halt
 x: dw 98
