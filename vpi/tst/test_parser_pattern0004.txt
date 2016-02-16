@@ -1,5 +1,9 @@
 p a1
 a1:
 p x
+
+@s:
+
+
 halt
 x: dw 98

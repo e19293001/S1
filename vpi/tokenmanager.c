@@ -97,7 +97,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     ret.kind = UNSIGNED;
 //    printf("found digit. %s\n", ret.image);
   }
-  else if (isalpha((*t)->currentChar) || (*t)->currentChar == '_') {
+  else if (isalpha((*t)->currentChar) ||
+           (*t)->currentChar == '@' ||
+           (*t)->currentChar == '_') {
     int indxToImage = 0;
     memset(ret.image, '\0', 512);
     do {
