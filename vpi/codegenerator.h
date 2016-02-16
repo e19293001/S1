@@ -8,6 +8,7 @@
 
 typedef enum {
   cgTypeDWORD,
+  cgTypeHALT,
   cgTypePUSH
 } cgType;
 

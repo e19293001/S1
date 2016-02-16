@@ -9,6 +9,7 @@ symData* symDataNew() {
   memset(ret->name, '\0', 512);
   memset(ret->data, '\0', 512);
   memset(ret->address, '\0', 512);
+  memset(ret->programcounter, '\0', 512);
 
   return ret;
 }

@@ -45,18 +45,23 @@ tstrie* ParseSymbols(char *s) {
       char num[256];
       memset(num, 0, 256);
 //      sprintf(num, "%03d", progcntr);
-      printf("FOUND ID lparser->currentToken.image: %s\n", lparser->currentToken.image);
+
+//      printf("FOUND ID lparser->currentToken.image: %s\n", lparser->currentToken.image);
+      if (tstSearch(ret, idToken.image) != NULL) {
+        printf("ERROR label already exists.\n");
+        exit(-1);
+      }
         
       symD = symDataNew();
       strncpy(symD->name, idToken.image, strlen(idToken.image));
-      strcpy(symD->address, "address");
-      sprintf(symD->address, "%0d\n", progcntr);
+      //strcpy(symD->address, "address");
+      sprintf(symD->address, "%03x", progcntr);
 //      ret = tstInsert(ret, idToken.image, symD);
 
       ParserSymbolsAdvance(lparser); // id
       ParserSymbolsAdvance(lparser); // colon
 
-      printf("lparser->image: %s\n", lparser->currentToken.image);
+      //printf("lparser->image: %s\n", lparser->currentToken.image);
 
       if (lparser->currentToken.kind == DWORD) {
         Token dwToken;
@@ -64,7 +69,21 @@ tstrie* ParseSymbols(char *s) {
         dwToken = lparser->currentToken;
         ParserSymbolsAdvance(lparser); // unsigned
 
-        strncpy(symD->data, dwToken.image, strlen(dwToken.image));
+        //printf("%04x\n", atoi(dwToken.image));
+        sprintf(symD->data, "%04x", atoi(dwToken.image));
+        //strncpy(symD->data, dwToken.image, strlen(dwToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == PUSH) {
+        Token dwToken;
+        ParserSymbolsAdvance(lparser); // dw
+        dwToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // unsigned
+
+        //printf("%04x\n", atoi(dwToken.image));
+        sprintf(symD->data, "%03x", atoi(dwToken.image));
+        //strncpy(symD->data, dwToken.image, strlen(dwToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
@@ -77,10 +96,10 @@ tstrie* ParseSymbols(char *s) {
       ParserSymbolsAdvance(lparser);
       progcntr++;
     }
-//      else if (lparser->currentToken.kind == HALT) {
-//        halt(lparser);
-//        progcntr++;
-//      }
+    else if (lparser->currentToken.kind == HALT) {
+      ParserSymbolsAdvance(lparser);
+      progcntr++;
+    }
     else {
       printf("TOKEN NOT SUPPORTED %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
@@ -120,43 +139,43 @@ void ParserStart(parserData *t) {
     printf("expecting EOF. token is: %s\n", tokenImage[t->currentToken.kind]);
     exit(-1);
   }
-  printf("address counter: %0d\n", t->addrCntr++);
-//  printf("t->st->numOfDwords: %0d\n", t->st->numOfDwords);
-//  t->cg->opcode = "0000";
-//  t->cg->address = t->addrCntr;
-//  for(indexDwords = 0; indexDwords < t->st->numOfDwords; indexDwords++) {
-//    codeGenEmmitInstruction(t->cg, cgTypeDWORD);
-//  }
+
+//  printf("address counter: %0d\n", t->addrCntr++);
+
 }
 
 void program(parserData *lparser) {
   if (lparser->currentToken.kind == PUSH) {
     push(lparser);
-    program(lparser);
     lparser->addrCntr++;
+
+    program(lparser);
   }
   else if (lparser->currentToken.kind == PUSHC) {
     pushc(lparser);
-    program(lparser);
     lparser->addrCntr++;
+
+    program(lparser);
   }
   else if (lparser->currentToken.kind == PUSHWC) {
     //    printf("call pushwc\n");
     pushwc(lparser);
-    program(lparser);
     lparser->addrCntr++;
+
+    program(lparser);
   }
   else if (lparser->currentToken.kind == HALT) {
-    //    printf("call halt\n");
     halt(lparser);
-    program(lparser);
     lparser->addrCntr++;
+
+    program(lparser);
   }
   else if (lparser->currentToken.kind == DWORD) {
     //    printf("call dword\n");
     dword(lparser);
-    program(lparser);
     lparser->addrCntr++;
+
+    program(lparser);
   }
   else if (lparser->currentToken.kind == ID) {
     //    printf("call label\n");
@@ -178,12 +197,10 @@ void label(parserData *lparser) {
 }
 
 void push(parserData *lparser) {
-  Token ltoken;
   consume(lparser, PUSH);
-  ltoken = lparser->currentToken;
-  printf("push ");
   expression(lparser);
-
+  sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSH);
 }
 
 void pushc(parserData *lparser) {
@@ -197,38 +214,39 @@ void pushwc(parserData *lparser) {
 }
 
 void halt(parserData *lparser) {
-  if (lparser->currentToken.kind == HALT) {
-    consume(lparser, HALT);
+  consume(lparser, HALT);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeHALT);
+    symDataDelete(lparser->cg->symD);
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeHALT);
   }
 }
 
 void dword(parserData *lparser) {
-  if (lparser->currentToken.kind == DWORD) {
-    consume(lparser, DWORD);
-    expression(lparser);
-//    consume(lparser, UNSIGNED);
-  }
+  consume(lparser, DWORD);
+  expression(lparser);
+  sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+  codeGenEmmitInstruction(lparser->cg, cgTypeDWORD);
 }
 
 void expression(parserData *lparser) {
   if (lparser->currentToken.kind == UNSIGNED) {
-//    lparser->cg->operand = lparser->currentToken.image;
     consume(lparser, UNSIGNED);
   }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
     tstrie *ltstrie;
-    symData *lsymD;
     consume(lparser, ID);
     if ((ltstrie = tstSearch(lparser->trieRootNode, tkn.image)) == NULL) {
       printf("unknown symbol: %s\n", tkn.image);
       exit(-1);
     }
-    else {
-      printf("ID found:\n");
-      symDataDump(ltstrie->symD);
-    }
-    lsymD = ltstrie->symD;
+    lparser->cg->symD = ltstrie->symD;
   }
   else {
     printf("error: Unknown token found: %s\n", tokenImage[lparser->currentToken.kind]);

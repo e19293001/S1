@@ -9,6 +9,7 @@ typedef struct symData {
   char name[512];
   char data[512];
   char address[512];
+  char programcounter[512];
 } symData;
 
 symData* symDataNew();
