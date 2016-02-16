@@ -2,8 +2,11 @@ p a1
 a1:
 p x
 
+p @s
 @s:
-
 
 halt
 x: dw 98
+s: dw 100
+
+p s

@@ -176,6 +176,7 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
   }
 
+//  printf("kind: %0d image: %s type: %s\n", ret.kind, ret.image, tokenImage[ret.kind]);
   return ret;
 }
 

@@ -49,7 +49,10 @@ tstrie* ParseSymbols(char *s) {
 //      printf("FOUND ID lparser->currentToken.image: %s\n", lparser->currentToken.image);
       if (tstSearch(ret, idToken.image) != NULL) {
         printf("ERROR label already exists.\n");
-        exit(-1);
+        ParserDelete(lparser);
+        tstDelete(ret);
+        //exit(-1);
+        return NULL;
       }
         
       symD = symDataNew();
@@ -97,15 +100,25 @@ tstrie* ParseSymbols(char *s) {
         progcntr++;
       }
       else if (lparser->currentToken.kind == PUSHC) {
-        Token haltToken;
-        haltToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // halt
+        Token pushcToken;
+        ParserSymbolsAdvance(lparser); // pushc
+        pushcToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
 
-        strncpy(symD->data, haltToken.image, strlen(haltToken.image));
+        strncpy(symD->data, pushcToken.image, strlen(pushcToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      
+      else if (lparser->currentToken.kind == PUSHWC) {
+        Token pushwcToken;
+        ParserSymbolsAdvance(lparser); // pushwc
+        pushwcToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        strncpy(symD->data, pushwcToken.image, strlen(pushwcToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr+=2;
+      }
       symDataDelete(symD);
     }
     else if (lparser->currentToken.kind == PUSHC ||
@@ -120,7 +133,7 @@ tstrie* ParseSymbols(char *s) {
       progcntr++;
     }
     else {
-      printf("TOKEN NOT SUPPORTED %s\n", lparser->currentToken.image);
+      printf("TOKEN NOT SUPPORTED [%s] kind: %d image: %s progcntr: %0d\n", lparser->currentToken.image, lparser->currentToken.kind, tokenImage[lparser->currentToken.kind], progcntr);
       ParserSymbolsAdvance(lparser);
     }
   } while (lparser->currentToken.kind != _EOF);
@@ -213,30 +226,34 @@ void label(parserData *lparser) {
 void push(parserData *lparser) {
   consume(lparser, PUSH);
   expression(lparser);
-  sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+  sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
   codeGenEmmitInstruction(lparser->cg, cgTypePUSH);
 }
 
 void pushc(parserData *lparser) {
   consume(lparser, PUSHC);
   expression(lparser);
+  sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSH);
 }
 
 void pushwc(parserData *lparser) {
   consume(lparser, PUSHWC);
   expression(lparser);
+  sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSH);
 }
 
 void halt(parserData *lparser) {
   consume(lparser, HALT);
   if (lparser->cg->symD == NULL) {
     lparser->cg->symD = symDataNew();
-    sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypeHALT);
     symDataDelete(lparser->cg->symD);
   }
   else {
-    sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypeHALT);
   }
 }
@@ -244,7 +261,7 @@ void halt(parserData *lparser) {
 void dword(parserData *lparser) {
   consume(lparser, DWORD);
   expression(lparser);
-  sprintf(lparser->cg->symD->programcounter, "%04d", lparser->addrCntr);
+  sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
   codeGenEmmitInstruction(lparser->cg, cgTypeDWORD);
 }
 
@@ -252,7 +269,9 @@ symData* expression(parserData *lparser) {
   symData* ret;
   
   if (lparser->currentToken.kind == UNSIGNED) {
+    Token tkn = lparser->currentToken;
     consume(lparser, UNSIGNED);
+    sprintf(lparser->cg->symD->data, "%04x", atoi(tkn.image));
   }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;

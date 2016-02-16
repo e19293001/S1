@@ -9,7 +9,9 @@
 typedef enum {
   cgTypeDWORD,
   cgTypeHALT,
-  cgTypePUSH
+  cgTypePUSH,
+  cgTypePUSHC,
+  cgTypePUSHWC
 } cgType;
 
 typedef struct codeGen {

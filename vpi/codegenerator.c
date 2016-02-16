@@ -8,6 +8,13 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt) {
   else if (cgt == cgTypePUSH) {
     printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
   }
+  else if (cgt == cgTypePUSHC) {
+    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+  }
+  else if (cgt == cgTypePUSHWC) {
+    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+  }
   else if (cgt == cgTypeHALT) {
     printf("+%s FFFF\n", cg->symD->programcounter);
   }
