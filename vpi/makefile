@@ -1,58 +1,69 @@
-#include ./makefrag
-#iveriloginclude=$(ICARUSVPI)
-#coptions=-I$(iveriloginclude)
+# IVERILOG_LIB_PATH_ and IVERILOG_INCLUDE_PATH_ must be set
+
+IVERILOG_LIB_PATH=$(IVERILOG_LIB_PATH_)
+IVERILOG_INCLUDE_PATH=$(IVERILOG_INCLUDE_PATH_)
+
+PARSEROBJS=$(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)/tokenmanager.o $(obj)/codegenerator.o $(obj)/memlist.o
 
 main=vpiTest
 obj=obj
-COPTS=-g -Wall
+COPTS=-g -Wall -L$(IVERILOG_INCLUDE_PATH) -I$(IVERILOG_LIB_PATH) -lvpi 
 
-#all: compile runsim
-all: mkdirs testParser runTest
+all: mkdirs compile runsim
+#all: mkdirs testParser runTest
+
+test: mkdirs testParser runTest
 
 mkdirs:
 	mkdir -p $(obj) bin
 
-$(main).vvp: $(main).v
+$(obj)/$(main).vvp: $(main).v
 	iverilog $^ -o $@
 
-compile: cxternals $(main).vvp
+compile: bin/s1Assembler.vpi $(obj)/$(main).vvp
+
+bin/s1Assembler.vpi: $(PARSEROBJS) $(obj)/s1Assembler.o 
+	gcc -shared -o $@ $^ $(COPTS)
+
+$(obj)/s1Assembler.o: s1Assembler.c 
+	gcc -c -fpic $^ -o $@ $(COPTS)
 
 runsim:
-	vvp -M. -ms1Assembler $(main).vvp
+	vvp -M. -mbin/s1Assembler $(obj)/$(main).vvp
 
 clean:
 	rm -fr *.vpi *.vvp *.o $(obj) bin tst/*.asm
 
-cxternals: s1Assembler.vpi
+#cxternals: s1Assembler.vpi
 
-s1Assembler.vpi: s1Assembler.c
-	iverilog-vpi $^
+#s1Assembler.vpi: s1Assembler.c
+#	iverilog-vpi $^
 
-val:
-#	valgrind -v vvp -M. -ms1Assembler $(main).vvp
+val: test
+#	valgrind -v vvp -M. -mbin/s1Assembler $(obj)/$(main).vvp
 #	valgrind --leak-check=full --show-reachable=yes -v vvp -M. -ms1Assembler $(main).vvp 
 	valgrind --leak-check=full --show-reachable=yes --track-origins=yes -v ./bin/testParser
 
-testParser: $(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)/tokenmanager.o $(obj)/codegenerator.o $(obj)/memlist.o
+testParser: $(PARSEROBJS)
 	gcc $^ -o bin/testParser $(COPTS)
 
 $(obj)/testParser.o: testParser.c
-	gcc -c $< -o $@ $(COPTS)
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 $(obj)/codegenerator.o: codegenerator.c codegenerator.h
-	gcc -c $< -o $@ $(COPTS)
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 $(obj)/memlist.o: memlist.c memlist.h
-	gcc -c $< -o $@ $(COPTS)
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 $(obj)/parser.o: parser.c parser.h
-	gcc -c $< -o $@ $(COPTS)
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 $(obj)/TernarySearchTrie.o: TernarySearchTrie.c TernarySearchTrie.h
-	gcc -c $< -o $@ $(COPTS)
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 $(obj)/tokenmanager.o: tokenmanager.c tokenmanager.h
-	gcc -c $< -o $@ $(COPTS)
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 runTest:
 	./bin/testParser

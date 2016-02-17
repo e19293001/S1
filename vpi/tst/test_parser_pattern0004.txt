@@ -1,5 +1,12 @@
+y:
 p a1
 a1:
 p x
+p x
+p x
+p x
+p a1
+p x
 halt
 x: dw 98
+p y
