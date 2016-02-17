@@ -9,8 +9,8 @@ main=vpiTest
 obj=obj
 COPTS=-g -Wall -L$(IVERILOG_INCLUDE_PATH) -I$(IVERILOG_LIB_PATH) -lvpi 
 
-all: mkdirs compile runsim
-#all: mkdirs testParser runTest
+#all: mkdirs compile runsim
+all: mkdirs testParser runTest
 
 test: mkdirs testParser runTest
 
@@ -39,7 +39,7 @@ clean:
 #s1Assembler.vpi: s1Assembler.c
 #	iverilog-vpi $^
 
-val: test
+val: 
 #	valgrind -v vvp -M. -mbin/s1Assembler $(obj)/$(main).vvp
 #	valgrind --leak-check=full --show-reachable=yes -v vvp -M. -ms1Assembler $(main).vvp 
 	valgrind --leak-check=full --show-reachable=yes --track-origins=yes -v ./bin/testParser

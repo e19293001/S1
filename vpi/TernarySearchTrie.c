@@ -99,13 +99,18 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
 //    printf("[ turning right.\n");
     return tstSearchR(t->right, s, i, cntr+1);
   }
+
   if (i < strlen(s)-1) {
 //    printf("current: val: %c t->item: %c ", val, t->item);
 //    printf("[ going to middle.\n");
     return tstSearchR(t->middle, s, i+1, cntr+1);
   }
 
-//  printf("returning... current: val: %c t->item: %c\n", val, t->item);
+//  printf("returning... current: *s: %s val: %c t->item: %c strlen(s): %0d\n", s, val, t->item, strlen(s));
+  if (t->symD == NULL) {
+//    printf("returning NULL\n");
+    return NULL;
+  }
 
   return t;
 }
@@ -122,43 +127,33 @@ tstrie* tstSearch(tstrie *t, char *s) {
 
 tstrie* tstInsertR(tstrie *t, char *s, symData* val, int i, int cntr) {
   char charindxd = s[i];
-//  tstrie *ret = t;
-//  printspace(cntr);
-//  printf("[ tstInsert ] s: %s i: %0d cntr: %0d\n", s, i, cntr);
-//  symDataDump(val);
-  //printf("++++++++++++++++++++++++++++++++++++++\n");
+
   if (t == NULL) {
-//    printf("t is NULL ");
-//    printf("inserting: %c\n", charindxd);
     t = tstNew(charindxd);
-    //tstDump(t);
   }
   if (charindxd < t->item) {
-//    printf("[ turning left.\n");
-    //printf("current: val: %c t->item: %c\n", val, t->item);
     t->left =  tstInsertR(t->left, s, val, i, cntr+1);
   }
   else if (charindxd > t->item) {
-//    printf("[ turning right.\n");
-    //printf("current: val: %c t->item: %c\n", val, t->item);
     t->right = tstInsertR(t->right, s, val, i, cntr+1);
   }
   else if (i < strlen(s)-1) {
-//    printf("[ going to middle.\n");
-    //printf("current: val: %c t->item: %c\n", val, t->item);
     t->middle = tstInsertR(t->middle, s, val, i+1, cntr+1);
   }
   else {
-//    printf("[ assigning value: \n");
+
     if (t->symD == NULL) {
+//      printf("searching for %s\n", s);
+//      printf("t->symD is NULL\n");
       t->symD = symDataCopy(val);
+//      printf("created new");
     }
     else {
       free(t->symD); // free first before creating another one.
       t->symD = symDataCopy(val);
     }
   }
-//  printf("returning %c\n", ret->item);
+
   return t;
 }
 
@@ -166,7 +161,8 @@ tstrie* tstInsert(tstrie *t, char *s, symData *val) {
   tstrie *ret;
 
 //  printf("++++++++++++++++++++++++++++++++++++++ start\n");
-//  printf("inserting [%s] with val: %s\n", s, val);
+//  printf("inserting [%s] with val: \n", s);
+//  symDataDump(val);
   ret = tstInsertR(t, s, val, 0, 0);
 //  printf("++++++++++++++++++++++++++++++++++++++ end\n");
 
@@ -243,7 +239,6 @@ void tstDump_(tstrie *t, int cnt) {
     printspace(cnt);
 //    printf("->%c--%s\n", t->item, (t->data == NULL) ? "blank" : t->data);
 //    printf("->%c--%s\n", t->item, (t->symD->data == NULL) ? "blank" : t->symD->data);
-//    symDataDump(t->symD);
 //    printspace(cnt);
     if (t->left != NULL) {
 //      printf(" turning left\n");
@@ -268,6 +263,7 @@ void tstDump_(tstrie *t, int cnt) {
     else {
       printf(" right is null.\n");
     }
+    //symDataDump(t->symD);
   }
 }  
 

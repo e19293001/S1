@@ -37,7 +37,7 @@ void pushc(parserData *lparser);
 void pushwc(parserData *lparser);
 void halt(parserData *lparser);
 void dword(parserData *lparser);
-symData* expression(parserData *lparser);
+void expression(parserData *lparser);
 void label(parserData *lparser);
 
 void consume(parserData *lparser, int expected);

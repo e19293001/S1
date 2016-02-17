@@ -1,7 +1,15 @@
-p x
+pc dd
+pc x
+y:
 pc xx
-p x
-p x
+pc x
+pc x
+pc x
+pc x
+pc x
+pc y
 xx:
+xxx:
 halt
+dd:
 x: dw 98

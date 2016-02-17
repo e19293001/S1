@@ -12,7 +12,9 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt) {
     printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
   }
   else if (cgt == cgTypePUSHWC) {
-    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+    printf("+%s F700\n", cg->symD->programcounter);
+    sprintf(cg->symD->programcounter, "%04x", atoi(cg->symD->programcounter)+1);
+    //sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
   }
   else if (cgt == cgTypeHALT) {

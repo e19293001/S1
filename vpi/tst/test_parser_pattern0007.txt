@@ -1,3 +1,9 @@
 pwc x
+pwc x
+pwc x
+pwc x
+pwc x
+pwc y
 halt
 x: dw 100
+y: dw 101
