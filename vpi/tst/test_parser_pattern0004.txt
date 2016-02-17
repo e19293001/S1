@@ -1,6 +1,8 @@
+y:
 p a1
 a1:
 p x
+<<<<<<< HEAD
 
 p @s
 @s:
@@ -10,3 +12,13 @@ x: dw 98
 s: dw 100
 
 p s
+=======
+p x
+p x
+p x
+p a1
+p x
+halt
+x: dw 98
+p y
+>>>>>>> 004f73fc2774195d765f81c10eeb769e7df27292
