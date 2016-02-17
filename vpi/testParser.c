@@ -78,15 +78,15 @@ void TestParser0007() { // test for code generator for pushwc
 }
 
 int main() {
-//  TestParser0000();
-//  TestParser0001();
-//
-//  TestParser0002(); // test for duplicate labels
-//  TestParser0003(); // test for labels with underscore character
+  TestParser0000();
+  TestParser0001();
 
-//  TestParser0004(); // test for code generator dword
-//  TestParser0005(); // test for code generator halt
-//  TestParser0006(); // test for code generator pushc
+  TestParser0002(); // test for duplicate labels
+  TestParser0003(); // test for labels with underscore character
+
+  TestParser0004(); // test for code generator dword
+  TestParser0005(); // test for code generator halt
+  TestParser0006(); // test for code generator pushc
   TestParser0007(); // test for code generator pushwc
   return 0;
 }

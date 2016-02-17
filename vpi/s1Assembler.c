@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "parser.h"
 
 void dumpVpiHandle(vpiHandle obj) {
 }
@@ -61,6 +62,13 @@ static int s1AssemblerCalltf(char*user_data)
   memset(s, '\0',strlen(value_s.value.str));
   strncpy(s,value_s.value.str, strlen(value_s.value.str));
   vpi_printf("argument: %s\n", s);
+
+  {
+    parserData *parser;
+    parser = ParserNew(s);
+    ParserStart(parser);
+    ParserDelete(parser);
+  }
 
   free(s);  
   return 0;
