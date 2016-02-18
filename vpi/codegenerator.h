@@ -28,7 +28,7 @@ typedef struct codeGen {
 
 codeGen *codeGenNew(char *s);
 
-void codeGenEmmitInstruction(codeGen *cg, int cgt);
+void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction);
 
 void codeGenDelete(codeGen *cg);
 #endif

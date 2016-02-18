@@ -1,0 +1,42 @@
+p x  ; comment here
+a1:
+; comment here
+pwc y
+pc z
+b1skldjf:    ; lsdjf
+
+
+p x
+a14:
+pwc y
+pc z
+b1skldjf2:
+p x
+a13:
+pwc y
+pc z
+b1skldjf3:
+p x
+a12:
+pwc y
+pc z
+@b1skldjf:
+p a1
+pc a1
+pwc a1
+p a12
+pc a12
+pwc a12
+p a13
+pc a13
+pwc a13
+p y
+pc y
+pwc y
+
+halt
+x: dw 0
+y: dw 0
+z: dw 2
+
+; comment

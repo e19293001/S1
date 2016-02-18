@@ -61,6 +61,9 @@ void getNextChar(TokenManager **t) {
   }
 
   tm->currentChar = tm->inputLine[tm->currentColumnNumber++];
+  if (tm->currentChar == ';') {
+    tm->currentChar = '\n';
+  }
 }
 
 Token TokenManagerGetNextToken(TokenManager **t) {

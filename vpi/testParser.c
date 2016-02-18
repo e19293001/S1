@@ -77,16 +77,25 @@ void TestParser0007() { // test for code generator for pushwc
   ParserDelete(parser);
 }
 
+void TestParser0008() { // test for comments
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0008.txt";
+  parser = ParserNew(data);
+  ParserStart(parser);
+  ParserDelete(parser);
+}
+
 int main() {
-//  TestParser0000();
-//  TestParser0001();
-//
-//  TestParser0002(); // test for duplicate labels
-//  TestParser0003(); // test for labels with underscore character
-//
-//  TestParser0004(); // test for code generator dword
-//  TestParser0005(); // test for code generator halt
+  TestParser0000();
+  TestParser0001();
+
+  TestParser0002(); // test for duplicate labels
+  TestParser0003(); // test for labels with underscore character
+
+  TestParser0004(); // test for code generator dword
+  TestParser0005(); // test for code generator halt
   TestParser0006(); // test for code generator pushc
-//  TestParser0007(); // test for code generator pushwc
+  TestParser0007(); // test for code generator pushwc
+  TestParser0008(); // test for comments
   return 0;
 }

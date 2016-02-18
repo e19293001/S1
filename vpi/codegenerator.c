@@ -1,24 +1,27 @@
 #include "codegenerator.h"
 
-void codeGenEmmitInstruction(codeGen *cg, int cgt) {
+void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   // if cg->type . . .
   if (cgt == cgTypeDWORD) {
-    printf("+%s %s\n", cg->symD->programcounter, cg->symD->data);
+    printf("+%s    %s ; %s\n", cg->symD->programcounter, cg->symD->data, instruction);
   }
   else if (cgt == cgTypePUSH) {
-    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+    printf("+%s    0%s ; %s\n", cg->symD->programcounter, cg->symD->address, instruction);
   }
   else if (cgt == cgTypePUSHC) {
-    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+    printf("+%s    1%s ; %s\n", cg->symD->programcounter, cg->symD->address, instruction);
   }
   else if (cgt == cgTypePUSHWC) {
-    printf("+%s F700\n", cg->symD->programcounter);
-    sprintf(cg->symD->programcounter, "%04x", atoi(cg->symD->programcounter)+1);
+    printf("+%s    F700 ; %s\n", cg->symD->programcounter, instruction);
+    //sprintf(cg->symD->programcounter, "%04x", atoi(cg->symD->programcounter)+1);
     //sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    printf("+%s 0%s\n", cg->symD->programcounter, cg->symD->address);
+    //printf("+%s    0%s\n", cg->symD->programcounter, cg->symD->address);
+
+    // 0%s must be %s
+    printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
   }
   else if (cgt == cgTypeHALT) {
-    printf("+%s FFFF\n", cg->symD->programcounter);
+    printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);
   }
   else {
     printf("unknown cgType.\n");
