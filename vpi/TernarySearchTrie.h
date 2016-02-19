@@ -10,6 +10,9 @@ typedef struct symData {
   char data[512];
   char address[512];
   char programcounter[512];
+
+  int dataInt;
+  int addressInt;
 } symData;
 
 symData* symDataNew();

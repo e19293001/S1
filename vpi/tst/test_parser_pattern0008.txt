@@ -33,10 +33,13 @@ pwc a13
 p y
 pc y
 pwc y
+p 1
+pc 2
+pwc 3
 
 halt
-x: dw 0
-y: dw 0
+x: dw 100
+y: dw 9
 z: dw 2
 
 ; comment

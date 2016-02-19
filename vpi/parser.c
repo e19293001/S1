@@ -233,7 +233,7 @@ void push(parserData *lparser) {
   consume(lparser, PUSH);
   expression(lparser);
   sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-  codeGenEmmitInstruction(lparser->cg, cgTypePUSH, "push");
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSH, "p");
 }
 
 void pushc(parserData *lparser) {
@@ -241,7 +241,7 @@ void pushc(parserData *lparser) {
   expression(lparser);
   sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
   //printf("cg->symD->address: %s\n", lparser->cg->symD->address);
-  codeGenEmmitInstruction(lparser->cg, cgTypePUSHC, "pushc");
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSHC, "pc");
 }
 
 void pushwc(parserData *lparser) {
@@ -249,7 +249,7 @@ void pushwc(parserData *lparser) {
   expression(lparser);
   sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
 //  symDataDump(lparser->cg->symD);
-  codeGenEmmitInstruction(lparser->cg, cgTypePUSHWC, "pushwc");
+  codeGenEmmitInstruction(lparser->cg, cgTypePUSHWC, "pwc");
 }
 
 void halt(parserData *lparser) {
@@ -270,14 +270,16 @@ void dword(parserData *lparser) {
   consume(lparser, DWORD);
   expression(lparser);
   sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-  codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dword");
+  codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
 }
 
 void expression(parserData *lparser) {
   if (lparser->currentToken.kind == UNSIGNED) {
     Token tkn = lparser->currentToken;
     consume(lparser, UNSIGNED);
-    sprintf(lparser->cg->symD->data, "%04x", atoi(tkn.image));
+    lparser->cg->symD->addressInt = atoi(tkn.image);
+    sprintf(lparser->cg->symD->address, "%03x", atoi(tkn.image));
+    sprintf(lparser->cg->symD->name, "%03x", atoi(tkn.image));
   }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
