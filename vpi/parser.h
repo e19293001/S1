@@ -1,6 +1,7 @@
 #ifndef parser_h
 #define parser_h
 
+#include <assert.h>
 #include "tokenmanager.h"
 #include "TernarySearchTrie.h"
 #include "codegenerator.h"
@@ -25,12 +26,12 @@ void ParserConsume();
 Token ParserGetToken();
 void ParserAdvance(parserData *lparser);
 void ParserSymbolsAdvance(parserData *t);
-void ParserDelete(parserData *t);
-void ParserStart(parserData *t);
+void ParserDelete(parserData **t);
+int ParserStart(parserData *t);
 
 int ParserImageExists();
 
-tstrie* ParseSymbols(char *s);
+tstrie* ParseSymbols(char *s, int *errorcode);
 void program(parserData *lparser);
 void push(parserData *lparser);
 void pushc(parserData *lparser);
@@ -39,8 +40,9 @@ void halt(parserData *lparser);
 void dword(parserData *lparser);
 void expression(parserData *lparser);
 void label(parserData *lparser);
+void pushr(parserData *lparser);
 
-void consume(parserData *lparser, int expected);
+int consume(parserData *lparser, int expected);
 
 parserData* ParserCopy(parserData t);
 

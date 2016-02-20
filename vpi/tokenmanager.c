@@ -12,6 +12,7 @@ const char *tokenImage[] = {
   "DWORD",
   "SEMICOL",
   "COLON",
+  "PUSHR",
   "ERROR"
 };
 
@@ -130,6 +131,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     else if ((strncmp(ret.image, "dw", 512)) == 0) {
       ret.kind = DWORD;
     }
+    else if ((strncmp(ret.image, "pr", 512)) == 0) {
+      ret.kind = PUSHR;
+    }
     else {
       //printf("\nfound ID. %s\n", ret.image);
       ret.kind = ID;
@@ -184,9 +188,10 @@ Token TokenManagerGetNextToken(TokenManager **t) {
   return ret;
 }
 
-void TokenManagerDelete(TokenManager* t) {
+void TokenManagerDelete(TokenManager** t) {
 //  printf("deleting t->infile: %0d\n", t->inFile);
-  fclose(t->inFile);
-  free(t);
+  fclose((*t)->inFile);
+  free(*t);
+  *t = NULL;
 }
 

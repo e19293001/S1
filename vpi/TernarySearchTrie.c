@@ -25,12 +25,14 @@ void symDataDump(symData* sd) {
   }
 }
 
-void symDataDelete(symData* t) {
-  if (t != NULL) {
-    free(t);
+void symDataDelete(symData** t) {
+  if (*t != NULL) {
+    //symDataDump(*t);
+//    printf("*t is not NULL freeing %08x name: %s\n", *t, (*t)->name);
+    free(*t);
   }
+  *t = NULL;
 }
-
 symData* symDataCopy(symData *dst) {
   symData *src;
   if (dst == NULL) {
@@ -149,7 +151,7 @@ tstrie* tstInsertR(tstrie *t, char *s, symData* val, int i, int cntr) {
 //      printf("created new");
     }
     else {
-      free(t->symD); // free first before creating another one.
+      symDataDelete(&(t->symD)); // free first before creating another one.
       t->symD = symDataCopy(val);
     }
   }
@@ -198,25 +200,16 @@ void tstCopy(tstrie *src, tstrie **dst) {
 //  printf("[ tstCopy ] src->item: %c src->data: %0d (*dst)->item: %c (*dst)->data: %0d\n", src->item, src->data, (*dst)->item, (*dst)->data);
 }
 
-void tstDelete(tstrie *t) {
-//  printf("[ tstDelete ]\n");
-  if (t != NULL) {
-    tstDelete(t->left);
-    tstDelete(t->middle);
-    tstDelete(t->right);
-//    if (t->symD != NULL) {
-//      free(t->symD->data);
-//      free(t->symD->address);
-//      free(t->symD);
-//    }
-    symDataDelete(t->symD);
-    free(t);
+void tstDelete(tstrie **t) {
+  if (*t != NULL) {
+    tstDelete(&(*t)->left);
+    tstDelete(&(*t)->middle);
+    tstDelete(&(*t)->right);
+    symDataDelete(&(*t)->symD);
+    free(*t);
+    *t = NULL;
   }
-//  else {
-//    printf("[ tstDelete ] t is null\n");
-//  }
 }
-
 
 void tstDump(tstrie *t) {
   if (t == NULL) {

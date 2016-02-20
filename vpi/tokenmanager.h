@@ -19,6 +19,7 @@ typedef enum {
   DWORD,
   SEMICOL,
   COLON,
+  PUSHR,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  
@@ -49,6 +50,6 @@ typedef struct TokenManager {
 TokenManager* TokenManagerNew(char *inFileName);
 void getNextChar();
 Token TokenManagerGetNextToken(TokenManager **t);
-void TokenManagerDelete(TokenManager* t);
+void TokenManagerDelete(TokenManager** t);
 
 #endif

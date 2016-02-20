@@ -1,7 +1,6 @@
 #include "codegenerator.h"
 
 void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
-  // if cg->type . . .
   if (cgt == cgTypeDWORD) {
     printf("+%s    %04x ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
   }
@@ -10,6 +9,9 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   }
   else if (cgt == cgTypePUSHC) {
     printf("+%s    1%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypePUSHR) {
+    printf("+%s    2%03x ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
   }
   else if (cgt == cgTypePUSHWC) {
     printf("+%s    F700 ; %s %s\n", cg->symD->programcounter, instruction, cg->symD->name);
@@ -35,9 +37,10 @@ codeGen *codeGenNew(char *s) {
   return ret;
 }
 
-void codeGenDelete(codeGen *cg) {
-  fclose(cg->fp);
-  free(cg->filename);
-  free(cg);
+void codeGenDelete(codeGen **cg) {
+  fclose((*cg)->fp);
+  free((*cg)->filename);
+  free(*cg);
+  *cg = NULL;
 }
 

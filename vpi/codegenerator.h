@@ -11,7 +11,8 @@ typedef enum {
   cgTypeHALT,
   cgTypePUSH,
   cgTypePUSHC,
-  cgTypePUSHWC
+  cgTypePUSHWC,
+  cgTypePUSHR,
 } cgType;
 
 typedef struct codeGen {
@@ -30,5 +31,5 @@ codeGen *codeGenNew(char *s);
 
 void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction);
 
-void codeGenDelete(codeGen *cg);
+void codeGenDelete(codeGen **cg);
 #endif

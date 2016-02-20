@@ -17,7 +17,7 @@ typedef struct symData {
 
 symData* symDataNew();
 void symDataDump(symData* sd);
-void symDataDelete(symData *t);
+void symDataDelete(symData **t);
 symData* symDataCopy(symData *dst);
 
 typedef struct tstrie {
@@ -33,7 +33,7 @@ tstrie* tstSearch(tstrie *t, char *s);
 tstrie* tstInsertR(tstrie *t, char *s, symData *val, int i, int cntr);
 tstrie* tstInsert(tstrie *t, char *s, symData *val);
 void tstCopy(tstrie *src, tstrie **dst);
-void tstDelete(tstrie *t);
+void tstDelete(tstrie **t);
 void tstDump_(tstrie *t, int cnt);
 void tstDump(tstrie *t);
 void tstDumpGraphical(tstrie *t);
