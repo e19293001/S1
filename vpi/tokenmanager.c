@@ -13,6 +13,7 @@ const char *tokenImage[] = {
   "SEMICOL",
   "COLON",
   "PUSHR",
+  "CORA",
   "ERROR"
 };
 
@@ -134,6 +135,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     else if ((strncmp(ret.image, "pr", 512)) == 0) {
       ret.kind = PUSHR;
     }
+    else if ((strncmp(ret.image, "cora", 512)) == 0) {
+      ret.kind = CORA;
+    }
     else {
       //printf("\nfound ID. %s\n", ret.image);
       ret.kind = ID;
@@ -183,7 +187,6 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     }
   }
-
 //  printf("line: %0d kind: %0d image: %s type: %s\n", ret.beginLine, ret.kind, ret.image, tokenImage[ret.kind]);
   return ret;
 }

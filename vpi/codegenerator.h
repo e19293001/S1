@@ -13,6 +13,7 @@ typedef enum {
   cgTypePUSHC,
   cgTypePUSHWC,
   cgTypePUSHR,
+  cgTypeCORA,
 } cgType;
 
 typedef struct codeGen {

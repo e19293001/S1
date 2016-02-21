@@ -1,2 +1,22 @@
-pr 9
-pr 9
+pr x
+p x
+pc x
+pwc x
+x:
+dw 0
+pr y
+p y
+pc y
+pwc y
+y:
+halt
+pr 99
+p 99
+pc 98
+pwc 100
+halt
+pr 99
+p 99
+pc 98
+pwc 100
+y9: dw 99

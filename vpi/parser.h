@@ -15,6 +15,7 @@ typedef struct parserData {
   Token previousToken;
   unsigned int addrCntr;
   char *filename;
+  int errorcode;
 } parserData;
 
 parserData *_parser;
@@ -38,9 +39,10 @@ void pushc(parserData *lparser);
 void pushwc(parserData *lparser);
 void halt(parserData *lparser);
 void dword(parserData *lparser);
-void expression(parserData *lparser);
+int expression(parserData *lparser);
 void label(parserData *lparser);
 void pushr(parserData *lparser);
+void cora(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

@@ -21,6 +21,7 @@ parserData* ParserNew(char *s) {
   ret->previousToken.next = NULL;
   ret->addrCntr = 0;
   ret->filename = calloc(strlen(s)+1, sizeof(char));
+  ret->errorcode = 0;
   strncpy(ret->filename, s, strlen(s));
 
   free(str);
@@ -121,11 +122,19 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         pushwcToken = lparser->currentToken;
         ParserSymbolsAdvance(lparser); // operand
 
-//        printf("pushwcToken.image: %s\n", pushwcToken.image);
-//        printf("symD->address: %s\n", symD->address);
         sprintf(symD->data, "%03x", atoi(pushwcToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr+=2;
+      }
+      else if (lparser->currentToken.kind == CORA) {
+        Token coraToken;
+        ParserSymbolsAdvance(lparser); // cora
+        coraToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(coraToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
       }
       else if (lparser->currentToken.kind == ID) {
         strncpy(symD->name, idToken.image, strlen(idToken.image));
@@ -137,6 +146,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
     }
     else if (lparser->currentToken.kind == PUSHC ||
              lparser->currentToken.kind == PUSHR ||
+             lparser->currentToken.kind == CORA ||
              lparser->currentToken.kind == PUSH) {
 //      printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
@@ -188,6 +198,9 @@ int ParserStart(parserData *t) {
   
   t->currentToken = TokenManagerGetNextToken(&t->tm);
   program(t);
+  if (t->errorcode == -1) {
+    printf("error occured.\n");
+  }
   if (t->currentToken.kind != _EOF) {
     printf("expecting EOF. token is: %s\n", tokenImage[t->currentToken.kind]);
     //exit(-1);
@@ -210,7 +223,6 @@ void program(parserData *lparser) {
     program(lparser);
   }
   else if (lparser->currentToken.kind == PUSHWC) {
-    //    printf("call pushwc\n");
     pushwc(lparser);
     lparser->addrCntr+=2;
 
@@ -223,20 +235,26 @@ void program(parserData *lparser) {
     program(lparser);
   }
   else if (lparser->currentToken.kind == DWORD) {
-    //    printf("call dword\n");
     dword(lparser);
     lparser->addrCntr++;
 
     program(lparser);
   }
   else if (lparser->currentToken.kind == ID) {
-    //    printf("call label\n");
     label(lparser);
     program(lparser);
   }
   else if (lparser->currentToken.kind == PUSHR) {
-    //    printf("call label\n");
     pushr(lparser);
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == CORA) {
+    cora(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
     program(lparser);
   }
   else if (lparser->currentToken.kind == _EOF) {
@@ -248,25 +266,51 @@ void program(parserData *lparser) {
   }
 }
 
+void cora(parserData *lparser) {
+  assert(consume(lparser, CORA) == 0);
+
+  if (lparser->cg->symD == NULL) { // guba
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeCORA, "cora");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeCORA, "cora");
+  }
+}
+
 void pushr(parserData *lparser) {
   assert(consume(lparser, PUSHR) == 0);
 
   if (lparser->cg->symD == NULL) { // guba
     symData *symD = symDataNew();
     lparser->cg->symD = symD;
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSHR, "pr");
     symDataDelete(&symD);
     lparser->cg->symD = NULL;
-//    lparser->cg->symD = symDataNew();
-//    expression(lparser);
-//    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-//    codeGenEmmitInstruction(lparser->cg, cgTypePUSHR, "pr");
-//    symDataDelete(&(lparser->cg->symD));
   }
   else {
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSHR, "pr");
   }
@@ -282,20 +326,19 @@ void push(parserData *lparser) {
   if (lparser->cg->symD == NULL) {
     symData *symD = symDataNew();
     lparser->cg->symD = symD;
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSH, "p");
     symDataDelete(&symD);
     lparser->cg->symD = NULL;
-
-//    lparser->cg->symD = symDataNew();
-//    expression(lparser);
-//    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-//    codeGenEmmitInstruction(lparser->cg, cgTypePUSH, "p");
-//    symDataDelete(&(lparser->cg->symD));
   }
   else {
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSH, "p");
   }
@@ -307,16 +350,19 @@ void pushc(parserData *lparser) {
     symData *symD;
     symD = symDataNew();
     lparser->cg->symD = symD;
-    //lparser->cg->symD = symDataNew();
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSHC, "pc");
     symDataDelete(&symD);
     lparser->cg->symD = NULL;
-    //symDataDelete(&(lparser->cg->symD));
   }
   else {
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSHC, "pc");
   }
@@ -340,13 +386,17 @@ void dword(parserData *lparser) {
   assert(consume(lparser, DWORD) == 0);
   if (lparser->cg->symD == NULL) {
     lparser->cg->symD = symDataNew();
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
     symDataDelete(&(lparser->cg->symD));
   }
   else {
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
   }
@@ -357,31 +407,29 @@ void pushwc(parserData *lparser) {
   if (lparser->cg->symD == NULL) {
     symData *symD = symDataNew();
     lparser->cg->symD = symD;
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSHWC, "pwc");
     symDataDelete(&symD);
     lparser->cg->symD = NULL;
-    
-
-//    lparser->cg->symD = symDataNew();
-//    expression(lparser);
-//    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-//    codeGenEmmitInstruction(lparser->cg, cgTypePUSHWC, "pwc");
-//    symDataDelete(&(lparser->cg->symD));
   }
   else {
-    expression(lparser);
+    if (expression(lparser) != 0) {
+      return;
+    }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypePUSHWC, "pwc");
   }
 }
 
-void expression(parserData *lparser) {
+int expression(parserData *lparser) {
+  int ret = 0;
   if (lparser->currentToken.kind == UNSIGNED) {
     Token tkn = lparser->currentToken;
     assert(consume(lparser, UNSIGNED) == 0);
-    //if (lparser->cg->symD != NULL) printf("[ expression ] this is not NULL address: %08x\n", lparser->cg->symD);
     lparser->cg->symD->addressInt = atoi(tkn.image);
     sprintf(lparser->cg->symD->address, "%03x", atoi(tkn.image));
     sprintf(lparser->cg->symD->name, "%03x", atoi(tkn.image));
@@ -391,16 +439,19 @@ void expression(parserData *lparser) {
     tstrie *ltstrie;
     assert(consume(lparser, ID) == 0);
     if ((ltstrie = tstSearch(lparser->trieRootNode, tkn.image)) == NULL) {
-      //tstDump(lparser->trieRootNode);
       printf("[ expression ] unknown symbol: %s\n", tkn.image);
-      exit(-1);
+      ret = 1;
     }
-    lparser->cg->symD = ltstrie->symD;
+    else {
+      lparser->cg->symD = ltstrie->symD;
+    }
   }
   else {
     printf("error: Unknown token found: %s\n", tokenImage[lparser->currentToken.kind]);
-    return;
+    ret = 1;
   }
+
+  return ret;
 }
 
 Token ParserGetToken() {
