@@ -136,17 +136,31 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
+      else if (lparser->currentToken.kind == asp) {
+        Token aspToken;
+        ParserSymbolsAdvance(lparser); // asp
+        aspToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(aspToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
       else if (lparser->currentToken.kind == ID) {
         strncpy(symD->name, idToken.image, strlen(idToken.image));
         sprintf(symD->address, "%03x", progcntr);
         ret = tstInsert(ret, idToken.image, symD);
       }
+      else {
+        ret = tstInsert(ret, idToken.image, symD);
+      }        
       symDataDelete(&symD);
 
     }
     else if (lparser->currentToken.kind == PUSHC ||
              lparser->currentToken.kind == PUSHR ||
              lparser->currentToken.kind == CORA ||
+             lparser->currentToken.kind == ASP ||
              lparser->currentToken.kind == PUSH) {
 //      printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
@@ -257,12 +271,46 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == ASP) {
+    asp(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
   else {
     printf("error unknown token %s\n", tokenImage[lparser->currentToken.kind]);
     return;
+  }
+}
+
+void asp(parserData *lparser) {
+  assert(consume(lparser, ASP) == 0);
+
+  if (lparser->cg->symD == NULL) { // guba
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeASP, "asp");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeASP, "asp");
   }
 }
 

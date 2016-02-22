@@ -14,6 +14,7 @@ const char *tokenImage[] = {
   "COLON",
   "PUSHR",
   "CORA",
+  "ASP",
   "ERROR"
 };
 
@@ -137,6 +138,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "cora", 512)) == 0) {
       ret.kind = CORA;
+    }
+    else if ((strncmp(ret.image, "asp", 512)) == 0) {
+      ret.kind = ASP;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);

@@ -18,7 +18,10 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
   }
   else if (cgt == cgTypeCORA) {
-    printf("+%s    3%03x ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
+    printf("+%s    3%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeASP) {
+    printf("+%s    4%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
   }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);

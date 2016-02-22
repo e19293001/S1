@@ -1,0 +1,7 @@
+asp x
+asp yy
+x: dw 999
+asp 9
+yy:
+halt
+

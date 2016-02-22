@@ -21,6 +21,7 @@ typedef enum {
   COLON,
   PUSHR,
   CORA,
+  ASP,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

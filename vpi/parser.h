@@ -43,6 +43,7 @@ int expression(parserData *lparser);
 void label(parserData *lparser);
 void pushr(parserData *lparser);
 void cora(parserData *lparser);
+void asp(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

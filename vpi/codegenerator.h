@@ -14,6 +14,7 @@ typedef enum {
   cgTypePUSHWC,
   cgTypePUSHR,
   cgTypeCORA,
+  cgTypeASP
 } cgType;
 
 typedef struct codeGen {
