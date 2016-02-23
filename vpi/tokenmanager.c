@@ -15,6 +15,7 @@ const char *tokenImage[] = {
   "PUSHR",
   "CORA",
   "ASP",
+  "CALL",
   "ERROR"
 };
 
@@ -141,6 +142,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "asp", 512)) == 0) {
       ret.kind = ASP;
+    }
+    else if ((strncmp(ret.image, "call", 512)) == 0) {
+      ret.kind = CALL;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);

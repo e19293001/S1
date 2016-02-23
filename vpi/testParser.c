@@ -127,6 +127,14 @@ void TestParser0011() { // test for add stack pointer
   ParserDelete(&parser);
 }
 
+void TestParser0012() { // test for call
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0012.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -142,7 +150,9 @@ int main() {
 //  TestParser0009(); // test for push relative
 //  TestParser0010(); // test for convert relative address
 
-  TestParser0011(); // test for add stack pointer
+//  TestParser0011(); // test for add stack pointer
+
+  TestParser0012(); // test for call
 
   success();
   return 0;

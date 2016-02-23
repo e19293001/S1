@@ -136,13 +136,23 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == asp) {
+      else if (lparser->currentToken.kind == ASP) {
         Token aspToken;
         ParserSymbolsAdvance(lparser); // asp
         aspToken = lparser->currentToken;
         ParserSymbolsAdvance(lparser); // operand
 
         sprintf(symD->data, "%03x", atoi(aspToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == CALL) {
+        Token callToken;
+        ParserSymbolsAdvance(lparser); // call
+        callToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(callToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
@@ -161,6 +171,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == PUSHR ||
              lparser->currentToken.kind == CORA ||
              lparser->currentToken.kind == ASP ||
+             lparser->currentToken.kind == CALL ||
              lparser->currentToken.kind == PUSH) {
 //      printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
@@ -279,6 +290,14 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == CALL) {
+    call(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
@@ -311,6 +330,32 @@ void asp(parserData *lparser) {
     }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypeASP, "asp");
+  }
+}
+
+void call(parserData *lparser) {
+  assert(consume(lparser, CALL) == 0);
+
+  if (lparser->cg->symD == NULL) { // guba
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeCALL, "call");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeCALL, "call");
   }
 }
 

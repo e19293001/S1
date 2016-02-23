@@ -1,0 +1,7 @@
+call x
+call yy
+x: dw 999
+call 9
+yy:
+halt
+
