@@ -45,6 +45,7 @@ void pushr(parserData *lparser);
 void cora(parserData *lparser);
 void asp(parserData *lparser);
 void call(parserData *lparser);
+void ja(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

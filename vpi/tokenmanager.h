@@ -23,6 +23,7 @@ typedef enum {
   CORA,
   ASP,
   CALL,
+  JA,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

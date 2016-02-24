@@ -135,6 +135,14 @@ void TestParser0012() { // test for call
   ParserDelete(&parser);
 }
 
+void TestParser0013() { // test for ja
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0013.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -152,8 +160,9 @@ int main() {
 
 //  TestParser0011(); // test for add stack pointer
 
-  TestParser0012(); // test for call
+//  TestParser0012(); // test for call
 
+  TestParser0013(); // test for ja
   success();
   return 0;
 }
