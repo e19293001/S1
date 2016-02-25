@@ -24,6 +24,8 @@ typedef enum {
   ASP,
   CALL,
   JA,
+  JCT,
+  JP,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

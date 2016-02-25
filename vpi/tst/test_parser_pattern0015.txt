@@ -1,0 +1,7 @@
+jp x
+jp yy
+x: dw 999
+jp 9
+yy:
+halt
+dw 103

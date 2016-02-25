@@ -16,7 +16,9 @@ typedef enum {
   cgTypeCORA,
   cgTypeASP,
   cgTypeCALL,
-  cgTypeJA
+  cgTypeJA,
+  cgTypeJCT,
+  cgTypeJP
 } cgType;
 
 typedef struct codeGen {

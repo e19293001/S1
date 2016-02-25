@@ -1,0 +1,7 @@
+jct x
+jct yy
+x: dw 999
+jct 9
+yy:
+halt
+dw 103

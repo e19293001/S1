@@ -17,6 +17,8 @@ const char *tokenImage[] = {
   "ASP",
   "CALL",
   "JA",
+  "JCT",
+  "JP",
   "ERROR"
 };
 
@@ -149,6 +151,12 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "ja", 512)) == 0) {
       ret.kind = JA;
+    }
+    else if ((strncmp(ret.image, "jct", 512)) == 0) {
+      ret.kind = JCT;
+    }
+    else if ((strncmp(ret.image, "jp", 512)) == 0) {
+      ret.kind = JP;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);
