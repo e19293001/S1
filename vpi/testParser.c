@@ -159,30 +159,40 @@ void TestParser0015() { // test for jp
   ParserDelete(&parser);
 }
 
+void TestParser0016() { // test for jn
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0016.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
-  TestParser0000();
-  TestParser0001();
-  
-  TestParser0002(); // test for duplicate labels
-  TestParser0003(); // test for labels with underscore character
-  
-  TestParser0004(); // test for code generator dword
-  TestParser0005(); // test for code generator halt
-  TestParser0006(); // test for code generator pushc
-  TestParser0007(); // test for code generator pushwc
-  TestParser0008(); // test for comments
-  TestParser0009(); // test for push relative
-  TestParser0010(); // test for convert relative address
+//  TestParser0000();
+//  TestParser0001();
+//  
+//  TestParser0002(); // test for duplicate labels
+//  TestParser0003(); // test for labels with underscore character
+//  
+//  TestParser0004(); // test for code generator dword
+//  TestParser0005(); // test for code generator halt
+//  TestParser0006(); // test for code generator pushc
+//  TestParser0007(); // test for code generator pushwc
+//  TestParser0008(); // test for comments
+//  TestParser0009(); // test for push relative
+//  TestParser0010(); // test for convert relative address
+//
+//  TestParser0011(); // test for add stack pointer
+//
+//  TestParser0012(); // test for call
+//
+//  TestParser0013(); // test for ja
+//
+//  TestParser0014(); // test for jct
+//
+//  TestParser0015(); // test for jp
 
-  TestParser0011(); // test for add stack pointer
-
-  TestParser0012(); // test for call
-
-  TestParser0013(); // test for ja
-
-  TestParser0014(); // test for jct
-
-  TestParser0015(); // test for jp
+  TestParser0016(); // test for jn
 
   success();
 

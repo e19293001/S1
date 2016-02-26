@@ -48,6 +48,7 @@ void call(parserData *lparser);
 void ja(parserData *lparser);
 void jct(parserData *lparser);
 void jp(parserData *lparser);
+void jnn(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 
