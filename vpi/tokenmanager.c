@@ -20,6 +20,12 @@ const char *tokenImage[] = {
   "JCT",
   "JP",
   "JN",
+  "JZ",
+  "JNZ",
+  "JODD",
+  "JZON",
+  "JZOP",
+  "RET",
   "ERROR"
 };
 
@@ -161,6 +167,24 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "jn", 512)) == 0) {
       ret.kind = JN;
+    }
+    else if ((strncmp(ret.image, "jz", 512)) == 0) {
+      ret.kind = JZ;
+    }
+    else if ((strncmp(ret.image, "jnz", 512)) == 0) {
+      ret.kind = JNZ;
+    }
+    else if ((strncmp(ret.image, "jodd", 512)) == 0) {
+      ret.kind = JODD;
+    }
+    else if ((strncmp(ret.image, "jzon", 512)) == 0) {
+      ret.kind = JZON;
+    }
+    else if ((strncmp(ret.image, "jzop", 512)) == 0) {
+      ret.kind = JZOP;
+    }
+    else if ((strncmp(ret.image, "ret", 512)) == 0) {
+      ret.kind = RET;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);

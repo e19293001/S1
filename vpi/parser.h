@@ -49,6 +49,12 @@ void ja(parserData *lparser);
 void jct(parserData *lparser);
 void jp(parserData *lparser);
 void jnn(parserData *lparser);
+void jzz(parserData *lparser);
+void jnz(parserData *lparser);
+void jodd(parserData *lparser);
+void jzon(parserData *lparser);
+void jzop(parserData *lparser);
+void ret(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

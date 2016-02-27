@@ -27,6 +27,12 @@ typedef enum {
   JCT,
   JP,
   JN,
+  JZ,
+  JNZ,
+  JODD,
+  JZON,
+  JZOP,
+  RET,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

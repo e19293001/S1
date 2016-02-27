@@ -1,0 +1,7 @@
+jzon x
+jzon yy
+x: dw 999
+jzon 9
+yy:
+halt
+dw 103

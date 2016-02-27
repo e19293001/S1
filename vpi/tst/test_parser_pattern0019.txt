@@ -1,0 +1,7 @@
+jodd x
+jodd yy
+x: dw 999
+jodd 9
+yy:
+halt
+dw 103

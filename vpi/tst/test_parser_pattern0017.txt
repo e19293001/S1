@@ -1,0 +1,7 @@
+jz x
+jz yy
+x: dw 999
+jz 9
+yy:
+halt
+dw 103

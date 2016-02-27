@@ -196,6 +196,66 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
+      else if (lparser->currentToken.kind == JZ) {
+        Token jzToken;
+        ParserSymbolsAdvance(lparser); // jz
+        jzToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(jzToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == JNZ) {
+        Token jnzToken;
+        ParserSymbolsAdvance(lparser); // jnz
+        jnzToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(jnzToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == JODD) {
+        Token joddToken;
+        ParserSymbolsAdvance(lparser); // jodd
+        joddToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(joddToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == JZON) {
+        Token jzonToken;
+        ParserSymbolsAdvance(lparser); // jzon
+        jzonToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(jzonToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == JZOP) {
+        Token jzopToken;
+        ParserSymbolsAdvance(lparser); // jzop
+        jzopToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(jzopToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == RET) {
+        Token retToken;
+        ParserSymbolsAdvance(lparser); // ret
+        retToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(retToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
       else if (lparser->currentToken.kind == ID) {
         strncpy(symD->name, idToken.image, strlen(idToken.image));
         sprintf(symD->address, "%03x", progcntr);
@@ -217,6 +277,11 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == JCT ||
              lparser->currentToken.kind == JP ||
              lparser->currentToken.kind == JN ||
+             lparser->currentToken.kind == JZ ||
+             lparser->currentToken.kind == JNZ ||
+             lparser->currentToken.kind == JODD ||
+             lparser->currentToken.kind == JZON ||
+             lparser->currentToken.kind == JZOP ||
              lparser->currentToken.kind == PUSH) {
 //      printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
@@ -228,7 +293,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       ParserSymbolsAdvance(lparser);
       progcntr+=2;
     }
-    else if (lparser->currentToken.kind == HALT) {
+    else if (lparser->currentToken.kind == HALT ||
+             lparser->currentToken.kind == RET) {
       ParserSymbolsAdvance(lparser);
       progcntr++;
     }
@@ -375,12 +441,204 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == JZ) {
+    jzz(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == JNZ) {
+    jnz(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == JODD) {
+    jodd(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == JZON) {
+    jzon(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == JZOP) {
+    jzop(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == RET) {
+    ret(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
   else {
     printf("error unknown token %s\n", tokenImage[lparser->currentToken.kind]);
     return;
+  }
+}
+
+void ret(parserData *lparser) {
+  assert(consume(lparser, RET) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeRET, "ret");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeRET, "ret");
+  }
+}
+
+void jzop(parserData *lparser) {
+  assert(consume(lparser, JZOP) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJZOP, "jzop");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJZOP, "jzop");
+  }
+}
+
+void jzon(parserData *lparser) {
+  assert(consume(lparser, JZON) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJZON, "jzon");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJZON, "jzon");
+  }
+}
+
+void jnz(parserData *lparser) {
+  assert(consume(lparser, JNZ) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJNZ, "jnz");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJNZ, "jnz");
+  }
+}
+
+void jodd(parserData *lparser) {
+  assert(consume(lparser, JODD) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJODD, "jodd");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJODD, "jodd");
+  }
+}
+
+void jzz(parserData *lparser) {
+  assert(consume(lparser, JZ) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJZ, "jz");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeJZ, "jz");
   }
 }
 

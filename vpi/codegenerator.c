@@ -38,6 +38,24 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   else if (cgt == cgTypeJN) {
     printf("+%s    9%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
   }
+  else if (cgt == cgTypeJZ) {
+    printf("+%s    A%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeJNZ) {
+    printf("+%s    B%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeJODD) {
+    printf("+%s    C%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeJZON) {
+    printf("+%s    D%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeJZOP) {
+    printf("+%s    E%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeRET) {
+    printf("+%s    F000 ; %s\n", cg->symD->programcounter, instruction);
+  }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);
   }
