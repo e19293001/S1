@@ -17,6 +17,10 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     printf("+%s    F700 ; %s %s\n", cg->symD->programcounter, instruction, cg->symD->name);
     printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
   }
+  else if (cgt == cgTypeAWC) {
+    printf("+%s    F700 ; %s %s\n", cg->symD->programcounter, instruction, cg->symD->name);
+    printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
+  }
   else if (cgt == cgTypeCORA) {
     printf("+%s    3%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
   }
@@ -55,6 +59,36 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   }
   else if (cgt == cgTypeRET) {
     printf("+%s    F000 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeADD) {
+    printf("+%s    F100 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeSUB) {
+    printf("+%s    F200 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeSTAV) {
+    printf("+%s    F300 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeSTVA) {
+    printf("+%s    F400 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeLOAD) {
+    printf("+%s    F500 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeDUPE) {
+    printf("+%s    F800 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeESBA) {
+    printf("+%s    F900 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeREBA) {
+    printf("+%s    FA00 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeZSP) {
+    printf("+%s    FB00 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeCMPS) {
+    printf("+%s    FC%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
   }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);

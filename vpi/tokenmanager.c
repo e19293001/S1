@@ -26,6 +26,17 @@ const char *tokenImage[] = {
   "JZON",
   "JZOP",
   "RET",
+  "ADD",
+  "SUB",
+  "STAV",
+  "STVA",
+  "LOAD",
+  "AWC",
+  "DUPE",
+  "ESBA",
+  "REBA",
+  "ZSP",
+  "CMPS",
   "ERROR"
 };
 
@@ -185,6 +196,39 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "ret", 512)) == 0) {
       ret.kind = RET;
+    }
+    else if ((strncmp(ret.image, "add", 512)) == 0) {
+      ret.kind = ADD;
+    }
+    else if ((strncmp(ret.image, "sub", 512)) == 0) {
+      ret.kind = SUB;
+    }
+    else if ((strncmp(ret.image, "stav", 512)) == 0) {
+      ret.kind = STAV;
+    }
+    else if ((strncmp(ret.image, "stva", 512)) == 0) {
+      ret.kind = STVA;
+    }
+    else if ((strncmp(ret.image, "load", 512)) == 0) {
+      ret.kind = LOAD;
+    }
+    else if ((strncmp(ret.image, "awc", 512)) == 0) {
+      ret.kind = AWC;
+    }
+    else if ((strncmp(ret.image, "dupe", 512)) == 0) {
+      ret.kind = DUPE;
+    }
+    else if ((strncmp(ret.image, "esba", 512)) == 0) {
+      ret.kind = ESBA;
+    }
+    else if ((strncmp(ret.image, "reba", 512)) == 0) {
+      ret.kind = REBA;
+    }
+    else if ((strncmp(ret.image, "zsp", 512)) == 0) {
+      ret.kind = ZSP;
+    }
+    else if ((strncmp(ret.image, "cmps", 512)) == 0) {
+      ret.kind = CMPS;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);

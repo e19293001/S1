@@ -25,6 +25,17 @@ typedef enum {
   cgTypeJODD,
   cgTypeJZON,
   cgTypeJZOP,
+  cgTypeADD,
+  cgTypeSUB,
+  cgTypeSTAV,
+  cgTypeSTVA,
+  cgTypeLOAD,
+  cgTypeAWC,
+  cgTypeDUPE,
+  cgTypeESBA,
+  cgTypeREBA,
+  cgTypeZSP,
+  cgTypeCMPS,
   cgTypeRET
 } cgType;
 

@@ -33,6 +33,17 @@ typedef enum {
   JZON,
   JZOP,
   RET,
+  ADD,
+  SUB,
+  STAV,
+  STVA,
+  LOAD,
+  AWC,
+  DUPE,
+  ESBA,
+  REBA,
+  ZSP,
+  CMPS,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

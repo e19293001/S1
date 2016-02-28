@@ -215,30 +215,140 @@ void TestParser0022() { // test for ret
   ParserDelete(&parser);
 }
 
+void TestParser0023() { // test for add
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0023.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0024() { // test for sub
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0024.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0025() { // test for stav
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0025.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0026() { // test for stva
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0026.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0027() { // test for load
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0027.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0028() { // test for awc
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0028.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0029() { // test for dupe
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0029.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0030() { // test for esba
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0030.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0031() { // test for reba
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0031.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0032() { // test for zsp
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0032.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0033() { // test for cmps
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0033.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
-  TestParser0000();
-  TestParser0001();
-  TestParser0002(); // test for duplicate labels
-  TestParser0003(); // test for labels with underscore character
-  TestParser0004(); // test for code generator dword
-  TestParser0005(); // test for code generator halt
-  TestParser0006(); // test for code generator pushc
-  TestParser0007(); // test for code generator pushwc
-  TestParser0008(); // test for comments
-  TestParser0009(); // test for push relative
-  TestParser0010(); // test for convert relative address
-  TestParser0011(); // test for add stack pointer
-  TestParser0012(); // test for call
-  TestParser0013(); // test for ja
-  TestParser0014(); // test for jct
-  TestParser0015(); // test for jp
-  TestParser0016(); // test for jn
-  TestParser0017(); // test for jz
-  TestParser0018(); // test for jnz
-  TestParser0019(); // test for jodd
-  TestParser0020(); // test for jzon
-  TestParser0021(); // test for jzop
-  TestParser0022(); // test for ret
+//  TestParser0000();
+//  TestParser0001();
+//  TestParser0002(); // test for duplicate labels
+//  TestParser0003(); // test for labels with underscore character
+//  TestParser0004(); // test for code generator dword
+//  TestParser0005(); // test for code generator halt
+//  TestParser0006(); // test for code generator pushc
+//  TestParser0007(); // test for code generator pushwc
+//  TestParser0008(); // test for comments
+//  TestParser0009(); // test for push relative
+//  TestParser0010(); // test for convert relative address
+//  TestParser0011(); // test for add stack pointer
+//  TestParser0012(); // test for call
+//  TestParser0013(); // test for ja
+//  TestParser0014(); // test for jct
+//  TestParser0015(); // test for jp
+//  TestParser0016(); // test for jn
+//  TestParser0017(); // test for jz
+//  TestParser0018(); // test for jnz
+//  TestParser0019(); // test for jodd
+//  TestParser0020(); // test for jzon
+//  TestParser0021(); // test for jzop
+//  TestParser0022(); // test for ret
+
+//  TestParser0023(); // test for add
+
+//  TestParser0024(); // test for sub
+
+//  TestParser0025(); // test for stav
+
+//  TestParser0026(); // test for stva
+
+//  TestParser0027(); // test for load
+
+//  TestParser0028(); // test for awc
+
+//  TestParser0029(); // test for dupe
+
+//  TestParser0030(); // test for esba
+
+//  TestParser0031(); // test for reba
+
+//  TestParser0032(); // test for zsp
+
+  TestParser0033(); // test for cmps
 
   success();
 

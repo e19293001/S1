@@ -1,0 +1,11 @@
+awc x
+awc yy
+x: dw 999
+awc 9
+ret
+dupe
+yy:
+halt
+dupe
+ret
+dw 103

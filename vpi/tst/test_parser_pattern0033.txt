@@ -1,0 +1,14 @@
+a:
+cmps x
+cmps yy
+x: dw 999
+cmps 9
+ret
+aa:
+cmps aa
+zsp
+yy:
+halt
+zsp
+ret
+dw 103

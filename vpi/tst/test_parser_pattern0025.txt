@@ -1,0 +1,11 @@
+jzop x
+jzop yy
+x: dw 999
+jzop 9
+ret
+stav
+yy:
+halt
+stav
+ret
+dw 103

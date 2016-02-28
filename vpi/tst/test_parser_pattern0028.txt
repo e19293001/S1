@@ -1,0 +1,11 @@
+awc x
+awc yy
+x: dw 999
+awc 9
+ret
+load
+yy:
+halt
+load
+ret
+dw 103

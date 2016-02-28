@@ -55,6 +55,17 @@ void jodd(parserData *lparser);
 void jzon(parserData *lparser);
 void jzop(parserData *lparser);
 void ret(parserData *lparser);
+void add(parserData *lparser);
+void sub(parserData *lparser);
+void stav(parserData *lparser);
+void stva(parserData *lparser);
+void load(parserData *lparser);
+void awc(parserData *lparser);
+void dupe(parserData *lparser);
+void esba(parserData *lparser);
+void reba(parserData *lparser);
+void zsp(parserData *lparser);
+void cmps(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 
