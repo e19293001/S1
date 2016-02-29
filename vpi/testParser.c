@@ -303,6 +303,14 @@ void TestParser0033() { // test for cmps
   ParserDelete(&parser);
 }
 
+void TestParser0034() { // test for cmpu
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0034.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -348,7 +356,9 @@ int main() {
 
 //  TestParser0032(); // test for zsp
 
-  TestParser0033(); // test for cmps
+//  TestParser0033(); // test for cmps
+
+  TestParser0034(); // test for cmpu
 
   success();
 

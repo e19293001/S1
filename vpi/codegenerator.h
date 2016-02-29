@@ -36,6 +36,7 @@ typedef enum {
   cgTypeREBA,
   cgTypeZSP,
   cgTypeCMPS,
+  cgTypeCMPU,
   cgTypeRET
 } cgType;
 

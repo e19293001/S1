@@ -88,7 +88,10 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     printf("+%s    FB00 ; %s\n", cg->symD->programcounter, instruction);
   }
   else if (cgt == cgTypeCMPS) {
-    printf("+%s    FC%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
+    printf("+%s    FC%02X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeCMPU) {
+    printf("+%s    FD%02X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
   }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);

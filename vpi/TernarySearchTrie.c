@@ -45,6 +45,8 @@ symData* symDataCopy(symData *dst) {
     strcpy(src->name, dst->name);
     strcpy(src->data, dst->data);
     strcpy(src->address, dst->address);
+    src->addressInt = dst->addressInt;
+//    printf("[ symDataCopy ] src->addressInt: %0d\n", src->addressInt);
   }
 
   return src;

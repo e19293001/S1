@@ -37,6 +37,7 @@ const char *tokenImage[] = {
   "REBA",
   "ZSP",
   "CMPS",
+  "CMPU",
   "ERROR"
 };
 
@@ -229,6 +230,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "cmps", 512)) == 0) {
       ret.kind = CMPS;
+    }
+    else if ((strncmp(ret.image, "cmpu", 512)) == 0) {
+      ret.kind = CMPU;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);

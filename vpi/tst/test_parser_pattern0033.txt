@@ -7,8 +7,16 @@ ret
 aa:
 cmps aa
 zsp
-yy:
 halt
 zsp
 ret
 dw 103
+cmps yy
+cmps yy
+cmps yy
+cmps yy
+cmps yy
+yy:
+cmps yy
+cmps yy
+

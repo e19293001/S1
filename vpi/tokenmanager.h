@@ -44,6 +44,7 @@ typedef enum {
   REBA,
   ZSP,
   CMPS,
+  CMPU,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

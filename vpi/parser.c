@@ -48,7 +48,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       
       memset(num, 0, 256);
 
-//      printf("progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
+      //printf("progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
 
       if (tstSearch(ret, idToken.image) != NULL) {
         printf("ERROR label already exists. progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
@@ -62,6 +62,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       
       strncpy(symD->name, idToken.image, strlen(idToken.image));
       sprintf(symD->address, "%03x", progcntr);
+      symD->addressInt = progcntr;
+      //sprintf(symD->addressInt, "%03x", progcntr);
       //printf("idToken.image: %s symD->address: %s\n", idToken.image, symD->address);
 
       ParserSymbolsAdvance(lparser); // id
@@ -366,6 +368,16 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
+      else if (lparser->currentToken.kind == CMPU) {
+        Token cmpuToken;
+        ParserSymbolsAdvance(lparser); // cmpu
+        cmpuToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%02x", atoi(cmpuToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
       else if (lparser->currentToken.kind == ID) {
         strncpy(symD->name, idToken.image, strlen(idToken.image));
         sprintf(symD->address, "%03x", progcntr);
@@ -393,8 +405,9 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == JZON ||
              lparser->currentToken.kind == JZOP ||
              lparser->currentToken.kind == CMPS ||
+             lparser->currentToken.kind == CMPU ||
              lparser->currentToken.kind == PUSH) {
-//      printf("pushcToken.image: %s\n", lparser->currentToken.image);
+      // printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
       ParserSymbolsAdvance(lparser);
       progcntr++;
@@ -698,12 +711,46 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == CMPU) {
+    cmpu(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
   else {
     printf("error unknown token %s\n", tokenImage[lparser->currentToken.kind]);
     return;
+  }
+}
+
+void cmpu(parserData *lparser) {
+  assert(consume(lparser, CMPU) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeCMPU, "cmpu");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeCMPU, "cmpu");
   }
 }
 
@@ -719,7 +766,6 @@ void cmps(parserData *lparser) {
       return;
     }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    sprintf(lparser->cg->symD->address, "%02x", atoi(lparser->cg->symD->address));
     codeGenEmmitInstruction(lparser->cg, cgTypeCMPS, "cmps");
     symDataDelete(&symD);
     lparser->cg->symD = NULL;
@@ -730,7 +776,6 @@ void cmps(parserData *lparser) {
       return;
     }
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    sprintf(lparser->cg->symD->address, "%02x", atoi(lparser->cg->symD->address));
     codeGenEmmitInstruction(lparser->cg, cgTypeCMPS, "cmps");
   }
 }
@@ -1348,9 +1393,9 @@ int expression(parserData *lparser) {
   if (lparser->currentToken.kind == UNSIGNED) {
     Token tkn = lparser->currentToken;
     assert(consume(lparser, UNSIGNED) == 0);
-    lparser->cg->symD->addressInt = atoi(tkn.image);
     sprintf(lparser->cg->symD->address, "%03x", atoi(tkn.image));
     sprintf(lparser->cg->symD->name, "%03x", atoi(tkn.image));
+    lparser->cg->symD->addressInt = atoi(tkn.image);
   }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
