@@ -112,7 +112,7 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
 
 //  printf("returning... current: *s: %s val: %c t->item: %c strlen(s): %0d\n", s, val, t->item, strlen(s));
   if (t->symD == NULL) {
-//    printf("returning NULL\n");
+//    printf("t->symD is null returning NULL\n");
     return NULL;
   }
 
