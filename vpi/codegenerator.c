@@ -93,6 +93,15 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   else if (cgt == cgTypeCMPU) {
     printf("+%s    FD%02X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
   }
+  else if (cgt == cgTypeREV) {
+    printf("+%s    FE00 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeSHLL) {
+    printf("+%s    FF0%01X ; %s %s\n", cg->symD->programcounter, (cg->symD->addressInt & 0xF), instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeSHRL) {
+    printf("+%s    FF1%01X ; %s %s\n", cg->symD->programcounter, (cg->symD->addressInt & 0xF), instruction, cg->symD->name);
+  }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);
   }

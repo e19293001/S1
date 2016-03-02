@@ -378,6 +378,36 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
+      else if (lparser->currentToken.kind == CMPU) {
+        Token revToken;
+        ParserSymbolsAdvance(lparser); // rev
+        revToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%02x", atoi(revToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == SHLL) {
+        Token shllToken;
+        ParserSymbolsAdvance(lparser); // shll
+        shllToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%01x", atoi(shllToken.image) & 0xF);
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == SHRL) {
+        Token shrlToken;
+        ParserSymbolsAdvance(lparser); // shrl
+        shrlToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%01x", atoi(shrlToken.image) & 0xF);
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
       else if (lparser->currentToken.kind == ID) {
         strncpy(symD->name, idToken.image, strlen(idToken.image));
         sprintf(symD->address, "%03x", progcntr);
@@ -406,6 +436,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == JZOP ||
              lparser->currentToken.kind == CMPS ||
              lparser->currentToken.kind == CMPU ||
+             lparser->currentToken.kind == SHLL ||
+             lparser->currentToken.kind == SHRL ||
              lparser->currentToken.kind == PUSH) {
       // printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
@@ -428,6 +460,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == ESBA ||
              lparser->currentToken.kind == REBA ||
              lparser->currentToken.kind == ZSP ||
+             lparser->currentToken.kind == REV ||
              lparser->currentToken.kind == RET) {
       ParserSymbolsAdvance(lparser);
       progcntr++;
@@ -719,12 +752,102 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == REV) {
+    rev(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == SHLL) {
+    shll(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == SHRL) {
+    shrl(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
   else {
     printf("error unknown token %s\n", tokenImage[lparser->currentToken.kind]);
     return;
+  }
+}
+
+void shrl(parserData *lparser) {
+  assert(consume(lparser, SHRL) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeSHRL, "shrl");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeSHRL, "shrl");
+  }
+}
+
+void shll(parserData *lparser) {
+  assert(consume(lparser, SHLL) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeSHLL, "shll");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeSHLL, "shll");
+  }
+}
+
+void rev(parserData *lparser) {
+  assert(consume(lparser, REV) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeREV, "rev");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeREV, "REV");
   }
 }
 

@@ -67,6 +67,9 @@ void reba(parserData *lparser);
 void zsp(parserData *lparser);
 void cmps(parserData *lparser);
 void cmpu(parserData *lparser);
+void rev(parserData *lparser);
+void shll(parserData *lparser);
+void shrl(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

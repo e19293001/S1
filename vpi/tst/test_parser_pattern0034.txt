@@ -6,9 +6,9 @@ cmpu 9
 ret
 aa:
 cmpu aa
-zsp
+rev
 halt
-zsp
+rev
 ret
 dw 103
 cmpu yy

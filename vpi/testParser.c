@@ -311,6 +311,30 @@ void TestParser0034() { // test for cmpu
   ParserDelete(&parser);
 }
 
+void TestParser0035() { // test for rev
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0035.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0036() { // test for shll
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0036.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
+void TestParser0037() { // test for shrl
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0037.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -358,7 +382,13 @@ int main() {
 
 //  TestParser0033(); // test for cmps
 
-  TestParser0034(); // test for cmpu
+//  TestParser0034(); // test for cmpu
+
+//  TestParser0035(); // test for rev
+
+//  TestParser0036(); // test for shll
+
+  TestParser0037(); // test for shrl
 
   success();
 

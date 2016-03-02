@@ -38,6 +38,9 @@ const char *tokenImage[] = {
   "ZSP",
   "CMPS",
   "CMPU",
+  "REV",
+  "SHLL",
+  "SHRL",
   "ERROR"
 };
 
@@ -233,6 +236,15 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "cmpu", 512)) == 0) {
       ret.kind = CMPU;
+    }
+    else if ((strncmp(ret.image, "rev", 512)) == 0) {
+      ret.kind = REV;
+    }
+    else if ((strncmp(ret.image, "shll", 512)) == 0) {
+      ret.kind = SHLL;
+    }
+    else if ((strncmp(ret.image, "shrl", 512)) == 0) {
+      ret.kind = SHRL;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);
