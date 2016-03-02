@@ -50,13 +50,13 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
 
       //printf("progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
 
-//      if (tstSearch(ret, idToken.image) != NULL) {
-//        printf("ERROR label already exists. progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
-//        ParserDelete(&lparser);
-//        tstDelete(&ret);
-//        *errorcode = 1;
-//        return NULL;
-//      }
+      if (tstSearch(ret, idToken.image) != NULL) {
+        printf("ERROR label already exists. progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
+        ParserDelete(&lparser);
+        tstDelete(&ret);
+        *errorcode = 1;
+        return NULL;
+      }
         
       symD = symDataNew();
       

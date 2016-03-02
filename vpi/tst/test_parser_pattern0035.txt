@@ -1,0 +1,22 @@
+a:
+cmpu x
+cmpu yy
+x: dw 999
+cmpu 9
+ret
+aa:
+cmpu aa
+rev
+halt
+rev
+ret
+dw 103
+cmpu yy
+cmpu yy
+cmpu yy
+cmpu yy
+cmpu yy
+yy:
+cmpu yy
+cmpu yy
+

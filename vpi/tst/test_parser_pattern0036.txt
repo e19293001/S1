@@ -1,0 +1,27 @@
+a:
+shll x
+shll yy
+x: dw 999
+shll 9
+shll 8
+shll 7
+shll 6
+shll 5
+shll 16
+ret
+aa:
+shll aa
+rev
+halt
+rev
+ret
+dw 103
+shll yy
+shll yy
+shll yy
+shll yy
+shll yy
+yy:
+shll yy
+shll yy
+

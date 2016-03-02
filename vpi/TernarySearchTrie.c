@@ -79,16 +79,7 @@ tstrie* tstNew(char i) {
 
 tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
   char val = s[i];
-//  int x;
 
-//  for (x = 0; x < cntr+1; x++) {
-//    printf(" ");
-//  }
-  
-//  (t == NULL) ? 
-//    printf("val: %c t is null\n", val) :
-//    printf("val: %c t->item: %c ", val, t->item);
-  
   if (t == NULL) {
 //    printf("t is null\n");
     return NULL;
@@ -112,7 +103,7 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
 
 //  printf("returning... current: *s: %s val: %c t->item: %c strlen(s): %0d\n", s, val, t->item, strlen(s));
   if (t->symD == NULL) {
-//    printf("returning NULL\n");
+    printf("t->symD is null returning NULL\n");
     return NULL;
   }
 

@@ -83,7 +83,7 @@ void TestParser0006() { // test for code generator to test for labels pointing t
   parserData *parser;
   char data[] = "tst/test_parser_pattern0006.txt";
   parser = ParserNew(data);
-  result(ParserStart(parser) == 0);
+  result(ParserStart(parser) == 1);
   ParserDelete(&parser);
 }
 
@@ -342,7 +342,7 @@ int main() {
 //  TestParser0003(); // test for labels with underscore character
 //  TestParser0004(); // test for code generator dword
 //  TestParser0005(); // test for code generator halt
-//  TestParser0006(); // test for code generator pushc
+  TestParser0006(); // test for code generator pushc
 //  TestParser0007(); // test for code generator pushwc
 //  TestParser0008(); // test for comments
 //  TestParser0009(); // test for push relative
@@ -359,36 +359,21 @@ int main() {
 //  TestParser0020(); // test for jzon
 //  TestParser0021(); // test for jzop
 //  TestParser0022(); // test for ret
-
 //  TestParser0023(); // test for add
-
 //  TestParser0024(); // test for sub
-
 //  TestParser0025(); // test for stav
-
 //  TestParser0026(); // test for stva
-
 //  TestParser0027(); // test for load
-
 //  TestParser0028(); // test for awc
-
 //  TestParser0029(); // test for dupe
-
 //  TestParser0030(); // test for esba
-
 //  TestParser0031(); // test for reba
-
 //  TestParser0032(); // test for zsp
-
 //  TestParser0033(); // test for cmps
-
 //  TestParser0034(); // test for cmpu
-
 //  TestParser0035(); // test for rev
-
 //  TestParser0036(); // test for shll
-
-  TestParser0037(); // test for shrl
+//  TestParser0037(); // test for shrl
 
   success();
 
