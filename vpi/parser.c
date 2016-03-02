@@ -50,13 +50,13 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
 
       //printf("progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
 
-      if (tstSearch(ret, idToken.image) != NULL) {
-        printf("ERROR label already exists. progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
-        ParserDelete(&lparser);
-        tstDelete(&ret);
-        *errorcode = 1;
-        return NULL;
-      }
+//      if (tstSearch(ret, idToken.image) != NULL) {
+//        printf("ERROR label already exists. progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
+//        ParserDelete(&lparser);
+//        tstDelete(&ret);
+//        *errorcode = 1;
+//        return NULL;
+//      }
         
       symD = symDataNew();
       
@@ -79,296 +79,41 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == PUSH) {
-        Token pushToken;
-        ParserSymbolsAdvance(lparser); // dw
-        pushToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // unsigned
+      else if (lparser->currentToken.kind == PUSH ||
+               lparser->currentToken.kind == PUSHWC ||
+               lparser->currentToken.kind == AWC ||
+               lparser->currentToken.kind == CORA ||
+               lparser->currentToken.kind == ASP ||
+               lparser->currentToken.kind == CALL ||
+               lparser->currentToken.kind == JA ||
+               lparser->currentToken.kind == JCT ||
+               lparser->currentToken.kind == JP ||
+               lparser->currentToken.kind == JN ||
+               lparser->currentToken.kind == JZ ||
+               lparser->currentToken.kind == JNZ ||
+               lparser->currentToken.kind == JODD ||
+               lparser->currentToken.kind == JZON ||
+               lparser->currentToken.kind == JZOP ||
+               lparser->currentToken.kind == RET ||
+               lparser->currentToken.kind == ADD ||
+               lparser->currentToken.kind == SUB ||
+               lparser->currentToken.kind == STVA ||
+               lparser->currentToken.kind == LOAD ||
+               lparser->currentToken.kind == DUPE ||
+               lparser->currentToken.kind == ESBA ||
+               lparser->currentToken.kind == REBA ||
+               lparser->currentToken.kind == ZSP) {
+        Token cmdToken;
+        ParserSymbolsAdvance(lparser); // cmd
+        cmdToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
 
-        sprintf(symD->data, "%03x", atoi(pushToken.image));
+        sprintf(symD->data, "%03x", atoi(cmdToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == HALT) {
-        Token haltToken;
-        haltToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // halt
-
-        strncpy(symD->data, haltToken.image, strlen(haltToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == PUSHR) {
-        Token pushrToken;
-        ParserSymbolsAdvance(lparser); // pushc
-        pushrToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        strncpy(symD->data, pushrToken.image, strlen(pushrToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == PUSHC) {
-        Token pushcToken;
-        ParserSymbolsAdvance(lparser); // pushc
-        pushcToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        strncpy(symD->data, pushcToken.image, strlen(pushcToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == PUSHWC) {
-        Token pushwcToken;
-        ParserSymbolsAdvance(lparser); // pushwc
-        pushwcToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(pushwcToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr+=2;
-      }
-      else if (lparser->currentToken.kind == AWC) {
-        Token awcToken;
-        ParserSymbolsAdvance(lparser); // awc
-        awcToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(awcToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr+=2;
-      }
-      else if (lparser->currentToken.kind == CORA) {
-        Token coraToken;
-        ParserSymbolsAdvance(lparser); // cora
-        coraToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(coraToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == ASP) {
-        Token aspToken;
-        ParserSymbolsAdvance(lparser); // asp
-        aspToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(aspToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == CALL) {
-        Token callToken;
-        ParserSymbolsAdvance(lparser); // call
-        callToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(callToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JA) {
-        Token jaToken;
-        ParserSymbolsAdvance(lparser); // ja
-        jaToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jaToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JCT) {
-        Token jctToken;
-        ParserSymbolsAdvance(lparser); // jct
-        jctToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jctToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JP) {
-        Token jpToken;
-        ParserSymbolsAdvance(lparser); // jp
-        jpToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jpToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JN) {
-        Token jnToken;
-        ParserSymbolsAdvance(lparser); // jn
-        jnToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jnToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JZ) {
-        Token jzToken;
-        ParserSymbolsAdvance(lparser); // jz
-        jzToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jzToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JNZ) {
-        Token jnzToken;
-        ParserSymbolsAdvance(lparser); // jnz
-        jnzToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jnzToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JODD) {
-        Token joddToken;
-        ParserSymbolsAdvance(lparser); // jodd
-        joddToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(joddToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JZON) {
-        Token jzonToken;
-        ParserSymbolsAdvance(lparser); // jzon
-        jzonToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jzonToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == JZOP) {
-        Token jzopToken;
-        ParserSymbolsAdvance(lparser); // jzop
-        jzopToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(jzopToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == RET) {
-        Token retToken;
-        ParserSymbolsAdvance(lparser); // ret
-        retToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(retToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == ADD) {
-        Token addToken;
-        ParserSymbolsAdvance(lparser); // add
-        addToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(addToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == SUB) {
-        Token subToken;
-        ParserSymbolsAdvance(lparser); // sub
-        subToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(subToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == STAV) {
-        Token stavToken;
-        ParserSymbolsAdvance(lparser); // stav
-        stavToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(stavToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == STVA) {
-        Token stvaToken;
-        ParserSymbolsAdvance(lparser); // stva
-        stvaToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(stvaToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == LOAD) {
-        Token loadToken;
-        ParserSymbolsAdvance(lparser); // load
-        loadToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(loadToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == DUPE) {
-        Token dupeToken;
-        ParserSymbolsAdvance(lparser); // dupe
-        dupeToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(dupeToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == ESBA) {
-        Token esbaToken;
-        ParserSymbolsAdvance(lparser); // esba
-        esbaToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(esbaToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == REBA) {
-        Token rebaToken;
-        ParserSymbolsAdvance(lparser); // reba
-        rebaToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(rebaToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == ZSP) {
-        Token zspToken;
-        ParserSymbolsAdvance(lparser); // zsp
-        zspToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%03x", atoi(zspToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == CMPS) {
-        Token cmpsToken;
-        ParserSymbolsAdvance(lparser); // cmps
-        cmpsToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%02x", atoi(cmpsToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == CMPU) {
+      else if (lparser->currentToken.kind == CMPU ||
+               lparser->currentToken.kind == CMPS) {
         Token cmpuToken;
         ParserSymbolsAdvance(lparser); // cmpu
         cmpuToken = lparser->currentToken;
@@ -378,33 +123,14 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == CMPU) {
-        Token revToken;
-        ParserSymbolsAdvance(lparser); // rev
-        revToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
+      else if (lparser->currentToken.kind == HALT ||
+               lparser->currentToken.kind == PUSHC ||
+               lparser->currentToken.kind == PUSHR) {
+        Token cmdToken;
+        cmdToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // cmd
 
-        sprintf(symD->data, "%02x", atoi(revToken.image));
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == SHLL) {
-        Token shllToken;
-        ParserSymbolsAdvance(lparser); // shll
-        shllToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%01x", atoi(shllToken.image) & 0xF);
-        ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
-      }
-      else if (lparser->currentToken.kind == SHRL) {
-        Token shrlToken;
-        ParserSymbolsAdvance(lparser); // shrl
-        shrlToken = lparser->currentToken;
-        ParserSymbolsAdvance(lparser); // operand
-
-        sprintf(symD->data, "%01x", atoi(shrlToken.image) & 0xF);
+        strncpy(symD->data, cmdToken.image, strlen(cmdToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
