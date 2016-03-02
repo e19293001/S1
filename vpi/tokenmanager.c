@@ -44,6 +44,9 @@ const char *tokenImage[] = {
   "ERROR"
 };
 
+void TokenDump(char *s, Token t) {
+  printf("%s line: %0d kind: %0d image: %s type: %s\n", s, t.beginLine, t.kind, t.image, tokenImage[t.kind]);
+}
 
 TokenManager* TokenManagerNew(char *inFileName) {
   TokenManager *ret = malloc(sizeof(TokenManager));
@@ -83,7 +86,7 @@ void getNextChar(TokenManager **t) {
       sz = strlen(tm->inputLine);
       tm->inputLine[sz-1] = '\0';
 //      printf("[ --- %s --- ]\n", tm->inputLine);
-      printf("[%s]\n", tm->inputLine);
+//      printf("[%s]\n", tm->inputLine);
       tm->inputLine[sz-1] = '\n';
       tm->currentColumnNumber = 0;
       tm->currentLineNumber++;
@@ -295,7 +298,8 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     }
   }
-  printf("line: %0d kind: %0d image: %s type: %s\n", ret.beginLine, ret.kind, ret.image, tokenImage[ret.kind]);
+//  TokenDump("[ TokenManagerGetNextToken ]", ret);
+//  printf("line: %0d kind: %0d image: %s type: %s\n", ret.beginLine, ret.kind, ret.image, tokenImage[ret.kind]);
   return ret;
 }
 

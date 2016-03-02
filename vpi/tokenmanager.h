@@ -75,9 +75,9 @@ typedef struct TokenManager {
   Token *tok;
 } TokenManager;
 
+void TokenDump(char* s, Token t);
 TokenManager* TokenManagerNew(char *inFileName);
 void getNextChar();
 Token TokenManagerGetNextToken(TokenManager **t);
 void TokenManagerDelete(TokenManager** t);
-
 #endif

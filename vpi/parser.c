@@ -48,6 +48,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       
       memset(num, 0, 256);
 
+      //TokenDump("[ ParseSymbols ]", idToken);
       //printf("progcntr: %0d image: %s kind: %s\n", progcntr, idToken.image, tokenImage[idToken.kind]);
 
       if (tstSearch(ret, idToken.image) != NULL) {
@@ -123,12 +124,21 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == HALT ||
-               lparser->currentToken.kind == PUSHC ||
+      else if (lparser->currentToken.kind == HALT) {
+        Token haltToken;
+        haltToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // halt
+
+        strncpy(symD->data, haltToken.image, strlen(haltToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr++;
+      }
+      else if (lparser->currentToken.kind == PUSHC ||
                lparser->currentToken.kind == PUSHR) {
         Token cmdToken;
-        cmdToken = lparser->currentToken;
         ParserSymbolsAdvance(lparser); // cmd
+        cmdToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
 
         strncpy(symD->data, cmdToken.image, strlen(cmdToken.image));
         ret = tstInsert(ret, idToken.image, symD);
@@ -141,9 +151,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       }
       else {
         ret = tstInsert(ret, idToken.image, symD);
-      }        
+      }
       symDataDelete(&symD);
-
     }
     else if (lparser->currentToken.kind == PUSHC ||
              lparser->currentToken.kind == PUSHR ||
@@ -165,7 +174,6 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == SHLL ||
              lparser->currentToken.kind == SHRL ||
              lparser->currentToken.kind == PUSH) {
-      // printf("pushcToken.image: %s\n", lparser->currentToken.image);
       ParserSymbolsAdvance(lparser);
       ParserSymbolsAdvance(lparser);
       progcntr++;

@@ -103,9 +103,20 @@ tstrie* tstSearchR(tstrie *t, char *s, int i, int cntr) {
 
 //  printf("returning... current: *s: %s val: %c t->item: %c strlen(s): %0d\n", s, val, t->item, strlen(s));
   if (t->symD == NULL) {
-    printf("t->symD is null returning NULL\n");
+//    printf("t->symD is null returning NULL\n");
     return NULL;
   }
+//  else {
+////    printf("present: %s\n", t->symD->name);
+//    
+//    if (t->symD->name[0] == '\0') {
+//      printf("name is null\n");
+//      return NULL;
+//    }
+//    else {
+//      printf("name is not null: %s\n", t->symD->name);
+//    }
+//  }
 
   return t;
 }
@@ -249,7 +260,7 @@ void tstDump_(tstrie *t, int cnt) {
     else {
       printf(" right is null.\n");
     }
-    //symDataDump(t->symD);
+    symDataDump(t->symD);
   }
 }  
 
