@@ -124,7 +124,16 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == HALT) {
+      else if (lparser->currentToken.kind == AND ||
+               lparser->currentToken.kind == FLIP ||
+               lparser->currentToken.kind == XOR ||
+               lparser->currentToken.kind == OR ||
+               lparser->currentToken.kind == ADDY ||
+               lparser->currentToken.kind == REM ||
+               lparser->currentToken.kind == DIV ||
+               lparser->currentToken.kind == MULT ||
+               lparser->currentToken.kind == NEG ||
+               lparser->currentToken.kind == HALT) {
         Token haltToken;
         haltToken = lparser->currentToken;
         ParserSymbolsAdvance(lparser); // halt
@@ -134,6 +143,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         progcntr++;
       }
       else if (lparser->currentToken.kind == PUSHC ||
+               lparser->currentToken.kind == SHRA ||
                lparser->currentToken.kind == PUSHR) {
         Token cmdToken;
         ParserSymbolsAdvance(lparser); // cmd
@@ -173,6 +183,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
              lparser->currentToken.kind == CMPU ||
              lparser->currentToken.kind == SHLL ||
              lparser->currentToken.kind == SHRL ||
+             lparser->currentToken.kind == SHRA ||
              lparser->currentToken.kind == PUSH) {
       ParserSymbolsAdvance(lparser);
       ParserSymbolsAdvance(lparser);
@@ -184,7 +195,16 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       ParserSymbolsAdvance(lparser);
       progcntr+=2;
     }
-    else if (lparser->currentToken.kind == HALT ||
+    else if (lparser->currentToken.kind == AND ||
+             lparser->currentToken.kind == FLIP ||
+             lparser->currentToken.kind == XOR ||
+             lparser->currentToken.kind == OR ||
+             lparser->currentToken.kind == ADDY ||
+             lparser->currentToken.kind == REM ||
+             lparser->currentToken.kind == DIV ||
+             lparser->currentToken.kind == MULT ||
+             lparser->currentToken.kind == NEG ||
+             lparser->currentToken.kind == HALT ||
              lparser->currentToken.kind == ADD ||
              lparser->currentToken.kind == SUB ||
              lparser->currentToken.kind == STAV ||
@@ -510,12 +530,244 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == SHRA) {
+    shra(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == NEG) {
+    neg(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == MULT) {
+    mult(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == DIV) {
+    divv(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == REM) {
+    rem(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == ADDY) {
+    addy(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == OR) {
+    or(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == XOR) {
+    xor(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == FLIP) {
+    flip(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
+  else if (lparser->currentToken.kind == AND) {
+    and(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
   else {
     printf("error unknown token %s\n", tokenImage[lparser->currentToken.kind]);
     return;
+  }
+}
+
+void and(parserData *lparser) {
+  assert(consume(lparser, AND) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeAND, "and");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeAND, "and");
+  }
+}
+
+void flip(parserData *lparser) {
+  assert(consume(lparser, FLIP) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeFLIP, "flip");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeFLIP, "flip");
+  }
+}
+
+void xor(parserData *lparser) {
+  assert(consume(lparser, XOR) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeXOR, "xor");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeXOR, "xor");
+  }
+}
+
+void or(parserData *lparser) {
+  assert(consume(lparser, OR) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeOR, "or");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeOR, "or");
+  }
+}
+
+void addy(parserData *lparser) {
+  assert(consume(lparser, ADDY) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeADDY, "addy");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeADDY, "addy");
+  }
+}
+
+void rem(parserData *lparser) {
+  assert(consume(lparser, REM) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeREM, "rem");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeREM, "rem");
+  }
+}
+
+void divv(parserData *lparser) {
+  assert(consume(lparser, DIV) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeDIV, "div");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeDIV, "div");
+  }
+}
+
+void neg(parserData *lparser) {
+  assert(consume(lparser, NEG) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeNEG, "neg");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeNEG, "neg");
+  }
+}
+
+void mult(parserData *lparser) {
+  assert(consume(lparser, MULT) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeMULT, "mult");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeMULT, "mult");
+  }
+}
+
+void shra(parserData *lparser) {
+  assert(consume(lparser, SHRA) == 0);
+
+  if (lparser->cg->symD == NULL) {
+    symData *symD = symDataNew();
+    lparser->cg->symD = symD;
+    if (expression(lparser) != 0) {
+      symDataDelete(&symD);
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeSHRA, "shra");
+    symDataDelete(&symD);
+    lparser->cg->symD = NULL;
+  }
+  else {
+    if (expression(lparser) != 0) {
+      lparser->errorcode = -1;
+      return;
+    }
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeSHRA, "shra");
   }
 }
 

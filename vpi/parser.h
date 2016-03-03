@@ -70,6 +70,16 @@ void cmpu(parserData *lparser);
 void rev(parserData *lparser);
 void shll(parserData *lparser);
 void shrl(parserData *lparser);
+void shra(parserData *lparser);
+void neg(parserData *lparser);
+void mult(parserData *lparser);
+void divv(parserData *lparser);
+void rem(parserData *lparser);
+void addy(parserData *lparser);
+void or(parserData *lparser);
+void xor(parserData *lparser);
+void flip(parserData *lparser);
+void and(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

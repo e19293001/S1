@@ -40,6 +40,16 @@ typedef enum {
   cgTypeREV,
   cgTypeSHLL,
   cgTypeSHRL,
+  cgTypeSHRA,
+  cgTypeNEG,
+  cgTypeMULT,
+  cgTypeDIV,
+  cgTypeREM,
+  cgTypeADDY,
+  cgTypeOR,
+  cgTypeXOR,
+  cgTypeFLIP,
+  cgTypeAND,
   cgTypeRET
 } cgType;
 

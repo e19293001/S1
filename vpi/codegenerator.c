@@ -102,6 +102,36 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   else if (cgt == cgTypeSHRL) {
     printf("+%s    FF1%01X ; %s %s\n", cg->symD->programcounter, (cg->symD->addressInt & 0xF), instruction, cg->symD->name);
   }
+  else if (cgt == cgTypeSHRA) {
+    printf("+%s    FF2%01X ; %s %s\n", cg->symD->programcounter, (cg->symD->addressInt & 0xF), instruction, cg->symD->name);
+  }
+  else if (cgt == cgTypeNEG) {
+    printf("+%s    FF30 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeMULT) {
+    printf("+%s    FF40 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeDIV) {
+    printf("+%s    FF50 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeREM) {
+    printf("+%s    FF60 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeADDY) {
+    printf("+%s    FF70 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeOR) {
+    printf("+%s    FF80 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeXOR) {
+    printf("+%s    FF90 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeAND) {
+    printf("+%s    FFA0 ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeFLIP) {
+    printf("+%s    FFB0 ; %s\n", cg->symD->programcounter, instruction);
+  }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);
   }

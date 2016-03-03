@@ -48,6 +48,16 @@ typedef enum {
   REV,
   SHLL,
   SHRL,
+  SHRA,
+  NEG,
+  MULT,
+  DIV,
+  REM,
+  ADDY,
+  OR,
+  XOR,
+  FLIP,
+  AND,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

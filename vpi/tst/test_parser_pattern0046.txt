@@ -1,0 +1,50 @@
+a:
+shra x
+shra yy
+x: dw 999
+shra 9
+shra 8
+shra 7
+shra 6
+shra 5
+shra 16
+ret
+aa: shra aa
+flip
+halt
+flip
+ret
+dw 103
+shra yy
+shra yy
+shra yy
+shra yy
+shra yyy
+yy: flip
+yyy: flip
+shra yy
+shra yy
+pc dd
+pc x
+y: pc xx
+pc x
+pc x
+flip
+flip
+pc x1
+pc x1
+pc x11
+pc x
+pc y
+pc xxx
+x2:
+x3:
+flip
+xx:
+xxx:
+halt
+dd:
+x1: dw 98
+x11: dw 987
+
+

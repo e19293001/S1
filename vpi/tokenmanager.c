@@ -41,6 +41,16 @@ const char *tokenImage[] = {
   "REV",
   "SHLL",
   "SHRL",
+  "SHRA",
+  "NEG",
+  "MULT",
+  "DIV",
+  "REM",
+  "ADDY",
+  "OR",
+  "XOR",
+  "FLIP",
+  "AND",
   "ERROR"
 };
 
@@ -248,6 +258,36 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "shrl", 512)) == 0) {
       ret.kind = SHRL;
+    }
+    else if ((strncmp(ret.image, "shra", 512)) == 0) {
+      ret.kind = SHRA;
+    }
+    else if ((strncmp(ret.image, "neg", 512)) == 0) {
+      ret.kind = NEG;
+    }
+    else if ((strncmp(ret.image, "mult", 512)) == 0) {
+      ret.kind = MULT;
+    }
+    else if ((strncmp(ret.image, "div", 512)) == 0) {
+      ret.kind = DIV;
+    }
+    else if ((strncmp(ret.image, "rem", 512)) == 0) {
+      ret.kind = REM;
+    }
+    else if ((strncmp(ret.image, "addy", 512)) == 0) {
+      ret.kind = ADDY;
+    }
+    else if ((strncmp(ret.image, "or", 512)) == 0) {
+      ret.kind = OR;
+    }
+    else if ((strncmp(ret.image, "xor", 512)) == 0) {
+      ret.kind = XOR;
+    }
+    else if ((strncmp(ret.image, "flip", 512)) == 0) {
+      ret.kind = FLIP;
+    }
+    else if ((strncmp(ret.image, "and", 512)) == 0) {
+      ret.kind = AND;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);
