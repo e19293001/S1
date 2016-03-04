@@ -80,6 +80,7 @@ void or(parserData *lparser);
 void xor(parserData *lparser);
 void flip(parserData *lparser);
 void and(parserData *lparser);
+void cali(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

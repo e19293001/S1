@@ -415,6 +415,14 @@ void TestParser0047() { // test for and
   ParserDelete(&parser);
 }
 
+void TestParser0048() { // test for cali
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0048.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -472,7 +480,9 @@ int main() {
 
 //  TestParser0046(); // test for flip
 
-  TestParser0047(); // test for and
+//  TestParser0047(); // test for and
+
+  TestParser0048(); // test for cali
 
   success();
 
