@@ -59,6 +59,7 @@ typedef enum {
   FLIP,
   AND,
   CALI,
+  SCT,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  
