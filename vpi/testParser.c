@@ -431,6 +431,14 @@ void TestParser0049() { // test for sct
   ParserDelete(&parser);
 }
 
+void TestParser0050() { // test for rot
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0050.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -492,7 +500,9 @@ int main() {
 
 //  TestParser0048(); // test for cali
 
-  TestParser0049(); // test for sct
+//  TestParser0049(); // test for sct
+
+  TestParser0050(); // test for rot
 
   success();
 

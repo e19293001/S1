@@ -82,6 +82,7 @@ void flip(parserData *lparser);
 void and(parserData *lparser);
 void cali(parserData *lparser);
 void sct(parserData *lparser);
+void rot(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

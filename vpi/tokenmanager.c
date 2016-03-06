@@ -53,6 +53,7 @@ const char *tokenImage[] = {
   "AND",
   "CALI",
   "SCT",
+  "ROT",
   "ERROR"
 };
 
@@ -296,6 +297,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "sct", 512)) == 0) {
       ret.kind = SCT;
+    }
+    else if ((strncmp(ret.image, "rot", 512)) == 0) {
+      ret.kind = ROT;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);
