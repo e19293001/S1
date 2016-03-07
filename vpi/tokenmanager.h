@@ -61,6 +61,7 @@ typedef enum {
   CALI,
   SCT,
   ROT,
+  PSP,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  
