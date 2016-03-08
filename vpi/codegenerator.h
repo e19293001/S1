@@ -54,7 +54,8 @@ typedef enum {
   cgTypeCALI,
   cgTypeSCT,
   cgTypeROT,
-  cgTypePSP
+  cgTypePSP,
+  cgTypeBPBP
 } cgType;
 
 typedef struct codeGen {

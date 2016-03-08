@@ -447,6 +447,14 @@ void TestParser0051() { // test for psp
   ParserDelete(&parser);
 }
 
+void TestParser0052() { // test for bpbp
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0052.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -512,7 +520,9 @@ int main() {
 
 //  TestParser0050(); // test for rot
 
-  TestParser0051(); // test for psp
+//  TestParser0051(); // test for psp
+
+  TestParser0052(); // test for bpbp
 
   success();
 
