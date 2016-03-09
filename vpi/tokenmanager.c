@@ -56,6 +56,7 @@ const char *tokenImage[] = {
   "ROT",
   "PSP",
   "BPBP",
+  "POBP",
   "ERROR"
 };
 
@@ -308,6 +309,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "bpbp", 512)) == 0) {
       ret.kind = BPBP;
+    }
+    else if ((strncmp(ret.image, "pobp", 512)) == 0) {
+      ret.kind = POBP;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);
