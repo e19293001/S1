@@ -463,6 +463,14 @@ void TestParser0053() { // test for pobp
   ParserDelete(&parser);
 }
 
+void TestParser0054() { // test for pbp
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0054.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -532,7 +540,9 @@ int main() {
 
 //  TestParser0052(); // test for bpbp
 
-  TestParser0053(); // test for pobp
+//  TestParser0053(); // test for pobp
+
+  TestParser0054(); // test for pbp
 
   success();
 
