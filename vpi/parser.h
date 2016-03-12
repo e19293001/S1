@@ -87,6 +87,7 @@ void psp(parserData *lparser);
 void bpbp(parserData *lparser);
 void pobp(parserData *lparser);
 void pbp(parserData *lparser);
+void bcpy(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 
