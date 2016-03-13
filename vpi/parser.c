@@ -124,7 +124,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == BCPY ||
+      else if (lparser->currentToken.kind == UOUT ||
+               lparser->currentToken.kind == BCPY ||
                lparser->currentToken.kind == PBP ||
                lparser->currentToken.kind == POBP ||
                lparser->currentToken.kind == BPBP ||
@@ -203,7 +204,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       ParserSymbolsAdvance(lparser);
       progcntr+=2;
     }
-    else if (lparser->currentToken.kind == BCPY ||
+    else if (lparser->currentToken.kind == UOUT ||
+             lparser->currentToken.kind == BCPY ||
              lparser->currentToken.kind == PBP ||
              lparser->currentToken.kind == POBP ||
              lparser->currentToken.kind == BPBP ||
@@ -690,6 +692,14 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == UOUT) {
+    uout(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
@@ -699,17 +709,17 @@ void program(parserData *lparser) {
   }
 }
 
-void pbp(parserData *lparser) {
-  assert(consume(lparser, PBP) == 0);
+void uout(parserData *lparser) {
+  assert(consume(lparser, UOUT) == 0);
   if (lparser->cg->symD == NULL) {
     lparser->cg->symD = symDataNew();
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    codeGenEmmitInstruction(lparser->cg, cgTypePBP, "pbp");
+    codeGenEmmitInstruction(lparser->cg, cgTypeUOUT, "uout");
     symDataDelete(&(lparser->cg->symD));
   }
   else {
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    codeGenEmmitInstruction(lparser->cg, cgTypePBP, "pbp");
+    codeGenEmmitInstruction(lparser->cg, cgTypeUOUT, "uout");
   }
 }
 
@@ -724,6 +734,20 @@ void bcpy(parserData *lparser) {
   else {
     sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
     codeGenEmmitInstruction(lparser->cg, cgTypeBCPY, "bcpy");
+  }
+}
+
+void pbp(parserData *lparser) {
+  assert(consume(lparser, PBP) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypePBP, "pbp");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypePBP, "pbp");
   }
 }
 

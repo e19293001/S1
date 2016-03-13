@@ -59,6 +59,7 @@ const char *tokenImage[] = {
   "POBP",
   "PBP",
   "BCPY",
+  "UOUT",
   "ERROR"
 };
 
@@ -320,6 +321,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "bcpy", 512)) == 0) {
       ret.kind = BCPY;
+    }
+    else if ((strncmp(ret.image, "uout", 512)) == 0) {
+      ret.kind = UOUT;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);

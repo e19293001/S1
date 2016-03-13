@@ -66,6 +66,7 @@ typedef enum {
   POBP,
   PBP,
   BCPY,
+  UOUT,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  
