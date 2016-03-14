@@ -159,6 +159,9 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   else if (cgt == cgTypeUOUT) {
     printf("+%s    FFF5 ; %s\n", cg->symD->programcounter, instruction);
   }
+  else if (cgt == cgTypeSIN) {
+    printf("+%s    FFF6 ; %s\n", cg->symD->programcounter, instruction);
+  }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);
   }

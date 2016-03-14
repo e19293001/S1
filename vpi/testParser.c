@@ -487,6 +487,14 @@ void TestParser0056() { // test for uout
   ParserDelete(&parser);
 }
 
+void TestParser0057() { // test for sin
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0057.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -562,7 +570,9 @@ int main() {
 
 //  TestParser0055(); // test for bcpy
 
-  TestParser0056(); // test for uout
+//  TestParser0056(); // test for uout
+
+  TestParser0057(); // test for sin
 
   success();
 
