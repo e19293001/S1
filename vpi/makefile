@@ -7,7 +7,7 @@ PARSEROBJS=$(obj)/testParser.o $(obj)/parser.o $(obj)/TernarySearchTrie.o $(obj)
 
 main=vpiTest
 obj=obj
-COPTS=-g -Wall -L$(IVERILOG_INCLUDE_PATH) -I$(IVERILOG_LIB_PATH) -lvpi 
+COPTS=-g -Wall -I$(IVERILOG_INCLUDE_PATH) -L$(IVERILOG_LIB_PATH)
 
 #all: mkdirs compile runsim
 all: mkdirs testParser runTest
@@ -45,7 +45,7 @@ val:
 	valgrind --leak-check=full --show-reachable=yes --track-origins=yes -v ./bin/testParser
 
 testParser: $(PARSEROBJS)
-	gcc $^ -o bin/testParser $(COPTS)
+	gcc $^ -o bin/testParser $(COPTS) -lvpi 
 
 $(obj)/testParser.o: testParser.c
 	gcc -c -fpic $< -o $@ $(COPTS)

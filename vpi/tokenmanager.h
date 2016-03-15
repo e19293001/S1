@@ -68,6 +68,7 @@ typedef enum {
   BCPY,
   UOUT,
   SIN,
+  SOUT,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  
