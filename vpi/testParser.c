@@ -503,6 +503,14 @@ void TestParser0058() { // test for sout
   ParserDelete(&parser);
 }
 
+void TestParser0059() { // test for hin
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0059.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -582,7 +590,9 @@ int main() {
 
 //  TestParser0057(); // test for sin
 
-  TestParser0058(); // test for sout
+//  TestParser0058(); // test for sout
+
+  TestParser0059(); // test for hin
 
   success();
 

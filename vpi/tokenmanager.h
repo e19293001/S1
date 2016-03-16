@@ -69,6 +69,7 @@ typedef enum {
   UOUT,
   SIN,
   SOUT,
+  HIN,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  
