@@ -511,6 +511,14 @@ void TestParser0059() { // test for hin
   ParserDelete(&parser);
 }
 
+void TestParser0060() { // test for hout
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0060.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -551,48 +559,30 @@ int main() {
 //  TestParser0036(); // test for shll
 //  TestParser0037(); // test for shrl
 //  TestParser0038(); // test for shra
-
 //  TestParser0039(); // test for neg
-
 //  TestParser0040(); // test for mult
-
 //  TestParser0041(); // test for divv
-
 //  TestParser0042(); // test for divv
-
 //  TestParser0043(); // test for addy
-
 //  TestParser0044(); // test for or
-
 //  TestParser0045(); // test for xor
-
 //  TestParser0046(); // test for flip
-
 //  TestParser0047(); // test for and
-
 //  TestParser0048(); // test for cali
-
 //  TestParser0049(); // test for sct
-
 //  TestParser0050(); // test for rot
-
 //  TestParser0051(); // test for psp
-
 //  TestParser0052(); // test for bpbp
-
 //  TestParser0053(); // test for pobp
-
 //  TestParser0054(); // test for pbp
-
 //  TestParser0055(); // test for bcpy
-
 //  TestParser0056(); // test for uout
-
 //  TestParser0057(); // test for sin
-
 //  TestParser0058(); // test for sout
 
-  TestParser0059(); // test for hin
+//  TestParser0059(); // test for hin
+
+  TestParser0060(); // test for hout
 
   success();
 
