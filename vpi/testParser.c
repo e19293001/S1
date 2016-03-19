@@ -527,6 +527,14 @@ void TestParser0061() { // test for ain
   ParserDelete(&parser);
 }
 
+void TestParser0062() { // test for aout
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0062.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -592,7 +600,9 @@ int main() {
 
 //  TestParser0060(); // test for hout
 
-  TestParser0061(); // test for ain
+//  TestParser0061(); // test for ain
+
+  TestParser0062(); // test for aout
 
   success();
 

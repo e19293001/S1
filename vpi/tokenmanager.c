@@ -65,6 +65,7 @@ const char *tokenImage[] = {
   "HIN",
   "HOUT",
   "AIN",
+  "AOUT",
   "ERROR"
 };
 
@@ -344,6 +345,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     else if ((strncmp(ret.image, "ain", 512)) == 0) {
       ret.kind = AIN;
+    }
+    else if ((strncmp(ret.image, "aout", 512)) == 0) {
+      ret.kind = AOUT;
     }
     else {
       //printf("\nfound ID. %s\n", ret.image);
