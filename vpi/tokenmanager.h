@@ -73,6 +73,7 @@ typedef enum {
   HOUT,
   AIN,
   AOUT,
+  DIN,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

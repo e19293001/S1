@@ -535,6 +535,14 @@ void TestParser0062() { // test for aout
   ParserDelete(&parser);
 }
 
+void TestParser0063() { // test for din
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0063.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -602,7 +610,9 @@ int main() {
 
 //  TestParser0061(); // test for ain
 
-  TestParser0062(); // test for aout
+//  TestParser0062(); // test for aout
+
+  TestParser0063(); // test for din
 
   success();
 

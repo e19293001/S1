@@ -95,6 +95,7 @@ void hin(parserData *lparser);
 void hout(parserData *lparser);
 void ain(parserData *lparser);
 void aout(parserData *lparser);
+void din(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 
