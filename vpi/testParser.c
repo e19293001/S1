@@ -543,6 +543,14 @@ void TestParser0063() { // test for din
   ParserDelete(&parser);
 }
 
+void TestParser0064() { // test for dout
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0064.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -603,16 +611,13 @@ int main() {
 //  TestParser0056(); // test for uout
 //  TestParser0057(); // test for sin
 //  TestParser0058(); // test for sout
-
 //  TestParser0059(); // test for hin
-
 //  TestParser0060(); // test for hout
-
 //  TestParser0061(); // test for ain
-
 //  TestParser0062(); // test for aout
+//  TestParser0063(); // test for din
 
-  TestParser0063(); // test for din
+  TestParser0064(); // test for dout
 
   success();
 

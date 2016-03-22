@@ -2,7 +2,7 @@
 
 void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   if (cgt == cgTypeDWORD) {
-    printf("+%s    %04x ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
+    printf("+%s    %04X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
   }
   else if (cgt == cgTypePUSH) {
     printf("+%s    0%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
@@ -11,7 +11,7 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     printf("+%s    1%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
   }
   else if (cgt == cgTypePUSHR) {
-    printf("+%s    2%03x ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
+    printf("+%s    2%03X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
   }
   else if (cgt == cgTypePUSHWC) {
     printf("+%s    F700 ; %s %s\n", cg->symD->programcounter, instruction, cg->symD->name);
@@ -179,6 +179,9 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   }
   else if (cgt == cgTypeDIN) {
     printf("+%s    FFFC ; %s\n", cg->symD->programcounter, instruction);
+  }
+  else if (cgt == cgTypeDOUT) {
+    printf("+%s    FFFD ; %s\n", cg->symD->programcounter, instruction);
   }
   else if (cgt == cgTypeHALT) {
     printf("+%s    FFFF ; %s\n", cg->symD->programcounter, instruction);
