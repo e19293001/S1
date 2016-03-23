@@ -97,6 +97,7 @@ void ain(parserData *lparser);
 void aout(parserData *lparser);
 void din(parserData *lparser);
 void dout(parserData *lparser);
+void noop(parserData *lparser);
 
 int consume(parserData *lparser, int expected);
 

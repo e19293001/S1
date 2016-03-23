@@ -124,7 +124,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == DOUT ||
+      else if (lparser->currentToken.kind == NOOP ||
+               lparser->currentToken.kind == DOUT ||
                lparser->currentToken.kind == DIN ||
                lparser->currentToken.kind == AOUT ||
                lparser->currentToken.kind == AIN ||
@@ -212,7 +213,8 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       ParserSymbolsAdvance(lparser);
       progcntr+=2;
     }
-    else if (lparser->currentToken.kind == DOUT ||
+    else if (lparser->currentToken.kind == NOOP ||
+             lparser->currentToken.kind == DOUT ||
              lparser->currentToken.kind == DIN ||
              lparser->currentToken.kind == AOUT ||
              lparser->currentToken.kind == AIN ||
@@ -780,12 +782,34 @@ void program(parserData *lparser) {
     lparser->addrCntr++;
     program(lparser);
   }
+  else if (lparser->currentToken.kind == NOOP) {
+    noop(lparser);
+    if (lparser->errorcode == -1) {
+      return;
+    }
+    lparser->addrCntr++;
+    program(lparser);
+  }
   else if (lparser->currentToken.kind == _EOF) {
     // do nothing
   }
   else {
     printf("error unknown token %s\n", tokenImage[lparser->currentToken.kind]);
     return;
+  }
+}
+
+void noop(parserData *lparser) {
+  assert(consume(lparser, NOOP) == 0);
+  if (lparser->cg->symD == NULL) {
+    lparser->cg->symD = symDataNew();
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeNOOP, "noop");
+    symDataDelete(&(lparser->cg->symD));
+  }
+  else {
+    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+    codeGenEmmitInstruction(lparser->cg, cgTypeNOOP, "noop");
   }
 }
 

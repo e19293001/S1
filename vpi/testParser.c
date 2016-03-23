@@ -551,6 +551,14 @@ void TestParser0064() { // test for dout
   ParserDelete(&parser);
 }
 
+void TestParser0065() { // test for noop
+  parserData *parser;
+  char data[] = "tst/test_parser_pattern0065.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -616,8 +624,9 @@ int main() {
 //  TestParser0061(); // test for ain
 //  TestParser0062(); // test for aout
 //  TestParser0063(); // test for din
+//  TestParser0064(); // test for dout
 
-  TestParser0064(); // test for dout
+  TestParser0065(); // test for noop
 
   success();
 

@@ -67,7 +67,8 @@ typedef enum {
   cgTypeAIN,
   cgTypeAOUT,
   cgTypeDIN,
-  cgTypeDOUT
+  cgTypeDOUT,
+  cgTypeNOOP
 } cgType;
 
 typedef struct codeGen {
