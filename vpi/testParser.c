@@ -560,72 +560,71 @@ void TestParser0065() { // test for noop
 }
 
 int main() {
-//  TestParser0000();
-//  TestParser0001();
-//  TestParser0002(); // test for duplicate labels
-//  TestParser0003(); // test for labels with underscore character
-//  TestParser0004(); // test for code generator dword
-//  TestParser0005(); // test for code generator halt
-//  TestParser0006(); // test for code generator pushc
-//  TestParser0007(); // test for code generator pushwc
-//  TestParser0008(); // test for comments
-//  TestParser0009(); // test for push relative
-//  TestParser0010(); // test for convert relative address
-//  TestParser0011(); // test for add stack pointer
-//  TestParser0012(); // test for call
-//  TestParser0013(); // test for ja
-//  TestParser0014(); // test for jct
-//  TestParser0015(); // test for jp
-//  TestParser0016(); // test for jn
-//  TestParser0017(); // test for jz
-//  TestParser0018(); // test for jnz
-//  TestParser0019(); // test for jodd
-//  TestParser0020(); // test for jzon
-//  TestParser0021(); // test for jzop
-//  TestParser0022(); // test for ret
-//  TestParser0023(); // test for add
-//  TestParser0024(); // test for sub
-//  TestParser0025(); // test for stav
-//  TestParser0026(); // test for stva
-//  TestParser0027(); // test for load
-//  TestParser0028(); // test for awc
-//  TestParser0029(); // test for dupe
-//  TestParser0030(); // test for esba
-//  TestParser0031(); // test for reba
-//  TestParser0032(); // test for zsp
-//  TestParser0033(); // test for cmps
-//  TestParser0034(); // test for cmpu
-//  TestParser0035(); // test for rev
-//  TestParser0036(); // test for shll
-//  TestParser0037(); // test for shrl
-//  TestParser0038(); // test for shra
-//  TestParser0039(); // test for neg
-//  TestParser0040(); // test for mult
-//  TestParser0041(); // test for divv
-//  TestParser0042(); // test for divv
-//  TestParser0043(); // test for addy
-//  TestParser0044(); // test for or
-//  TestParser0045(); // test for xor
-//  TestParser0046(); // test for flip
-//  TestParser0047(); // test for and
-//  TestParser0048(); // test for cali
-//  TestParser0049(); // test for sct
-//  TestParser0050(); // test for rot
-//  TestParser0051(); // test for psp
-//  TestParser0052(); // test for bpbp
-//  TestParser0053(); // test for pobp
-//  TestParser0054(); // test for pbp
-//  TestParser0055(); // test for bcpy
-//  TestParser0056(); // test for uout
-//  TestParser0057(); // test for sin
-//  TestParser0058(); // test for sout
-//  TestParser0059(); // test for hin
-//  TestParser0060(); // test for hout
-//  TestParser0061(); // test for ain
-//  TestParser0062(); // test for aout
-//  TestParser0063(); // test for din
-//  TestParser0064(); // test for dout
-
+  TestParser0000();
+  TestParser0001();
+  TestParser0002(); // test for duplicate labels
+  TestParser0003(); // test for labels with underscore character
+  TestParser0004(); // test for code generator dword
+  TestParser0005(); // test for code generator halt
+  TestParser0006(); // test for code generator pushc
+  TestParser0007(); // test for code generator pushwc
+  TestParser0008(); // test for comments
+  TestParser0009(); // test for push relative
+  TestParser0010(); // test for convert relative address
+  TestParser0011(); // test for add stack pointer
+  TestParser0012(); // test for call
+  TestParser0013(); // test for ja
+  TestParser0014(); // test for jct
+  TestParser0015(); // test for jp
+  TestParser0016(); // test for jn
+  TestParser0017(); // test for jz
+  TestParser0018(); // test for jnz
+  TestParser0019(); // test for jodd
+  TestParser0020(); // test for jzon
+  TestParser0021(); // test for jzop
+  TestParser0022(); // test for ret
+  TestParser0023(); // test for add
+  TestParser0024(); // test for sub
+  TestParser0025(); // test for stav
+  TestParser0026(); // test for stva
+  TestParser0027(); // test for load
+  TestParser0028(); // test for awc
+  TestParser0029(); // test for dupe
+  TestParser0030(); // test for esba
+  TestParser0031(); // test for reba
+  TestParser0032(); // test for zsp
+  TestParser0033(); // test for cmps
+  TestParser0034(); // test for cmpu
+  TestParser0035(); // test for rev
+  TestParser0036(); // test for shll
+  TestParser0037(); // test for shrl
+  TestParser0038(); // test for shra
+  TestParser0039(); // test for neg
+  TestParser0040(); // test for mult
+  TestParser0041(); // test for divv
+  TestParser0042(); // test for divv
+  TestParser0043(); // test for addy
+  TestParser0044(); // test for or
+  TestParser0045(); // test for xor
+  TestParser0046(); // test for flip
+  TestParser0047(); // test for and
+  TestParser0048(); // test for cali
+  TestParser0049(); // test for sct
+  TestParser0050(); // test for rot
+  TestParser0051(); // test for psp
+  TestParser0052(); // test for bpbp
+  TestParser0053(); // test for pobp
+  TestParser0054(); // test for pbp
+  TestParser0055(); // test for bcpy
+  TestParser0056(); // test for uout
+  TestParser0057(); // test for sin
+  TestParser0058(); // test for sout
+  TestParser0059(); // test for hin
+  TestParser0060(); // test for hout
+  TestParser0061(); // test for ain
+  TestParser0062(); // test for aout
+  TestParser0063(); // test for din
+  TestParser0064(); // test for dout
   TestParser0065(); // test for noop
 
   success();
