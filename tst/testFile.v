@@ -264,7 +264,7 @@ end
          $fclose(fp);
          code = indx - 1;
          for (indx = 0; indx < code; indx = indx + 1) begin
-            $display("mem[%04d]: %04x", indx, mem.mem[indx]);
+            $display("mem[%02x]: %04x", indx, mem.mem[indx]);
          end
       end
    endtask

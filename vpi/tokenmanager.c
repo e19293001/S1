@@ -83,6 +83,9 @@ TokenManager* TokenManagerNew(char *inFileName) {
     printf("could not open file: %s\n", inFileName);
     exit(-1);
   }
+  //printf("opened file: %s\n", inFileName);
+  //printf("file pointer is: %0d\n", ret->inFile);
+  //printf("     address is: %0d\n", &(ret->inFile));
   //printf("ret->inFile: %0d\n", ret->inFile);
   ret->currentChar = '\n';
   ret->currentColumnNumber = 0;
@@ -104,6 +107,9 @@ void getNextChar(TokenManager **t) {
 // TODO: add functionality here
   if (tm->currentChar == '\n' ||
       tm->currentChar == '\r') {
+    if (tm->printEnable != -1) {
+      printf("                                  ; %s", tm->inputLine);
+    }
     if ((fgets(tm->inputLine, 512, tm->inFile)) == NULL) {
 //      printf("reached end of file\n");
       tm->currentChar = EOF;
@@ -416,7 +422,9 @@ Token TokenManagerGetNextToken(TokenManager **t) {
 }
 
 void TokenManagerDelete(TokenManager** t) {
-//  printf("deleting t->infile: %0d\n", t->inFile);
+  //printf("deleting t->infile: %0d\n", (*t)->inFile);
+  //printf("closing file. file pointer is: %0d\n", (*t)->inFile);
+  //printf("     address is: %0d\n", &((*t)->inFile));
   fclose((*t)->inFile);
   free(*t);
   *t = NULL;

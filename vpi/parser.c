@@ -39,8 +39,10 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
 
   lparser = ParserNew(s);
   lparser->currentToken = TokenManagerGetNextToken(&lparser->tm);
+  lparser->tm->printEnable = -1;
 
   do {
+//    printf("progcntr: %0d\n", progcntr);
     if (lparser->currentToken.kind == ID) {
       Token idToken = lparser->currentToken;
       symData *symD = NULL;
@@ -65,7 +67,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
       sprintf(symD->address, "%03x", progcntr);
       symD->addressInt = progcntr;
       //sprintf(symD->addressInt, "%03x", progcntr);
-      //printf("idToken.image: %s symD->address: %s\n", idToken.image, symD->address);
+      //printf("    idToken.image: %s symD->address: %s symD->addressInt: %0d\n", idToken.image, symD->address, symD->addressInt);
 
       ParserSymbolsAdvance(lparser); // id
       ParserSymbolsAdvance(lparser); // colon
@@ -77,12 +79,22 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         ParserSymbolsAdvance(lparser); // unsigned
 
         sprintf(symD->data, "%04x", atoi(dwToken.image));
+        //printf("inserting dword: %04x\n", atoi(dwToken.image));
         ret = tstInsert(ret, idToken.image, symD);
         progcntr++;
       }
-      else if (lparser->currentToken.kind == PUSH ||
-               lparser->currentToken.kind == PUSHWC ||
-               lparser->currentToken.kind == AWC ||
+      else if (lparser->currentToken.kind == PUSHWC ||
+               lparser->currentToken.kind == AWC) {
+        Token cmdToken;
+        ParserSymbolsAdvance(lparser); // cmd
+        cmdToken = lparser->currentToken;
+        ParserSymbolsAdvance(lparser); // operand
+
+        sprintf(symD->data, "%03x", atoi(cmdToken.image));
+        ret = tstInsert(ret, idToken.image, symD);
+        progcntr+=2;
+      }
+      else if (lparser->currentToken.kind == PUSH ||               
                lparser->currentToken.kind == CORA ||
                lparser->currentToken.kind == ASP ||
                lparser->currentToken.kind == CALL ||

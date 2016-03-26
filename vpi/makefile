@@ -39,7 +39,7 @@ clean:
 #s1Assembler.vpi: s1Assembler.c
 #	iverilog-vpi $^
 
-val: 
+val: all
 #	valgrind -v vvp -M. -mbin/s1Assembler $(obj)/$(main).vvp
 #	valgrind --leak-check=full --show-reachable=yes -v vvp -M. -ms1Assembler $(main).vvp 
 	valgrind --leak-check=full --show-reachable=yes --track-origins=yes -v ./bin/testParser

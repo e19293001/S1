@@ -1,26 +1,26 @@
-p _b1skldjf
-p x
+p _b1skldjf       ; 0
+p x               ; 1
 a1:
-pwc y
-pc z
+pwc y             ; 2,3
+pc z              ; 4
 _b1skldjf:
-p x
+p x               ; 5
 a12:
-pwc y
-pc z
+pwc y             ; 6,7
+pc z              ; 8
 b1skldjf:
-p x
+p x               ; 9
 _a1:
-pwc y
-pc z
+pwc y             ; 9,A
+pc z              ; B
 b_1skldjf:
-p x
+p x               ; C
 a123:
-pwc y
-pc z
+pwc y             ; D,E  
+pc z              ; F
 _2b1skldjf:
-halt
-x: dw 0
-y: dw 0
-z: dw 2
-_sldfj: dw 129
+halt              ; 01
+x: dw 0           ; 02
+y: dw 0           ; 03
+z: dw 2           ; 04
+_sldfj: dw 129    ; 05

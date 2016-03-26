@@ -100,6 +100,7 @@ typedef struct TokenManager {
   int currentColumnNumber;
   int currentLineNumber;
   char inputLine[512];
+  int printEnable;
   Token *tok;
 } TokenManager;
 

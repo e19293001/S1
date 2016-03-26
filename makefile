@@ -18,7 +18,16 @@ TSTDIR=tst
 #TEST=$(TSTDIR)/TestS1ret.v
 #TEST=$(TSTDIR)/TestS1stav.v
 #TEST=$(TSTDIR)/TestS1stva.v
-TEST=$(TSTDIR)/TestS1sub.v
+#TEST=$(TSTDIR)/TestS1sub.v
+
+main=TestValuePlusArgs
+TEST=$(TSTDIR)/$(main).v
+
+#TSTPATTERN='vpi/tst/test_parser_pattern0000.txt'
+#TSTPATTERN='vpi/tst/test_parser_pattern0001.txt'
+#TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
+TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
+
 
 #TEST=$(TSTDIR)/TestS1pc.v
 #UTILS=testFile.v
@@ -27,7 +36,8 @@ OUT=S1
 
 DIRS=-I./ -I$(TSTDIR)/
 
-all: comp run
+#all: comp run
+all: comp-vpi runsim
 
 comp: $(OUT) $(TEST)
 	iverilog -ffiles $(TEST) $(DIRS) -o $(OUT)
@@ -35,9 +45,10 @@ comp: $(OUT) $(TEST)
 $(OUT): $(FILES)
 
 run:
-	vvp $(OUT)
+	vvp $(OUT) +TSTPATTERN=$(TSTPATTERN)
 
 clean:
+	cd vpi && rm -fr *.vpi *.vvp *.o $(obj) bin tst/*.asm && cd ..
 	rm -fr $(OUT)
 
 tex:
@@ -45,3 +56,49 @@ tex:
 
 wave:
 	gtkwave sim.vcd &
+
+# vpi
+IVERILOG_LIB_PATH=$(IVERILOG_LIB_PATH_)
+IVERILOG_INCLUDE_PATH=$(IVERILOG_INCLUDE_PATH_)
+
+obj=obj
+COPTS=-g -Wall -I$(IVERILOG_INCLUDE_PATH) -L$(IVERILOG_LIB_PATH)
+
+PARSEROBJS=vpi/$(obj)/testParser.o vpi/$(obj)/parser.o vpi/$(obj)/TernarySearchTrie.o vpi/$(obj)/tokenmanager.o vpi/$(obj)/codegenerator.o vpi/$(obj)/memlist.o
+
+mkdirs:
+	mkdir -p vpi/$(obj) vpi/bin
+
+comp-vpi: mkdirs vpi/bin/s1Assembler.vpi vpi/$(obj)/$(main).vvp
+
+runsim:
+	vvp -M. -mvpi/bin/s1Assembler vpi/$(obj)/$(main).vvp +TSTPATTERN=$(TSTPATTERN) 
+
+vpi/$(obj)/$(main).vvp: $(TEST)
+	iverilog -ffiles $(DIRS) $^ -o $@ 
+
+vpi/$(obj)/s1Assembler.o: vpi/s1Assembler.c 
+	gcc -c -fpic $^ -o $@ $(COPTS)
+
+vpi/bin/s1Assembler.vpi: $(PARSEROBJS) vpi/$(obj)/s1Assembler.o 
+	gcc -shared -o $@ $^ $(COPTS)
+
+vpi/$(obj)/testParser.o: vpi/testParser.c
+	gcc -c -fpic $< -o $@ $(COPTS)
+
+vpi/$(obj)/codegenerator.o: vpi/codegenerator.c vpi/codegenerator.h
+	gcc -c -fpic $< -o $@ $(COPTS)
+
+vpi/$(obj)/memlist.o: vpi/memlist.c vpi/memlist.h
+	gcc -c -fpic $< -o $@ $(COPTS)
+
+vpi/$(obj)/parser.o: vpi/parser.c vpi/parser.h
+	gcc -c -fpic $< -o $@ $(COPTS)
+
+vpi/$(obj)/TernarySearchTrie.o: vpi/TernarySearchTrie.c vpi/TernarySearchTrie.h
+	gcc -c -fpic $< -o $@ $(COPTS)
+
+vpi/$(obj)/tokenmanager.o: vpi/tokenmanager.c vpi/tokenmanager.h
+	gcc -c -fpic $< -o $@ $(COPTS)
+
+

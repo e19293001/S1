@@ -24,8 +24,10 @@ static int s1AssemblerCompiletf(char*user_data)
   arg_handle = vpi_scan(arg_itr);
   tfarg_type = vpi_get(vpiType, arg_handle);
   if (tfarg_type != vpiConstant &&
-      tfarg_type != vpiStringVal) {
+      tfarg_type != vpiStringVal &&
+      tfarg_type != vpiReg) {
     vpi_printf("$s1Assember argument must be a string.\n");
+    vpi_printf("            tfarg_type is %0d\n", tfarg_type);
     err_flag = 1;
   }
   if (vpi_scan(arg_itr) != NULL) {
@@ -57,17 +59,17 @@ static int s1AssemblerCalltf(char*user_data)
   value_s.format = vpiStringVal;
   vpi_get_value(arg_handle, &value_s);
   
-  vpi_printf("hello string size: %0d\n", (int)strlen(value_s.value.str));
+  //vpi_printf("hello string size: %0d\n", (int)strlen(value_s.value.str));
   s = calloc(strlen(value_s.value.str), sizeof(char));
   memset(s, '\0',strlen(value_s.value.str));
   strncpy(s,value_s.value.str, strlen(value_s.value.str));
-  vpi_printf("argument: %s\n", s);
+  vpi_printf("[ s1Assembler ] argument: %s\n", s);
 
   {
     parserData *parser;
     parser = ParserNew(s);
     ParserStart(parser);
-    ParserDelete(parser);
+    ParserDelete(&parser);
   }
 
   free(s);  
