@@ -1,0 +1,10 @@
+; test
+p x
+p y
+add
+pwc w
+halt
+x: dw 3
+y: dw 10
+w: dw 65535
+

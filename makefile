@@ -20,13 +20,15 @@ TSTDIR=tst
 #TEST=$(TSTDIR)/TestS1stva.v
 #TEST=$(TSTDIR)/TestS1sub.v
 
-main=TestValuePlusArgs
-TEST=$(TSTDIR)/$(main).v
+#main=TestValuePlusArgs
+main=TestAout
 
 #TSTPATTERN='vpi/tst/test_parser_pattern0000.txt'
 #TSTPATTERN='vpi/tst/test_parser_pattern0001.txt'
 #TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
-TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
+#TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
+#TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
+TSTPATTERN='stm/ptn0000.txt'
 
 
 #TEST=$(TSTDIR)/TestS1pc.v
@@ -35,6 +37,7 @@ TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
 OUT=S1
 
 DIRS=-I./ -I$(TSTDIR)/
+TEST=$(TSTDIR)/$(main).v
 
 #all: comp run
 all: comp-vpi runsim
@@ -69,13 +72,13 @@ PARSEROBJS=vpi/$(obj)/testParser.o vpi/$(obj)/parser.o vpi/$(obj)/TernarySearchT
 mkdirs:
 	mkdir -p vpi/$(obj) vpi/bin
 
-comp-vpi: mkdirs vpi/bin/s1Assembler.vpi vpi/$(obj)/$(main).vvp
+comp-vpi: mkdirs vpi/$(obj)/$(main).vvp vpi/bin/s1Assembler.vpi 
 
 runsim:
 	vvp -M. -mvpi/bin/s1Assembler vpi/$(obj)/$(main).vvp +TSTPATTERN=$(TSTPATTERN) 
 
-vpi/$(obj)/$(main).vvp: $(TEST)
-	iverilog -ffiles $(DIRS) $^ -o $@ 
+vpi/$(obj)/$(main).vvp: $(TEST) rtl/S1.v
+	iverilog -ffiles $(DIRS) $(TEST) -o $@ 
 
 vpi/$(obj)/s1Assembler.o: vpi/s1Assembler.c 
 	gcc -c -fpic $^ -o $@ $(COPTS)

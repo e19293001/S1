@@ -228,6 +228,9 @@ module S1(
             enValueA = 1;
          end
       end
+      else if (w_push && eoDecode) begin
+         enValueA = 1;
+      end
    end
 
    always @* begin
@@ -448,6 +451,14 @@ module S1(
          end
          else if (w_decode) begin
             if (w_push) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            if (w_pwc) begin
                if (w_decodeStart) begin
                   outputSelect <= 1;
                end
@@ -948,8 +959,15 @@ module S1(
 
    always @* begin
       combOutputAddressEn = 0;
-      if (w_push && w_executeStart) begin
-         combOutputAddressEn = 1;
+      if (w_push) begin
+         if (w_executeStart | w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      if (w_pwc) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
       end
       else if (w_fetchEn) begin
          combOutputAddressEn = 1;
