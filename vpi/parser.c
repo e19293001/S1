@@ -1950,6 +1950,12 @@ int expression(parserData *lparser) {
     sprintf(lparser->cg->symD->name, "%03x", atoi(tkn.image));
     lparser->cg->symD->addressInt = atoi(tkn.image);
   }
+  else if (lparser->currentToken.kind == CHAR) {
+    Token tkn = lparser->currentToken;
+    assert(consume(lparser, CHAR) == 0);
+    sprintf(lparser->cg->symD->address, "%03x", tkn.image[0]);
+    lparser->cg->symD->addressInt = (int)tkn.image[0];
+  }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
     tstrie *ltstrie;

@@ -69,6 +69,7 @@ const char *tokenImage[] = {
   "DIN",
   "DOUT",
   "NOOP",
+  "CHAR",
   "ERROR"
 };
 
@@ -372,6 +373,22 @@ Token TokenManagerGetNextToken(TokenManager **t) {
       ret.kind = ID;
     }
   }
+  else if ((*t)->currentChar == '\'') {
+    getNextChar(t);
+    memset(ret.image, '\0', 512);
+    ret.image[0] = (*t)->currentChar;
+    ret.endLine = (*t)->currentLineNumber;
+    ret.endColumn = (*t)->currentColumnNumber;
+    ret.kind = CHAR;
+    getNextChar(t);
+    if ((*t)->currentChar != '\'' && (*t)->printEnable != -1) {
+      printf("error: character does not end with \'\n");
+      printf("       unexpected token: %c\n", (*t)->currentChar);
+      ret.kind = ERROR;
+    }
+    getNextChar(t);
+//    printf("(*t)->currentChar: [%c]\n", (*t)->currentChar);
+  }
   else {
     switch((*t)->currentChar) {
     case '+': {
@@ -417,7 +434,7 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
   }
 //  TokenDump("[ TokenManagerGetNextToken ]", ret);
-//  printf("line: %0d kind: %0d image: %s type: %s\n", ret.beginLine, ret.kind, ret.image, tokenImage[ret.kind]);
+  printf("line: %0d kind: %0d image: %s type: %s\n", ret.beginLine, ret.kind, ret.image, tokenImage[ret.kind]);
   return ret;
 }
 

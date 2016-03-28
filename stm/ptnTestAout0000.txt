@@ -1,0 +1,8 @@
+p 'A'
+aout
+p x
+p xx
+aout
+halt
+x: dw 'X'
+xx: dw 'Y'

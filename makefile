@@ -28,7 +28,9 @@ main=TestAout
 #TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
 #TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
 #TSTPATTERN='vpi/tst/test_parser_pattern0003.txt'
-TSTPATTERN='stm/ptn0000.txt'
+
+#TSTPATTERN='stm/ptn0000.txt'
+TSTPATTERN=stm/ptnTestAout0000.txt
 
 
 #TEST=$(TSTDIR)/TestS1pc.v
