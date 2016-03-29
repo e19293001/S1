@@ -7,7 +7,9 @@ module S1(
    outputSelect,
    outputHalt,
    inputRdata,
-   inputValid
+   inputValid,
+   outCharData,
+   outCharEn
 );
    parameter P_IDLE = 0;
    parameter P_FETCH = 1;
@@ -396,7 +398,7 @@ module S1(
    assign w_stav = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF3)) ? 1 : 0;
    assign w_stva = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF4)) ? 1 : 0;
    assign w_load = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF5)) ? 1 : 0;
-   assign w_aout = (w_decode || w_execute) && (regInstruction[15:12] == 'hFFFB) ? 1 : 0;
+   assign w_aout = (w_decode || w_execute) && (regInstruction == 'hFFFB) ? 1 : 0;
 
    // states
    assign w_idle = (regState == P_IDLE) ? 1 : 0;

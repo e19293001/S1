@@ -1,4 +1,4 @@
-p 'A'
+pc 'A'
 aout
 p x
 p xx

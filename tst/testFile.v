@@ -231,7 +231,7 @@ end
    task file2mem(input [8*128:1] str);
       integer fp;
       integer code;
-      integer indx;
+      reg [9:0] indx; // should be an integer. but iverilog won't display %04x properly
       integer data;
       //reg [8*128:1] data;
       reg [8*128:1] datastr;
@@ -264,7 +264,7 @@ end
          $fclose(fp);
          code = indx - 1;
          for (indx = 0; indx < code; indx = indx + 1) begin
-            $display("mem[%02x]: %04x", indx, mem.mem[indx]);
+            $display("mem[%04x]: %04x", indx, mem.mem[indx]);
          end
       end
    endtask

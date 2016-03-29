@@ -79,7 +79,7 @@ comp-vpi: mkdirs vpi/$(obj)/$(main).vvp vpi/bin/s1Assembler.vpi
 runsim:
 	vvp -M. -mvpi/bin/s1Assembler vpi/$(obj)/$(main).vvp +TSTPATTERN=$(TSTPATTERN) 
 
-vpi/$(obj)/$(main).vvp: $(TEST) rtl/S1.v
+vpi/$(obj)/$(main).vvp: $(TEST) rtl/S1.v tst/testFile.v
 	iverilog -ffiles $(DIRS) $(TEST) -o $@ 
 
 vpi/$(obj)/s1Assembler.o: vpi/s1Assembler.c 
