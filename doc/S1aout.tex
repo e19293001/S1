@@ -19,29 +19,30 @@
     xscale=2.05,yscale=1.1,
     semithick
 ]
-  \scriptsize clk & 25{C} \\ 
-  outputAddress & 5U 4D{0x000} 2U 4D{0x002} 2U 4D{0xFFE} 2U 2D{} \\
-  outputWdata & 17U 4D{0xAAAA} 4U\\
-  outputWnR & LLLLLLLLLLLLLLLLLHHHHLL LL \\
-  outputSelect & LLLLLHH N(A) HHLL HHHH LL HHHH 2L HH \\
-  inputRdata & 7U 2D{0x0002} N(C) 4U 2D{0xAAAA} 10U \\
-  inputValid & LLLLLLLHH N(B) LLLL HH LLLL HH 4L \\
-  outCharData & 25D{0x00000} \\
-  outCharEn & LLLLLLLLLLLLLLLLLLLLLLLLL \\
+  \scriptsize clk & 23{C} \\ 
+  outputAddress & 5U 4D{0x0000} 2U 4D{0xFFFE} 4U 4D{} \\
+  outputWdata & 23U \\
+  outputWnR & 23L \\
+  outputSelect & LLLLLHH N(A) HHLL HHHH LL LLLLLL \\
+  inputRdata & 7U 2D{0xFFFB} N(C) 4U 2D{0x0041} 8U \\
+  inputValid & LLLLLLLHH N(B) LLLL HH LLLL LL LL\\
+  outputCharData & 15D{0x00000} 2D{0x0041} 6D{0x0000} \\
+  outputCharValid & LLLLLLLLLLLLLLLHHLLLLLL \\
+  inputCharAck & LLLLLLLLLLLLLLLHHLLLLLL \\
   \\
-  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 6D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
-  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 6D{$PUSH$} 4D{$PC$} \\ 
-  combOutputAddressEn & LLLHHLLLLHHLLLLHHLLLLHHLL \\
-  enInstruction & LLLLLLLHHLLLLL 11L \\
-  regInstruction & 9U 12D{0x0002} 4U \\
-  w\_aout & LLLLLLLLLHHHHHHHHHHHHLLLL \\
-  enValueA & LLLLLLLLLLLLLHHLLLL 6L \\
-  regValueA & 15U 10D{0xAAAA} \\
+  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 4D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 4D{$NONE$} 4D{$PC$} \\
+  combOutputAddressEn & LLLHHLLLLHHLLLLLLLLHHLL \\
+  enInstruction & LLLLLLLHHLLLLL 9L \\
+  regInstruction & 9U 10D{0xFFFB} 4U \\
+  w\_aout & LLLLLLLLLHHHHHHHHHHLLLL \\
+  enValueA & LLLLLLLLLLLLLHHLLLL 4L \\
+  regValueA & 15U 8D{0x0041} \\
   \\
-  enStackPtr & 15L HH 8L \\
-  regStackPtr & 17D{0xFFF} 8D{0xFFE} \\
-  enPrgCntr & 19L HH 4L \\
-  regPrgCntr & 21D{0x0000} 4D{0x0001} \\
+  enStackPtr & 13L HH 8L \\
+  regStackPtr & 15D{0xFFFE} 8D{0xFFFF} \\
+  enPrgCntr & 17L HH 4L \\
+  regPrgCntr & 19D{0x0000} 4D{0x0001} \\
   \extracode
 %  \draw [orange,semithick]
 %  (A.mid) ellipse (.1 and .2)
