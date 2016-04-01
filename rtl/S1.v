@@ -9,7 +9,8 @@ module S1(
    inputRdata,
    inputValid,
    outCharData,
-   outCharEn
+   outCharEn // should rename to outCharValid
+   // should add outCharAck
 );
    parameter P_IDLE = 0;
    parameter P_FETCH = 1;
@@ -21,13 +22,12 @@ module S1(
    parameter P_ADDRSEL_NONE = 0;
    parameter P_ADDRSEL_PC = 1;
    parameter P_ADDRSEL_PUSH = 2;
-   parameter P_ADDRSEL_STACK = 3;
-   parameter P_ADDRSEL_VALUEB = 4;
-   parameter P_ADDRSEL_READ = 5;
-   parameter P_ADDRSEL_POP = 6;
-   parameter P_ADDRSEL_VALUEA = 7;
-//   parameter P_ADDRSEL_NONE = 4;
-//   parameter P_ADDRSEL_NONE = 5;
+   parameter P_ADDRSEL_PEAK = 3;
+   parameter P_ADDRSEL_STACK = 4;
+   parameter P_ADDRSEL_VALUEB = 5;
+   parameter P_ADDRSEL_READ = 6;
+   parameter P_ADDRSEL_POP = 7;
+   parameter P_ADDRSEL_VALUEA = 8;
    
    input        clk;
    input        rstn;
@@ -45,7 +45,8 @@ module S1(
    wire              PrgCntrInD;
    reg	            enJmp;
 
-   wire [11:0] 		nextStackPtr;
+//   wire [11:0] 		nextStackPtr;
+   reg [11:0]	 		nextStackPtr;
    reg [11:0]        regStackPtr;
    reg               enStackPtr;
    reg               StackPtrDnI;
@@ -53,7 +54,13 @@ module S1(
    reg [2:0]         combAddressSelect;
 //   reg [15:0] 			combOutputWData;
 
-   
+   reg [11:0]        regBasePtr;
+   reg					enBasePtr;
+//   wire [11:0]       nextBasePtr;
+   reg [11:0]       nextBasePtr;
+   output reg [7:0]         outCharData;
+   output reg               outCharEn;
+
    reg [3:0]         regState;
    reg [3:0]         nextState;
 
@@ -77,10 +84,15 @@ module S1(
    reg					prevRegValueSelect;
    wire 					w_1stDecode;
    wire 					w_2ndDecode;
-   
-   reg              regValueSelect;
-   reg              enValueA;
-   reg              enValueB;
+
+   wire 					w_1stExecute;
+   wire 					w_2ndExecute;
+
+   reg					reg_awcSel;
+   reg              	regValueSelect;
+   reg              	enValueA;
+   reg              	enValueB;
+
    reg [15:0]        regValueA;
    reg [15:0]        regValueB;
 
@@ -90,7 +102,7 @@ module S1(
    wire               enInstruction;
 
    wire               w_pop;
-   wire               w_pwc;
+
    wire					 w_asp;
    wire					 w_call;
    wire					 w_ja;
@@ -106,6 +118,16 @@ module S1(
    wire					 w_stav;
    wire					 w_stva;
    wire					 w_load;
+   wire					 w_awc;
+   wire					 w_pwc;
+   wire					 w_dupe;
+   wire					 w_esba;
+   wire					 w_reba;
+   wire					 w_zsp;
+   wire					 w_rev;
+   wire					 w_shll;
+   wire					 w_shrl;
+   wire					 w_shra;
 
    reg eoFetch;
    reg eoDecode;
@@ -118,6 +140,42 @@ module S1(
    reg        alu_flag_odd;
    reg        carry;
 
+   // instructions
+   assign w_push = ((w_decode || w_execute) && (regInstruction[15:12] == 'h00)) ? 1 : 0;
+   assign w_pc = ((w_decode || w_execute) && (regInstruction[15:12] == 'h01)) ? 1 :0;
+   assign w_halt = ((w_decode) && (regInstruction == 'hFFFF)) ? 1 : 0;
+   assign w_asp = ((w_decode || w_execute) && (regInstruction[15:12] == 'h4)) ? 1 : 0;
+   assign w_call = ((w_decode || w_execute) && (regInstruction[15:12] == 'h5)) ? 1 : 0;
+   assign w_ja = ((w_decode || w_execute) && (regInstruction[15:12] == 'h6)) ? 1 : 0;
+   assign w_jp = ((w_decode || w_execute) && (regInstruction[15:12] == 'h8)) ? 1 : 0;
+   assign w_jn = ((w_decode || w_execute) && (regInstruction[15:12] == 'h9)) ? 1 : 0;
+   assign w_jz = ((w_decode || w_execute) && (regInstruction[15:12] == 'hA)) ? 1 : 0;
+   assign w_jnz = ((w_decode || w_execute) && (regInstruction[15:12] == 'hB)) ? 1 : 0;
+   assign w_jodd = ((w_decode || w_execute) && (regInstruction[15:12] == 'hC)) ? 1 : 0;
+   assign w_jzon = ((w_decode || w_execute) && (regInstruction[15:12] == 'hD)) ? 1 : 0;
+   assign w_jzop = ((w_decode || w_execute) && (regInstruction[15:12] == 'hE)) ? 1 : 0;
+   assign w_ret = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF0)) ? 1 : 0;
+   assign w_add = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF1)) ? 1 : 0;
+   assign w_sub = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF2)) ? 1 : 0;
+   assign w_stav = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF3)) ? 1 : 0;
+   assign w_stva = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF4)) ? 1 : 0;
+   assign w_load = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF5)) ? 1 : 0;
+   assign w_awc = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF6)) ? 1 : 0;
+   assign w_pwc = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF7)) ? 1 : 0;
+   assign w_dupe = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF8)) ? 1 : 0;
+   assign w_esba = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF9)) ? 1 : 0;
+   assign w_reba = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFA)) ? 1 : 0;
+   assign w_zsp = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFB)) ? 1 : 0;
+   assign w_rev = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFE)) ? 1 : 0;
+   assign w_shll = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFF0)) ? 1 : 0;
+   assign w_shrl = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFF1)) ? 1 : 0;
+   assign w_shra = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFF2)) ? 1 : 0;
+   assign w_aout = (w_decode || w_execute) && (regInstruction == 'hFFFB) ? 1 : 0;
+
+// 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+// [         ][          ][          ]
+
+   
 // beginning of alu block    
    always @* begin
       alu_flag_positive = 0;
@@ -143,11 +201,20 @@ module S1(
    always @(*) begin
       alu = 0;
       carry = 0;
-      if (w_add) begin
+      if (w_add | w_awc) begin
          {carry,alu} = regValueA + regValueB;
       end
       else if (w_sub) begin
          {carry,alu} = regValueA - regValueB;
+      end
+      else if (w_shll) begin
+         {carry,alu} = regValueA << regInstruction[3:0];
+      end
+      else if (w_shrl) begin
+         {carry,alu} = regValueA >> regInstruction[3:0];
+      end
+      else if (w_shra) begin
+         {carry,alu} = regValueA >> regInstruction[3:0];
       end
    end
 // end of alu block    
@@ -158,16 +225,43 @@ module S1(
    assign w_1stDecode = (regValueSelect == 0 && w_decode && inputValid) ? 1 : 0;
    assign w_2ndDecode = (regValueSelect == 1 && w_decode && inputValid) ? 1 : 0;
 
+   assign w_1stExecute = (regValueSelect == 0 && w_execute && inputValid) ? 1 : 0;
+   assign w_2ndExecute = (regValueSelect == 1 && w_execute && inputValid) ? 1 : 0;
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         reg_awcSel <= 0;
+      end
+      else begin
+         if (w_1stDecode) begin
+            reg_awcSel <= 1;
+         end
+         else if (eoExecute) begin
+            reg_awcSel <= 0;
+         end
+      end
+   end
+
    always @(posedge clk) begin
       if (!rstn) begin
          regValueSelect <= 0;
       end
       else begin
-         if (w_1stDecode) begin
-            regValueSelect <= 1;
+         if (w_rev && w_execute) begin
+            if (w_1stExecute) begin
+               regValueSelect <= 1;
+            end
+            else if (eoExecute) begin
+               regValueSelect <= 0;
+            end
          end
-         else if (eoDecode) begin
-            regValueSelect <= 0;
+         else begin
+            if (w_1stDecode) begin
+               regValueSelect <= 1;
+            end
+            else if (eoDecode) begin
+               regValueSelect <= 0;
+            end
          end
       end
    end
@@ -230,7 +324,29 @@ module S1(
             enValueA = 1;
          end
       end
-      else if (w_push && eoDecode) begin
+      else if (w_awc && w_1stDecode) begin
+         if (!regValueSelect) begin
+            enValueA = 1;
+         end
+      end
+      else if (w_pwc && eoDecode) begin
+         enValueA = 1;
+      end
+      else if (w_dupe && eoDecode) begin
+         enValueA = 1;
+      end
+      else if (w_rev && w_1stDecode) begin
+         if (!regValueSelect) begin
+            enValueA = 1;
+         end
+      end
+      else if (w_shll && eoDecode) begin
+         enValueA = 1;
+      end
+      else if (w_shrl && eoDecode) begin
+         enValueA = 1;
+      end
+      else if (w_shra && eoDecode) begin
          enValueA = 1;
       end
    end
@@ -250,6 +366,12 @@ module S1(
             enValueB = 1;
       end
       else if (w_load && w_2ndDecode) begin
+            enValueB = 1;
+      end
+      else if (w_awc && w_2ndDecode) begin
+            enValueB = 1;
+      end
+      else if (w_rev && w_2ndDecode) begin
             enValueB = 1;
       end
    end
@@ -312,6 +434,14 @@ module S1(
                   outputWnR <= 0;
                end
             end
+            else if (w_esba) begin
+               if (w_decodeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (w_decode && inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -370,35 +500,68 @@ module S1(
                   outputWnR <= 0;
                end
             end
+            else if (w_awc) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_pwc) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_dupe) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_rev) begin
+               if (w_executeStart | w_regValueSelectStart1) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_shll) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_shrl) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_shra) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
          end
          else begin
             outputWnR <= 0;
          end
       end
    end
-
-   // instructions
-   assign w_push = ((w_decode || w_execute) && (regInstruction[15:12] == 'h00)) ? 1 : 0;
-   assign w_pc = ((w_decode || w_execute) && (regInstruction[15:12] == 'h01)) ? 1 :0;
-   assign w_halt = ((w_decode) && (regInstruction == 'hFFFF)) ? 1 : 0;
-   assign w_pwc = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF7)) ? 1 : 0;
-   assign w_asp = ((w_decode || w_execute) && (regInstruction[15:12] == 'h4)) ? 1 : 0;
-   assign w_call = ((w_decode || w_execute) && (regInstruction[15:12] == 'h5)) ? 1 : 0;
-   assign w_ja = ((w_decode || w_execute) && (regInstruction[15:12] == 'h6)) ? 1 : 0;
-   assign w_jp = ((w_decode || w_execute) && (regInstruction[15:12] == 'h8)) ? 1 : 0;
-   assign w_jn = ((w_decode || w_execute) && (regInstruction[15:12] == 'h9)) ? 1 : 0;
-   assign w_jz = ((w_decode || w_execute) && (regInstruction[15:12] == 'hA)) ? 1 : 0;
-   assign w_jnz = ((w_decode || w_execute) && (regInstruction[15:12] == 'hB)) ? 1 : 0;
-   assign w_jodd = ((w_decode || w_execute) && (regInstruction[15:12] == 'hC)) ? 1 : 0;
-   assign w_jzon = ((w_decode || w_execute) && (regInstruction[15:12] == 'hD)) ? 1 : 0;
-   assign w_jzop = ((w_decode || w_execute) && (regInstruction[15:12] == 'hE)) ? 1 : 0;
-   assign w_ret = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF0)) ? 1 : 0;
-   assign w_add = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF1)) ? 1 : 0;
-   assign w_sub = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF2)) ? 1 : 0;
-   assign w_stav = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF3)) ? 1 : 0;
-   assign w_stva = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF4)) ? 1 : 0;
-   assign w_load = ((w_decode || w_execute) && (regInstruction[15:8] == 'hF5)) ? 1 : 0;
-   assign w_aout = (w_decode || w_execute) && (regInstruction == 'hFFFB) ? 1 : 0;
 
    // states
    assign w_idle = (regState == P_IDLE) ? 1 : 0;
@@ -454,14 +617,6 @@ module S1(
          end
          else if (w_decode) begin
             if (w_push) begin
-               if (w_decodeStart) begin
-                  outputSelect <= 1;
-               end
-               else if (inputValid) begin
-                  outputSelect <= 0;
-               end
-            end
-            if (w_pwc) begin
                if (w_decodeStart) begin
                   outputSelect <= 1;
                end
@@ -573,6 +728,70 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_awc) begin
+               if (w_decodeStart | w_regValueSelectStart1) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_pwc) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_dupe) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_esba) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_rev) begin
+               if (w_decodeStart | w_regValueSelectStart1) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_shll) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_shrl) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_shra) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -631,6 +850,70 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_awc) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_pwc) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_dupe) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_reba) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_rev) begin
+               if (w_executeStart | w_regValueSelectStart1) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_shll) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_shrl) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_shra) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
       end
    end
@@ -652,11 +935,6 @@ module S1(
       end
       else if (w_pc) begin
          if (w_decode) begin
-            eoDecode = 1;
-         end
-      end
-      else if (w_pwc) begin
-         if (inputValid && w_decode) begin
             eoDecode = 1;
          end
       end
@@ -746,15 +1024,66 @@ module S1(
             end
          end
       end
+      else if (w_awc) begin
+         if (inputValid && w_decode) begin
+            if (reg_awcSel == 1) begin
+               eoDecode = 1;
+            end
+         end
+      end
+      else if (w_pwc) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_dupe) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_esba) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_reba) begin
+         if (w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_zsp) begin
+         if (w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_rev) begin
+         if (inputValid && w_decode) begin
+            if (regValueSelect == 1) begin
+               eoDecode = 1;
+            end
+         end
+      end
+      else if (w_shll) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_shrl) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_shra) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
    end
 
    always @* begin
       eoExecute = 0;
       // most of the instructions ends at the execution state when inputValid is asserted
-      if (inputValid && w_execute) begin 
-         eoExecute = 1;
-      end
-      else if (w_asp && w_execute) begin
+      if (w_asp && w_execute) begin
          eoExecute = 1;
       end
       else if (w_call && w_execute) begin
@@ -785,6 +1114,22 @@ module S1(
          eoExecute = 1;
       end
       else if (w_ret && w_execute) begin
+         eoExecute = 1;
+      end
+      else if (w_esba && w_execute) begin
+         eoExecute = 1;
+      end
+      else if (w_zsp && w_execute) begin
+         eoExecute = 1;
+      end
+      else if (w_rev) begin
+         if (inputValid && w_execute) begin
+            if (regValueSelect == 1) begin
+               eoExecute = 1;
+            end
+         end
+      end
+      else if (inputValid && w_execute) begin 
          eoExecute = 1;
       end
    end
@@ -889,6 +1234,46 @@ module S1(
       else if (w_load && w_executeStart) begin
          enPrgCntr = 1;
       end
+      else if (w_awc) begin
+         if (w_executeStart) begin
+            enPrgCntr = 1;
+         end
+         else if (w_decodeStart) begin
+            enPrgCntr = 1;
+         end
+      end
+      else if (w_pwc) begin
+         if (w_executeStart) begin
+            enPrgCntr = 1;
+         end
+         else if (w_decodeStart) begin
+            enPrgCntr = 1;
+         end
+      end
+      else if (w_dupe && w_executeStart) begin
+         enPrgCntr = 1;
+      end
+      else if (w_esba && w_executeStart) begin
+         enPrgCntr = 1;
+      end
+      else if (w_reba && w_executeEnd) begin
+         enPrgCntr = 1;
+      end
+      else if (w_zsp && w_execute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_rev && w_executeEnd) begin
+         enPrgCntr = 1;
+      end
+      else if (w_shll && w_executeEnd) begin
+         enPrgCntr = 1;
+      end
+      else if (w_shrl && w_executeEnd) begin
+         enPrgCntr = 1;
+      end
+      else if (w_shra && w_executeEnd) begin
+         enPrgCntr = 1;
+      end
    end 
 
    always @* begin
@@ -952,9 +1337,9 @@ module S1(
                regPrgCntr <= inputRdata;
             end
             else begin
-               if (PrgCntrInD) begin
+//               if (PrgCntrInD) begin
                   regPrgCntr <= regPrgCntr + 1;
-               end
+//               end
             end
          end
       end
@@ -962,15 +1347,8 @@ module S1(
 
    always @* begin
       combOutputAddressEn = 0;
-      if (w_push) begin
-         if (w_executeStart | w_decodeStart) begin
-            combOutputAddressEn = 1;
-         end
-      end
-      if (w_pwc) begin
-         if (w_decodeStart) begin
-            combOutputAddressEn = 1;
-         end
+      if (w_push && w_executeStart) begin
+         combOutputAddressEn = 1;
       end
       else if (w_fetchEn) begin
          combOutputAddressEn = 1;
@@ -1056,6 +1434,78 @@ module S1(
          else if (w_executeStart) begin
             combOutputAddressEn = 1;
          end
+      end 
+      else if (w_awc) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_regValueSelectStart1) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_pwc) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_dupe) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_esba) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_reba) begin
+         if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_rev) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_regValueSelectStart1) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_shll) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_shrl) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_shra) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
       end
    end
 
@@ -1067,7 +1517,10 @@ module S1(
          if (combOutputAddressEn) begin
             case (combAddressSelect)
               P_ADDRSEL_PC: begin
-                 if (w_pwc) begin
+//                 if (w_pwc) begin
+//                    outputAddress <= regPrgCntr + 1;
+//                 end
+                 if (w_awc | w_pwc) begin
                     outputAddress <= regPrgCntr + 1;
                  end
                  else begin
@@ -1081,10 +1534,16 @@ module S1(
                  outputAddress <= nextStackPtr;
               end
               P_ADDRSEL_POP: begin
-                    outputAddress <= regStackPtr;
+                 outputAddress <= regStackPtr;
+              end
+              P_ADDRSEL_PEAK: begin
+                 outputAddress <= regStackPtr;
               end
               P_ADDRSEL_VALUEA: begin
                  if (w_stav) begin
+                    outputAddress <= regValueA;
+                 end
+                 else if (w_dupe) begin
                     outputAddress <= regValueA;
                  end
                  else if (w_load) begin
@@ -1128,9 +1587,6 @@ module S1(
          end
          else if (w_pc) begin
             combAddressSelect = P_ADDRSEL_NONE;
-         end
-         else if (w_pwc) begin
-            combAddressSelect = P_ADDRSEL_PC;
          end
          else if (w_call) begin
             combAddressSelect = P_ADDRSEL_PUSH;
@@ -1179,6 +1635,35 @@ module S1(
                combAddressSelect = P_ADDRSEL_VALUEA;
             end
          end
+         else if (w_awc) begin
+            if (reg_awcSel == 0) begin 
+               combAddressSelect = P_ADDRSEL_PC;
+            end
+            else if (reg_awcSel == 1) begin
+               combAddressSelect = P_ADDRSEL_POP;
+            end
+         end
+         else if (w_pwc) begin
+            combAddressSelect = P_ADDRSEL_PC;
+         end
+         else if (w_dupe) begin
+            combAddressSelect = P_ADDRSEL_PEAK;
+         end
+         else if (w_esba) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_rev) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_shll) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_shrl) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_shra) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
       end
       else if (w_execute) begin
          if (w_push) begin
@@ -1190,7 +1675,7 @@ module S1(
          else if (w_sub) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
-         else if (w_pc || w_pwc) begin
+         else if (w_pc) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
          else if (w_stav) begin
@@ -1200,6 +1685,30 @@ module S1(
             combAddressSelect = P_ADDRSEL_VALUEB;
          end
          else if (w_load) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_awc) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_pwc) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_dupe) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_reba) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_rev) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_shll) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_shrl) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_shra) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
       end
@@ -1220,11 +1729,6 @@ module S1(
    always @* begin
       enStackPtr = 0;
       if (w_push) begin
-         if (w_executeStart) begin
-            enStackPtr = 1;
-         end
-      end
-      else if (w_pwc) begin
          if (w_executeStart) begin
             enStackPtr = 1;
          end
@@ -1330,16 +1834,84 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_awc) begin
+         if (eoDecode) begin
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_pwc) begin
+         if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_dupe) begin
+         if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_esba) begin
+         if (w_decodeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_reba) begin
+         if (w_executeEnd) begin
+            enStackPtr = 1;
+         end
+         else if (w_decodeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_zsp) begin
+         enStackPtr = 1;
+      end
+      else if (w_rev) begin
+         if (w_decode) begin
+            if (w_1stDecode) begin
+               enStackPtr = 1;
+            end
+            else if (eoDecode) begin
+               enStackPtr = 1;
+            end
+         end
+         else if (w_execute) begin
+            if (w_executeStart | w_regValueSelectStart1) begin
+               enStackPtr = 1;
+            end
+         end
+      end
+      else if (w_shll) begin
+         if (eoDecode) begin
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_shrl) begin
+         if (eoDecode) begin
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_shra) begin
+         if (eoDecode) begin
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
       StackPtrDnI = 0;
       if (w_push) begin
-         if (w_executeStart) begin
-            StackPtrDnI = 1;
-         end
-      end
-      else if (w_pwc) begin
          if (w_executeStart) begin
             StackPtrDnI = 1;
          end
@@ -1369,6 +1941,48 @@ module S1(
             StackPtrDnI = 1;
          end
       end
+      else if (w_awc) begin
+         if (eoDecode) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_pwc) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_dupe) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_reba) begin
+         if (w_executeEnd) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_rev) begin
+         if (w_execute) begin
+            if (w_executeStart | w_regValueSelectStart1) begin
+               StackPtrDnI = 1;
+            end
+         end
+      end
+      else if (w_shll) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_shrl) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_shra) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
    end
 
    always @* begin
@@ -1378,7 +1992,26 @@ module S1(
       end
    end
 
-   assign nextStackPtr = enAddAStackPtr ? regInstruction[11:0] : StackPtrDnI ? regStackPtr - 1 : regStackPtr + 1;
+   //assign nextStackPtr = enAddAStackPtr ? regInstruction[11:0] : StackPtrDnI ? regStackPtr - 1 : regStackPtr + 1;
+   always @* begin
+      nextStackPtr = 0;
+      if (enAddAStackPtr) begin
+         nextStackPtr = regStackPtr + regInstruction[11:0];
+      end
+      else if (StackPtrDnI) begin
+         nextStackPtr = regStackPtr - 1;
+      end
+      else if (w_reba) begin
+         nextStackPtr = regBasePtr;
+      end
+      else if (w_zsp) begin
+         nextStackPtr = 0;
+      end
+      else begin
+         nextStackPtr = regStackPtr + 1;
+      end
+
+   end
 
    always @(posedge clk) begin
       if (!rstn) begin
@@ -1402,6 +2035,14 @@ module S1(
                   outputWdata <= regPrgCntr+1;
                end
                else if (inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_esba) begin
+               if (w_decodeStart) begin
+                  outputWdata <= regBasePtr;
+               end
+               else if (w_decode && inputValid) begin
                   outputWdata <= 0;
                end
             end
@@ -1463,6 +2104,104 @@ module S1(
                   outputWdata <= 0;
                end
             end
+            else if (w_awc) begin
+               if (w_executeStart) begin
+                  outputWdata = alu;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_pwc) begin
+               if (w_executeStart) begin
+                  outputWdata = regValueA;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_dupe) begin
+               if (w_executeStart) begin
+                  outputWdata = regValueA;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_rev) begin
+               if (w_executeStart | w_regValueSelectStart1) begin
+                  if (regValueSelect == 0) begin
+                     outputWdata <= regValueA;
+                  end
+                  else begin
+                     outputWdata <= regValueB;
+                  end
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_shll) begin
+               if (w_executeStart) begin
+                  outputWdata = alu;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_shrl) begin
+               if (w_executeStart) begin
+                  outputWdata = alu;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_shra) begin
+               if (w_executeStart) begin
+                  outputWdata = alu;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+         end
+      end
+   end
+
+   //assign nextBasePtr = regStackPtr;
+
+   always @* begin
+      nextBasePtr = 0;
+      if (w_esba) begin
+         nextBasePtr = regStackPtr;
+      end
+      else if (w_reba) begin
+         nextBasePtr = inputRdata;
+      end
+   end
+
+   always @* begin
+      enBasePtr = 0;
+      if (w_esba) begin
+         if (w_executeStart) begin
+            enBasePtr = 1;
+         end                       
+      end
+      else if (w_reba) begin
+         if (w_executeEnd) begin
+            enBasePtr = 1;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         regBasePtr <= 0;
+      end
+      else begin
+         if (enBasePtr) begin
+            regBasePtr <= nextBasePtr;
          end
       end
    end
@@ -1513,9 +2252,6 @@ module S1(
       else if (combAddressSelect == P_ADDRSEL_POP) begin
          combAddressSelectstr = "addrselpop";
       end
-      else if (combAddressSelect == P_ADDRSEL_STACK) begin
-         combAddressSelectstr = "addrselstack";
-      end
       else if (combAddressSelect == P_ADDRSEL_VALUEB) begin
          combAddressSelectstr = "addrselvalueb";
       end
@@ -1524,6 +2260,9 @@ module S1(
       end
       else if (combAddressSelect == P_ADDRSEL_VALUEA) begin
          combAddressSelectstr = "addrselvaluea";
+      end
+      else if (combAddressSelect == P_ADDRSEL_PEAK) begin
+         combAddressSelectstr = "addrselpeak";
       end
       else begin
          combAddressSelectstr = "addrselerror";
