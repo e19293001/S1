@@ -41,6 +41,20 @@ end
    wire        select;
    wire        valid;
 
+   wire [7:0] 	    	CharData;
+   wire           	CharValid;
+   wire              CharAck;
+
+   assign CharAck = CharValid ? 1 : 0;
+
+   initial begin
+      forever begin
+         if (CharAck && CharValid) begin
+            $display("%0c", CharData);
+         end
+         @(posedge clk);
+      end
+   end
    
    MemoryModel mem(
                    .clk(clk),
@@ -62,7 +76,10 @@ end
           .outputSelect(select),
           .outputHalt(halt),
           .inputRdata(rdata),
-          .inputValid(valid));
+          .inputValid(valid),
+          .outputCharData(CharData),
+          .outputCharValid(CharValid),
+          .inputCharAck(CharAck));
 
 
 //   initial begin

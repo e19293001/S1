@@ -8,9 +8,9 @@ module S1(
    outputHalt,
    inputRdata,
    inputValid,
-   outCharData,
-   outCharEn // should rename to outCharValid
-   // should add outCharAck
+   outputCharData,
+   outputCharValid,
+   inputCharAck
 );
    parameter P_IDLE = 0;
    parameter P_FETCH = 1;
@@ -58,8 +58,12 @@ module S1(
    reg					enBasePtr;
 //   wire [11:0]       nextBasePtr;
    reg [11:0]       nextBasePtr;
-   output reg [7:0]         outCharData;
-   output reg               outCharEn;
+
+   output reg [7:0]         outputCharData;
+   output reg               outputCharValid;
+   input                    inputCharAck;
+
+   reg                      enOutputCharData;
 
    reg [3:0]         regState;
    reg [3:0]         nextState;
@@ -270,9 +274,47 @@ module S1(
 
    always @(posedge clk) begin
       if (!rstn) begin
+         prevRegValueSelect <= 0;
       end
       else begin
          prevRegValueSelect <= regValueSelect;
+      end
+   end
+
+   always @* begin
+      enOutputCharData = 0;
+      if (w_decode) begin
+         if (w_aout && inputValid) begin
+            enOutputCharData = 1;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         outputCharValid <= 0;
+      end
+      else begin
+         if (enOutputCharData) begin
+            outputCharValid <= 1;
+         end
+         else if (inputCharAck) begin
+            outputCharValid <= 0;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         outputCharData <= 0;
+      end
+      else begin
+         if (enOutputCharData) begin
+            outputCharData <= inputRdata;
+         end
+         else begin
+            outputCharData <= 0;
+         end
       end
    end
    
@@ -792,6 +834,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_aout) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -1078,6 +1128,11 @@ module S1(
             eoDecode = 1;
          end
       end
+      else if (w_aout) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
    end
 
    always @* begin
@@ -1128,6 +1183,9 @@ module S1(
                eoExecute = 1;
             end
          end
+      end
+      else if (w_aout && w_execute) begin
+         eoExecute = 1;
       end
       else if (inputValid && w_execute) begin 
          eoExecute = 1;
@@ -1272,6 +1330,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_shra && w_executeEnd) begin
+         enPrgCntr = 1;
+      end
+      else if (w_aout && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -1507,6 +1568,19 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_pc) begin
+         if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_aout) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -1662,6 +1736,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_POP;
          end
          else if (w_shra) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_aout) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
       end
@@ -1907,6 +1984,11 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_aout) begin
+         if (eoDecode) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
@@ -1980,6 +2062,11 @@ module S1(
       end
       else if (w_shra) begin
          if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_aout) begin
+         if (w_decodeStart) begin
             StackPtrDnI = 1;
          end
       end

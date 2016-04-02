@@ -30,19 +30,20 @@
   outputCharValid & LLLLLLLLLLLLLLLHHLLLLLL \\
   inputCharAck & LLLLLLLLLLLLLLLHHLLLLLL \\
   \\
-  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 4D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
-  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 4D{$NONE$} 4D{$PC$} \\
-  combOutputAddressEn & LLLHHLLLLHHLLLLLLLLHHLL \\
+  outputCharDataEn & LLLLLLLLLLLLLHHLLLLLLLL \\
+  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 2D{\scriptsize $P\_EXECUTE$} 6D{$P\_FETCH$} \\
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 2D{$NONE$} 6D{$PC$} \\
+  combOutputAddressEn & LLLHHLLLLHHLLLLLLHHLLLL \\
   enInstruction & LLLLLLLHHLLLLL 9L \\
   regInstruction & 9U 10D{0xFFFB} 4U \\
   w\_aout & LLLLLLLLLHHHHHHHHHHLLLL \\
-  enValueA & LLLLLLLLLLLLLHHLLLL 4L \\
-  regValueA & 15U 8D{0x0041} \\
+  enValueA & LLLLLLLLLLLLLLLLLLL 4L \\
+  regValueA & 23U \\
   \\
   enStackPtr & 13L HH 8L \\
   regStackPtr & 15D{0xFFFE} 8D{0xFFFF} \\
-  enPrgCntr & 17L HH 4L \\
-  regPrgCntr & 19D{0x0000} 4D{0x0001} \\
+  enPrgCntr & 15L HH 6L \\
+  regPrgCntr & 17D{0x0000} 6D{0x0001} \\
   \extracode
 %  \draw [orange,semithick]
 %  (A.mid) ellipse (.1 and .2)
