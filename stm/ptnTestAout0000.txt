@@ -3,6 +3,24 @@ aout
 p x
 p xx
 aout
+aout
+pc 'A'
+pc 1
+add
+aout
+pc '\n'
+aout
+p xxx
+aout
+p xxx
+pc 1
+add
+aout
+pc '\n'
+aout
+
 halt
 x: dw 'X'
 xx: dw 'Y'
+xxx: dw 'a'
+

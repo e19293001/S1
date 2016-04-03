@@ -376,11 +376,36 @@ Token TokenManagerGetNextToken(TokenManager **t) {
   else if ((*t)->currentChar == '\'') {
     getNextChar(t);
     memset(ret.image, '\0', 512);
-    ret.image[0] = (*t)->currentChar;
-    ret.endLine = (*t)->currentLineNumber;
-    ret.endColumn = (*t)->currentColumnNumber;
-    ret.kind = CHAR;
-    getNextChar(t);
+    if ((*t)->currentChar == '\\') {
+      getNextChar(t);
+      if ((*t)->currentChar == 'n') {
+        ret.image[0] = 0x0A;
+        ret.endLine = (*t)->currentLineNumber;
+        ret.endColumn = (*t)->currentColumnNumber;
+        ret.kind = CHAR;
+        getNextChar(t);
+      }
+      else if ((*t)->currentChar == 'r') {
+        ret.image[0] = 0x0D;
+        ret.image[0] = (*t)->currentChar;
+        ret.endLine = (*t)->currentLineNumber;
+        ret.endColumn = (*t)->currentColumnNumber;
+        ret.kind = CHAR;
+        getNextChar(t);
+      }
+      else {
+        printf("error: escape sequence is not supported\n");
+        printf("       unexpected token: %c\n", (*t)->currentChar);
+        ret.kind = ERROR;
+      }
+    }
+    else {
+      ret.image[0] = (*t)->currentChar;
+      ret.endLine = (*t)->currentLineNumber;
+      ret.endColumn = (*t)->currentColumnNumber;
+      ret.kind = CHAR;
+      getNextChar(t);
+    }
     if ((*t)->currentChar != '\'' && (*t)->printEnable != -1) {
       printf("error: character does not end with \'\n");
       printf("       unexpected token: %c\n", (*t)->currentChar);

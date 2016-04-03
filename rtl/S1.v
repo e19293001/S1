@@ -391,6 +391,9 @@ module S1(
       else if (w_shra && eoDecode) begin
          enValueA = 1;
       end
+      else if (w_push && eoDecode) begin
+         enValueA = 1;
+      end
    end
 
    always @* begin
@@ -1408,7 +1411,7 @@ module S1(
 
    always @* begin
       combOutputAddressEn = 0;
-      if (w_push && w_executeStart) begin
+      if (w_push && (w_executeStart | w_decodeStart)) begin
          combOutputAddressEn = 1;
       end
       else if (w_fetchEn) begin

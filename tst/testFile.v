@@ -50,7 +50,8 @@ end
    initial begin
       forever begin
          if (CharAck && CharValid) begin
-            $display("%0c", CharData);
+            $write("%0c", CharData);
+            //$display("[%0d]", CharData);
          end
          @(posedge clk);
       end
