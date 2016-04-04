@@ -8,9 +8,10 @@ module S1(
    outputHalt,
    inputRdata,
    inputValid,
-   outputCharData,
-   outputCharValid,
-   inputCharAck
+   outputVidData,
+   outputVidValid,
+   outputVidOp,
+   inputVidAck
 );
    parameter P_IDLE = 0;
    parameter P_FETCH = 1;
@@ -59,11 +60,12 @@ module S1(
 //   wire [11:0]       nextBasePtr;
    reg [11:0]       nextBasePtr;
 
-   output reg [7:0]         outputCharData;
-   output reg               outputCharValid;
-   input                    inputCharAck;
+   output reg [15:0]         outputVidData;
+   output reg               outputVidValid;
+   output reg [3:0]         outputVidOp;
+   input                    inputVidAck;
 
-   reg                      enOutputCharData;
+   reg                      enOutputVidData;
 
    reg [3:0]         regState;
    reg [3:0]         nextState;
@@ -175,6 +177,7 @@ module S1(
    assign w_shrl = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFF1)) ? 1 : 0;
    assign w_shra = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFF2)) ? 1 : 0;
    assign w_aout = (w_decode || w_execute) && (regInstruction == 'hFFFB) ? 1 : 0;
+   assign w_dout = (w_decode || w_execute) && (regInstruction == 'hFFFD) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -282,38 +285,55 @@ module S1(
    end
 
    always @* begin
-      enOutputCharData = 0;
+      enOutputVidData = 0;
       if (w_decode) begin
          if (w_aout && inputValid) begin
-            enOutputCharData = 1;
+            enOutputVidData = 1;
+         end
+         else if (w_dout && inputValid) begin
+            enOutputVidData = 1;
          end
       end
    end
 
    always @(posedge clk) begin
       if (!rstn) begin
-         outputCharValid <= 0;
+         outputVidOp <= 0;
       end
       else begin
-         if (enOutputCharData) begin
-            outputCharValid <= 1;
-         end
-         else if (inputCharAck) begin
-            outputCharValid <= 0;
-         end
-      end
-   end
-
-   always @(posedge clk) begin
-      if (!rstn) begin
-         outputCharData <= 0;
-      end
-      else begin
-         if (enOutputCharData) begin
-            outputCharData <= inputRdata;
+         if (enOutputVidData) begin
+            outputVidOp <= regInstruction[7:0];
          end
          else begin
-            outputCharData <= 0;
+            outputVidOp <= 0;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         outputVidValid <= 0;
+      end
+      else begin
+         if (enOutputVidData) begin
+            outputVidValid <= 1;
+         end
+         else if (inputVidAck) begin
+            outputVidValid <= 0;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         outputVidData <= 0;
+      end
+      else begin
+         if (enOutputVidData) begin
+            outputVidData <= inputRdata;
+         end
+         else begin
+            outputVidData <= 0;
          end
       end
    end
@@ -845,6 +865,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_dout) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -1136,6 +1164,11 @@ module S1(
             eoDecode = 1;
          end
       end
+      else if (w_dout) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
    end
 
    always @* begin
@@ -1188,6 +1221,9 @@ module S1(
          end
       end
       else if (w_aout && w_execute) begin
+         eoExecute = 1;
+      end
+      else if (w_dout && w_execute) begin
          eoExecute = 1;
       end
       else if (inputValid && w_execute) begin 
@@ -1336,6 +1372,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_aout && eoExecute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_dout && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -1584,6 +1623,14 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_dout) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -1742,6 +1789,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_POP;
          end
          else if (w_aout) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_dout) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
       end
@@ -1992,6 +2042,11 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_dout) begin
+         if (eoDecode) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
@@ -2069,6 +2124,11 @@ module S1(
          end
       end
       else if (w_aout) begin
+         if (w_decodeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_dout) begin
          if (w_decodeStart) begin
             StackPtrDnI = 1;
          end

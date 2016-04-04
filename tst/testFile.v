@@ -41,17 +41,22 @@ end
    wire        select;
    wire        valid;
 
-   wire [7:0] 	    	CharData;
-   wire           	CharValid;
-   wire              CharAck;
+   wire [7:0] 	    	VidData;
+   wire           	VidValid;
+   wire              VidAck;
+   wire [3:0]        VidOp;
 
-   assign CharAck = CharValid ? 1 : 0;
+   assign VidAck = VidValid ? 1 : 0;
 
    initial begin
       forever begin
-         if (CharAck && CharValid) begin
-            $write("%0c", CharData);
-            //$display("[%0d]", CharData);
+         if (VidAck && VidValid) begin
+            case (VidOp)
+              'hB: $write("%0c", VidData);
+              'hD: $write("%0d", VidData);
+              default: $write("unknown op");
+            endcase
+            //$display("[%0d]", VidData);
          end
          @(posedge clk);
       end
@@ -78,9 +83,10 @@ end
           .outputHalt(halt),
           .inputRdata(rdata),
           .inputValid(valid),
-          .outputCharData(CharData),
-          .outputCharValid(CharValid),
-          .inputCharAck(CharAck));
+          .outputVidData(VidData),
+          .outputVidValid(VidValid),
+          .outputVidOp(VidOp),
+          .inputVidAck(VidAck));
 
 
 //   initial begin
