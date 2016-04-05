@@ -70,6 +70,7 @@ const char *tokenImage[] = {
   "DOUT",
   "NOOP",
   "CHAR",
+  "STRING",
   "ERROR"
 };
 
@@ -413,6 +414,20 @@ Token TokenManagerGetNextToken(TokenManager **t) {
     }
     getNextChar(t);
 //    printf("(*t)->currentChar: [%c]\n", (*t)->currentChar);
+  }
+  else if ((*t)->currentChar == '"') {
+    getNextChar(t);
+    int indxToImage = 0;
+    memset(ret.image, '\0', 512);
+    do {
+      ret.image[indxToImage++] = (*t)->currentChar;
+      ret.endLine = (*t)->currentLineNumber;
+      ret.endColumn = (*t)->currentColumnNumber;
+      getNextChar(t);
+    } while ((*t)->currentChar != '"');
+    ret.image[indxToImage] = '\0';
+    ret.kind = STRING;
+    getNextChar(t);
   }
   else {
     switch((*t)->currentChar) {

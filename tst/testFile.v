@@ -41,7 +41,7 @@ end
    wire        select;
    wire        valid;
 
-   wire [7:0] 	    	VidData;
+   wire [15:0] 	    	VidData;
    wire           	VidValid;
    wire              VidAck;
    wire [3:0]        VidOp;

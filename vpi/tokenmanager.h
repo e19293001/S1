@@ -77,6 +77,7 @@ typedef enum {
   DOUT,
   NOOP,
   CHAR,
+  STRING,
   ERROR
 } tokenConst; // update this with tokenImage in tokenmanager.c
  

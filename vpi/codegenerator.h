@@ -8,6 +8,7 @@
 
 typedef enum {
   cgTypeDWORD,
+  cgTypeDWORDSTRING,
   cgTypeHALT,
   cgTypePUSH,
   cgTypePUSHC,

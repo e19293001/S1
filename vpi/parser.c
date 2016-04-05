@@ -342,7 +342,6 @@ void program(parserData *lparser) {
   else if (lparser->currentToken.kind == DWORD) {
     dword(lparser);
     lparser->addrCntr++;
-
     program(lparser);
   }
   else if (lparser->currentToken.kind == ID) {
@@ -1899,22 +1898,42 @@ void halt(parserData *lparser) {
 }
 
 void dword(parserData *lparser) {
+  int isString = 0;
   assert(consume(lparser, DWORD) == 0);
+  if (lparser->currentToken.kind == STRING) {
+    isString = 1;
+  }
+
   if (lparser->cg->symD == NULL) {
     lparser->cg->symD = symDataNew();
     if (expression(lparser) != 0) {
       return;
     }
-    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
-    symDataDelete(&(lparser->cg->symD));
+    if (!isString) {
+      sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+      codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
+      symDataDelete(&(lparser->cg->symD));
+    }
+    else {
+      sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+      lparser->addrCntr += strlen(lparser->cg->symD->address);
+      codeGenEmmitInstruction(lparser->cg, cgTypeDWORDSTRING, "dw");
+      symDataDelete(&(lparser->cg->symD));
+    }
   }
   else {
     if (expression(lparser) != 0) {
       return;
     }
-    sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
-    codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
+    if (!isString) {
+      sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+      codeGenEmmitInstruction(lparser->cg, cgTypeDWORD, "dw");
+    }
+    else {
+      sprintf(lparser->cg->symD->programcounter, "%04x", lparser->addrCntr);
+      lparser->addrCntr += strlen(lparser->cg->symD->address);
+      codeGenEmmitInstruction(lparser->cg, cgTypeDWORDSTRING, "dw");
+    }
   }
 }
 
@@ -1956,12 +1975,19 @@ int expression(parserData *lparser) {
     sprintf(lparser->cg->symD->address, "%03x", tkn.image[0]);
     lparser->cg->symD->addressInt = (int)tkn.image[0];
   }
+  else if (lparser->currentToken.kind == STRING) {
+    Token tkn = lparser->currentToken;
+    assert(consume(lparser, STRING) == 0);
+    memset(lparser->cg->symD->address, '\0', 512);
+    strncpy(lparser->cg->symD->address, tkn.image, 512);
+  }
   else if (lparser->currentToken.kind == ID) {
     Token tkn = lparser->currentToken;
     tstrie *ltstrie;
     assert(consume(lparser, ID) == 0);
     if ((ltstrie = tstSearch(lparser->trieRootNode, tkn.image)) == NULL) {
       printf("[ expression ] unknown symbol: %s\n", tkn.image);
+      exit(-1); // this fix is temporary. the caller MUST detect the return value. current caller does not check
       ret = 1;
     }
     else {
@@ -1970,6 +1996,7 @@ int expression(parserData *lparser) {
   }
   else {
     printf("error: Unknown token found: %s\n", tokenImage[lparser->currentToken.kind]);
+    exit(-1); // this fix is temporary. the caller MUST detect the return value. current caller does not check
     ret = 1;
   }
 

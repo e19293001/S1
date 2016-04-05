@@ -1,0 +1,14 @@
+pc x
+pc yy
+add
+pc data
+add
+sub
+pc d
+halt
+x: dw "hello"
+yy: dw "this is yy"
+data:
+   dw 0
+d: 
+   dw "this label is data"

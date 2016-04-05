@@ -1,7 +1,23 @@
 #include "codegenerator.h"
 
 void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
-  if (cgt == cgTypeDWORD) {
+  if (cgt == cgTypeDWORDSTRING) {
+    // get string length
+    // then printing inside the loop
+    //printf("string: %s\n", cg->symD->address);
+    //printf("        programcounter: %s atoi: %0d\n", cg->symD->programcounter, (int) strtol(cg->symD->programcounter, NULL, 16));
+    
+    int len = strlen(cg->symD->address);
+    int charIndx = 0;
+    for(charIndx = 0; charIndx < len; charIndx++) {
+      fprintf(cg->fp, "+%s    %04X\n", cg->symD->programcounter, cg->symD->addressInt);
+      fprintf(cg->fp, "+%04x    %04X\n", (int)(strtol(cg->symD->programcounter, NULL, 16)) + charIndx, cg->symD->address[charIndx]);
+      printf("+%04x    %04X\n", (int) strtol(cg->symD->programcounter, NULL, 16) + charIndx, cg->symD->address[charIndx]);
+    }
+    // terminate with zero
+    printf("+%04x    0000\n", (int) strtol(cg->symD->programcounter, NULL, 16) + len);
+  }
+  else if (cgt == cgTypeDWORD) {
     //printf("+%s    %04X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);
     fprintf(cg->fp, "+%s    %04X\n", cg->symD->programcounter, cg->symD->addressInt);
     printf("+%s    %04X\n", cg->symD->programcounter, cg->symD->addressInt);
@@ -27,16 +43,16 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     printf("+%s    F700\n", cg->symD->programcounter);
     //printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
     //fprintf(cg->fp, "+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
-    fprintf(cg->fp, "+%04x    0%s\n", (unsigned int) (strtoul(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
-    printf("+%04x    0%s\n", (unsigned int)(strtoul(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
+    fprintf(cg->fp, "+%04x    0%s\n", (int) (strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
+    printf("+%04x    0%s\n", (int)(strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
   }
   else if (cgt == cgTypeAWC) {
     //printf("+%s    F700 ; %s %s\n", cg->symD->programcounter, instruction, cg->symD->name);
     fprintf(cg->fp, "+%s    F700\n", cg->symD->programcounter);
     printf("+%s    F700\n", cg->symD->programcounter);
     //printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
-    fprintf(cg->fp, "+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
-    printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
+    fprintf(cg->fp, "+%04x    0%s\n", (int)(strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
+    printf("+%04x    0%s\n", (int)(strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
   }
   else if (cgt == cgTypeCORA) {
     //printf("+%s    3%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
