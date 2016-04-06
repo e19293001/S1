@@ -10,7 +10,7 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     int len = strlen(cg->symD->address);
     int charIndx = 0;
     for(charIndx = 0; charIndx < len; charIndx++) {
-      fprintf(cg->fp, "+%s    %04X\n", cg->symD->programcounter, cg->symD->addressInt);
+      //fprintf(cg->fp, "+%s    %04X\n", cg->symD->programcounter, cg->symD->addressInt);
       fprintf(cg->fp, "+%04x    %04X\n", (int)(strtol(cg->symD->programcounter, NULL, 16)) + charIndx, cg->symD->address[charIndx]);
       printf("+%04x    %04X\n", (int) strtol(cg->symD->programcounter, NULL, 16) + charIndx, cg->symD->address[charIndx]);
     }

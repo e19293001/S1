@@ -255,7 +255,7 @@ end
    task file2mem(input [8*128:1] str);
       integer fp;
       integer code;
-      reg [9:0] indx; // should be an integer. but iverilog won't display %04x properly
+      reg [15:0] indx; // should be an integer. but iverilog won't display %04x properly
       integer data;
       //reg [8*128:1] data;
       reg [8*128:1] datastr;
@@ -277,7 +277,8 @@ end
          addrOrData = 0;
          while (code > 0) begin
             code = $fscanf(fp, "+%04x %04x\n", addr, datain);
-            $display("code: %0d addr: %04x datain: %04x", code, addr, datain);
+            //$display("code: %0d addr: %04x datain: %04x", code, addr, datain);
+            $display("code: %0d addr: %0d datain: %04x", code, addr, datain);
             if (code == 0) begin
                $display("invalid input");
                $finish;
@@ -287,8 +288,10 @@ end
          end
          $fclose(fp);
          code = indx - 1;
+         $display("code: %0d indx: %0d\n", code, indx);
          for (indx = 0; indx < code; indx = indx + 1) begin
-            $display("mem[%04x]: %04x", indx, mem.mem[indx]);
+//            $display("mem[%04x]: %04x", indx, mem.mem[indx]);
+            $display("mem[%0d]: %04x", indx, mem.mem[indx]);
          end
       end
    endtask
