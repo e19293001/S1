@@ -16,6 +16,7 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     }
     // terminate with zero
     printf("+%04x    0000\n", (int) strtol(cg->symD->programcounter, NULL, 16) + len);
+    fprintf(cg->fp, "+%04x    0000\n", (int) strtol(cg->symD->programcounter, NULL, 16) + len);
   }
   else if (cgt == cgTypeDWORD) {
     //printf("+%s    %04X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);

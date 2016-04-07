@@ -81,7 +81,13 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
         sprintf(symD->data, "%04x", atoi(dwToken.image));
         //printf("inserting dword: %04x\n", atoi(dwToken.image));
         ret = tstInsert(ret, idToken.image, symD);
-        progcntr++;
+
+        if (dwToken.kind == STRING) { // increment with the length of the string if this is really a string
+          progcntr += strlen(dwToken.image) + 1;
+        }
+        else {
+          progcntr++;
+        }
       }
       else if (lparser->currentToken.kind == PUSHWC ||
                lparser->currentToken.kind == AWC) {

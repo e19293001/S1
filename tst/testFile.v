@@ -54,7 +54,8 @@ end
             case (VidOp)
               'hB: $write("%0c", VidData);
               'hD: $write("%0d", VidData);
-              default: $write("unknown op");
+              'h7: $write("%0c", VidData);
+              default: $write("[ testFile ] unknown op");
             endcase
             //$display("[%0d]", VidData);
          end
