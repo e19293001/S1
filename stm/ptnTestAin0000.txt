@@ -1,0 +1,12 @@
+pc enter
+sout
+pc x
+ain
+pc x
+aout
+halt
+
+enter:
+   dw "enter a character"
+x:
+   dw 0

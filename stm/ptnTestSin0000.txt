@@ -1,0 +1,35 @@
+pc x
+sout
+pc '\n'
+aout
+pc yy
+sout
+pc '\n'
+aout
+pc data
+sout
+pc '\n'
+aout
+pc d
+sout
+halt
+x: dw "hello"
+yy: dw "this is yy"
+data:
+   dw "this is labeled data"
+d: 
+   dw "this label is d"
+
+;;pc x
+;;sout
+;;halt
+;;x: dw "hello"
+
+
+;pc x
+;sout
+;pc yy
+;sout
+;halt
+;x: dw "hello"
+;yy: dw "this is yy"

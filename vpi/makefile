@@ -9,8 +9,11 @@ main=vpiTest
 obj=obj
 COPTS=-g -Wall -I$(IVERILOG_INCLUDE_PATH) -L$(IVERILOG_LIB_PATH)
 
-#all: mkdirs compile runsim
-all: mkdirs testParser runTest
+#all: mkdirs compile runsim #running $s1Assember in Verilog
+#all: mkdirs testParser runTest #running testParser in C
+all: mkdirs testGetInput runGetInputsim
+
+
 
 test: mkdirs testParser runTest
 
@@ -70,3 +73,22 @@ runTest:
 
 gdb:
 	gdb ./bin/testParser
+
+
+
+# test getinput
+
+testGetInput: bin/getInput.vpi $(obj)/vpiTestGetInput.vvp
+
+bin/getInput.vpi: $(PARSEROBJS) $(obj)/getInput.o 
+	gcc -shared -o $@ $^ $(COPTS)
+
+$(obj)/getInput.o: getInput.c 
+	gcc -c -fpic $^ -o $@ $(COPTS)
+
+$(obj)/vpiTestGetInput.vvp: vpiTestGetInput.v
+	iverilog $^ -o $@
+
+runGetInputsim:
+	vvp -M. -mbin/getInput $(obj)/vpiTestGetInput.vvp
+

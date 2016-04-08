@@ -32,7 +32,8 @@ main=TestAout
 #TSTPATTERN='stm/ptn0000.txt'
 #TSTPATTERN=stm/ptnTestAout0000.txt
 #TSTPATTERN=stm/ptnTestDout0000.txt
-TSTPATTERN=stm/ptnTestSout0000.txt
+#TSTPATTERN=stm/ptnTestSout0000.txt
+TSTPATTERN=stm/ptnTestAin0000.txt
 
 
 #TEST=$(TSTDIR)/TestS1pc.v
@@ -76,7 +77,7 @@ PARSEROBJS=vpi/$(obj)/testParser.o vpi/$(obj)/parser.o vpi/$(obj)/TernarySearchT
 mkdirs:
 	mkdir -p vpi/$(obj) vpi/bin
 
-comp-vpi: mkdirs vpi/$(obj)/$(main).vvp vpi/bin/s1Assembler.vpi 
+comp-vpi: mkdirs vpi/$(obj)/$(main).vvp vpi/bin/s1Assembler.vpi vpi/bin/getInput.vpi 
 
 runsim:
 	vvp -M. -mvpi/bin/s1Assembler vpi/$(obj)/$(main).vvp +TSTPATTERN=$(TSTPATTERN) 
@@ -86,6 +87,12 @@ vpi/$(obj)/$(main).vvp: $(TEST) rtl/S1.v tst/testFile.v
 
 vpi/$(obj)/s1Assembler.o: vpi/s1Assembler.c 
 	gcc -c -fpic $^ -o $@ $(COPTS)
+
+vpi/bin/getInput.vpi: $(PARSEROBJS) vpi/$(obj)/getInput.o
+	gcc -shared -o $@ $^ $(COPTS)
+
+vpi/$(obj)/getInput.o: vpi/getInput.c
+	gcc -c -fpic $< -o $@ $(COPTS)
 
 vpi/bin/s1Assembler.vpi: $(PARSEROBJS) vpi/$(obj)/s1Assembler.o 
 	gcc -shared -o $@ $^ $(COPTS)

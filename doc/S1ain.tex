@@ -1,0 +1,68 @@
+\documentclass{article}
+%\usepackage{tikz-timing}[2009/12/09]
+\usepackage{tikz-timing}[2011/01/09]
+\usetikztiminglibrary[new={char=Q,reset char=R}]{counters}
+%\usetikztiminglibrary[simple]{advnodes}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength{\PreviewBorder}{5mm}
+\pagestyle{empty}
+\begin{document}
+\definecolor{bgblue}{rgb}{0.5,0.9,0.9}
+\definecolor{bgred}{rgb}{1,0.6,0.6}
+\definecolor{fgblue}{rgb}{0,0,0.6}
+\definecolor{bgred}{rgb}{0.6,,0}
+\begin{tikztimingtable} [
+%    table/grid,
+    timing/slope=0.15,
+    timing/coldist=2pt,
+    xscale=2.05,yscale=1.1,
+    semithick
+]
+  \scriptsize clk & 37{C} \\ 
+  outputAddress & 5U 4D{0x0000} 2U 4D{0xFFFE} 2U 4D{0x0030} 2U 4D{0x0031} 2U 4D{0x0032} 2U 2D{} \\
+  outputWdata & 37U \\
+  outputWnR & 37L \\
+  outputSelect & LLLLLHH N(A) HHLL HHHH LL HHHH LL HHHH LL HHHH LL HH \\
+  inputRdata & 7U 2D{0xFFFA} N(C) 4U 2D{0x0030} 4U 2D{0x0041} 4U 2D{0x0042} 4U 2D{0x0000} 4U \\
+  inputValid & LLLLLLLHH N(B) LLLL HH LLLL HH LLLL HH LLLL HH LLLL \\
+  outputVidData & 21D{0x00000} 2D{0x0041} 4D{0x0000} 2D{0x0042} 8D{0x0000} \\
+
+  inputKeyValid & LLLLLL \\
+  outputKeyAck & LLLLLL \\
+  inputKeyData & 30U \\
+
+  outputVidValid & LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL \\
+  outputVidOp & 37U \\
+  inputVidAck & LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL \\
+
+  \\
+  enOutputVidData & LLLLLLLLLLLLLLLLLLLHHLLLLHHLLLLLLLLLL \\
+  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 18D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 18D{$VALUEA$} 4D{$PC$} \\
+  combOutputAddressEn & LLLHHLLLLHHLLLLHHLLLLHHLLLLHHLLLLHHLL \\
+  enInstruction & LLLLLLLHHLLLLLLLLLLLLLLLLLLLLLLLLLLLL \\
+  regInstruction & 9U 24D{0xFFF7} 4U \\
+  w\_ain & LLLLLLLLLHHHHHHHHHHHHHHHHHHHHHHHHLLLL \\
+  enValueA & LLLLLLLLLLLLLHHLLLLHHLLLLHHLLLLLLLLLL \\
+  regValueA & 15U 6D{0x0030} 6D{0x0031} 10D{0x0032} \\
+  \\
+  enStackPtr & 13L HH 22L \\
+  regStackPtr & 15D{0xFFFE} 22D{0xFFFF} \\
+  enPrgCntr & 31L HH 4L \\
+  regPrgCntr & 33D{0x0000} 4D{0x0001} \\
+  \extracode
+%  \draw [orange,semithick]
+%  (A.mid) ellipse (.1 and .2)
+%  (B.mid) ellipse (.1 and .2);
+%  \draw [orange,semithick,->]
+%  ($ (A.mid) - (0,.2) $)
+%  parabola [bend pos=0.3]
+%  ($ (B.mid) + (0,.2) $);
+%
+%  \draw [orange,semithick]
+%  (C.mid) ellipse (.2 and .6);
+
+\end{tikztimingtable}
+
+\end{document}
