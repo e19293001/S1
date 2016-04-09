@@ -2,7 +2,6 @@ pc enter
 sout
 pc x
 ain
-pc x
 aout
 halt
 

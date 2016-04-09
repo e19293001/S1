@@ -8,10 +8,15 @@ module S1(
    outputHalt,
    inputRdata,
    inputValid,
+
    outputVidData,
    outputVidValid,
    outputVidOp,
-   inputVidAck
+   inputVidAck,
+
+   inputKeyData,
+   outputKeyValid,
+   inputKeyAck
 );
    parameter P_IDLE = 0;
    parameter P_FETCH = 1;
@@ -64,6 +69,10 @@ module S1(
    output reg               outputVidValid;
    output reg [3:0]         outputVidOp;
    input                    inputVidAck;
+
+   input [15:0]	         inputKeyData;
+   output reg                outputKeyValid;
+   input 	                inputKeyAck;
 
    reg                      enOutputVidData;
 
@@ -137,6 +146,7 @@ module S1(
    wire               w_aout;
    wire               w_dout;
    wire               w_sout;
+   wire               w_ain;
 
    reg eoFetch;
    reg eoDecode;
@@ -182,6 +192,7 @@ module S1(
    assign w_aout = (w_decode || w_execute) && (regInstruction == 'hFFFB) ? 1 : 0;
    assign w_dout = (w_decode || w_execute) && (regInstruction == 'hFFFD) ? 1 : 0;
    assign w_sout = (w_decode || w_execute) && (regInstruction == 'hFFF7) ? 1 : 0;
+   assign w_ain = (w_decode || w_execute) && (regInstruction == 'hFFFA) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -303,6 +314,20 @@ module S1(
             enOutputVidData = 1;
          end
       end         
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         outputKeyValid <= 0;
+      end
+      else begin
+         if (w_ain && w_decodeStart) begin
+            outputKeyValid <= 1;
+         end
+         else if (inputKeyAck) begin
+            outputKeyValid <= 0;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -431,6 +456,11 @@ module S1(
             enValueA = 1;
          end
       end
+      else if (w_ain) begin
+         if (eoDecode) begin
+            enValueA = 1;
+         end
+      end
    end
 
    always @* begin
@@ -466,6 +496,9 @@ module S1(
          if (enValueA) begin
             if (w_sout && w_execute) begin
                regValueA <= regValueA + 1;
+            end
+            else if (w_ain) begin
+               regValueA <= inputKeyData;
             end
             else begin
                regValueA <= inputRdata;
@@ -636,6 +669,14 @@ module S1(
                end
             end
             else if (w_shra) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_ain) begin
                if (w_executeStart) begin
                   outputWnR <= 1;
                end
@@ -1036,6 +1077,14 @@ module S1(
                   outputSelect <= 1;
                end
             end
+            else if (w_ain) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
       end
    end
@@ -1212,6 +1261,11 @@ module S1(
       end
       else if (w_sout) begin
          if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_ain) begin
+         if (inputKeyAck && w_decode) begin
             eoDecode = 1;
          end
       end
@@ -1434,6 +1488,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_sout && eoExecute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_ain && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -1701,6 +1758,11 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_ain) begin
+         if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -1724,7 +1786,7 @@ module S1(
               P_ADDRSEL_READ: begin
                  outputAddress <= regInstruction[11:0];
               end
-              P_ADDRSEL_PUSH: begin // not needed ? ? ?
+              P_ADDRSEL_PUSH: begin
                  outputAddress <= nextStackPtr;
               end
               P_ADDRSEL_POP: begin
@@ -1919,6 +1981,9 @@ module S1(
          end
          else if (w_sout) begin
             combAddressSelect = P_ADDRSEL_VALUEA;
+         end
+         else if (w_ain) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
          end
       end
    end
@@ -2131,6 +2196,11 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_ain) begin
+         if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
@@ -2219,6 +2289,11 @@ module S1(
       end
       else if (w_sout) begin
          if (w_decodeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_ain) begin
+         if (w_executeStart) begin
             StackPtrDnI = 1;
          end
       end
@@ -2399,6 +2474,14 @@ module S1(
             else if (w_shra) begin
                if (w_executeStart) begin
                   outputWdata = alu;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_ain) begin
+               if (w_executeStart) begin
+                  outputWdata = regValueA;
                end
                else if (w_execute && inputValid) begin
                   outputWdata <= 0;

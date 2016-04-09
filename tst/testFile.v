@@ -46,6 +46,11 @@ end
    wire              VidAck;
    wire [3:0]        VidOp;
 
+   reg [15:0]       KeyData;
+   wire              KeyValid;
+   reg              KeyAck;
+   reg [15:0]       KeyData_;
+
    assign VidAck = VidValid ? 1 : 0;
 
    initial begin
@@ -60,6 +65,22 @@ end
             //$display("[%0d]", VidData);
          end
          @(posedge clk);
+      end
+   end
+
+   initial begin
+      KeyData = 0;
+      KeyAck = 0;
+      forever begin
+         @(posedge clk);
+         if (KeyValid) begin
+            KeyData_ = $getInput;
+            KeyData <= KeyData_;
+            KeyAck <= 1;
+            @(posedge clk);
+            KeyData <= 0;
+            KeyAck <= 0;
+         end
       end
    end
    
@@ -84,10 +105,16 @@ end
           .outputHalt(halt),
           .inputRdata(rdata),
           .inputValid(valid),
+
           .outputVidData(VidData),
           .outputVidValid(VidValid),
           .outputVidOp(VidOp),
-          .inputVidAck(VidAck));
+          .inputVidAck(VidAck),
+
+          .inputKeyData(KeyData),
+          .inputKeyAck(KeyAck),
+          .outputKeyValid(KeyValid)
+);
 
 
 //   initial begin
