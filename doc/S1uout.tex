@@ -19,33 +19,31 @@
     xscale=2.05,yscale=1.1,
     semithick
 ]
-  \scriptsize clk & 21{C} \\ 
-  outputAddress & 5U 4D{0x0000} 2U 4D{0xFFFD} 2U 4D{} \\
-  outputWdata & 13U 4U 4U\\
-  outputWnR & LLLLLLLLLLLLLLL LL 4L  \\
-  outputSelect & LLLLLHH LLLL HHHH 2L 4H\\
-  inputRdata & 7U 2D{0xFFF5} 4U 2D{0x000A} 6U \\
-  inputValid & LLLLLLLHH N(B) LLLL HH 6L \\
-  outputDisplay & 7U 2D{0xFFF5} 6U 2D{A} 4U \\
-  outputDisplayValid & LLLLLLLLL LLLLLL HH 4L \\
-  outputDisplayAck & LLLLLLLLL LLLLLL HH 4L \\
+  \scriptsize clk & 23{C} \\ 
+  outputAddress & 5U 4D{0x0000} 2U 4D{0xFFFE} 4U 4D{} \\
+  outputWdata & 23U \\
+  outputWnR & 23L \\
+  outputSelect & LLLLLHH N(A) HHLL HHHH LL LLLLLL \\
+  inputRdata & 7U 2D{0xFFF7} N(C) 4U 2D{0x0041} 8U \\
+  inputValid & LLLLLLLHH N(B) LLLL HH LLLL LL LL\\
+  outputCharData & 15D{0x00000} 2D{0x0041} 6D{0x0000} \\
+  outputCharValid & LLLLLLLLLLLLLLLHHLLLLLL \\
+  inputCharAck & LLLLLLLLLLLLLLLHHLLLLLL \\
   \\
-  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 2D{\scriptsize $P\_EXECUTE$} 4D{$P\_FETCH$} \\
-  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 2D{$PUSH$} 4D{$PC$} \\ 
-  combOutputAddressEn & LLLHHLLLLHHLLLLLL HH LL \\
-  enInstruction & LLLLLLLHHLLLLL 7L \\
-  regInstruction & 9U 8D{0xFFF3} 4U \\
-  w\_uout & LLLLLLLLLHHHH HHHH LLLL \\
+  outputCharDataEn & LLLLLLLLLLLLLHHLLLLLLLL \\
+  regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 2D{\scriptsize $P\_EXECUTE$} 6D{$P\_FETCH$} \\
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$POP$} 2D{$NONE$} 6D{$PC$} \\
+  combOutputAddressEn & LLLHHLLLLHHLLLLLLHHLLLL \\
+  enInstruction & LLLLLLLHHLLLLL 9L \\
+  regInstruction & 9U 10D{0xFFF7} 4U \\
+  w\_uout & LLLLLLLLLHHHHHHHHHHLLLL \\
+  enValueA & LLLLLLLLLLLLLLLLLLL 4L \\
+  regValueA & 23U \\
   \\
-  enValueA & LLLLLLLLL LLLL HH LLLL 2L \\
-  regValueA & 15U 6D{0x000A} \\
-  \\
-  enBasePtr & 11L LL LL LL 4L \\
-  regBasePtr & 21D{0xDEAD} \\
-  enStackPtr & 11L LL HH LL 4L \\
-  regStackPtr & 15D{0x0000} 6D{0xFFFF} \\
-  enPrgCntr & 15L HH 4L \\
-  regPrgCntr & 17D{0x0000} 4D{0x0001} \\
+  enStackPtr & 13L HH 8L \\
+  regStackPtr & 15D{0xFFFE} 8D{0xFFFF} \\
+  enPrgCntr & 15L HH 6L \\
+  regPrgCntr & 17D{0x0000} 6D{0x0001} \\
   \extracode
 %  \draw [orange,semithick]
 %  (A.mid) ellipse (.1 and .2)

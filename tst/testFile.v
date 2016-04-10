@@ -60,6 +60,7 @@ end
               'hB: $write("%0c", VidData);
               'hD: $write("%0d", VidData);
               'h7: $write("%0c", VidData);
+              'h5: $write("%0d", VidData);
               default: $write("[ testFile ] unknown op");
             endcase
             //$display("[%0d]", VidData);

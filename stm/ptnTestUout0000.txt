@@ -1,0 +1,25 @@
+pc 10
+uout
+
+pc ' '
+aout
+
+pc 1
+pc 2
+add
+uout
+
+pc ' '
+aout
+
+p x
+pc 10
+add
+uout
+
+pc '\n'
+aout
+
+halt
+
+x: dw 8
