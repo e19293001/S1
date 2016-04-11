@@ -1,0 +1,32 @@
+pc 10
+hout
+
+pc '\n'
+aout
+
+pc display1
+sout
+
+pc 1
+pc 30
+add
+hout
+
+pc '\n'
+aout
+
+p x
+pc 10
+add
+hout
+
+pc '\n'
+aout
+
+halt
+
+x: dw 8
+
+display1:
+   dw "0x1 + 0x30 = 0x"
+
