@@ -149,6 +149,7 @@ module S1(
    wire               w_ain;
    wire               w_uout;
    wire               w_hout;
+   wire               w_pr;
 
    reg eoFetch;
    reg eoDecode;
@@ -197,6 +198,7 @@ module S1(
    assign w_ain = (w_decode || w_execute) && (regInstruction == 'hFFFA) ? 1 : 0;
    assign w_uout = (w_decode || w_execute) && (regInstruction == 'hFFF5) ? 1 : 0;
    assign w_hout = (w_decode || w_execute) && (regInstruction == 'hFFF9) ? 1 : 0;
+   assign w_pr = (w_decode || w_execute) && (regInstruction[15:12] == 'h02) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -2383,6 +2385,11 @@ module S1(
          end
       end
       else if (w_hout) begin
+         if (w_decodeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_esba) begin
          if (w_decodeStart) begin
             StackPtrDnI = 1;
          end

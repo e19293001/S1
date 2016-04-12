@@ -1,0 +1,19 @@
+;pc 10
+;pc 11
+;esba
+;pc 12
+;esba
+;
+;halt
+;
+;enter:
+;   dw "enter a character"
+;x:
+;   dw 0
+
+pc 10
+esba
+halt
+
+
+
