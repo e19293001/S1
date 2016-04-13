@@ -13,6 +13,10 @@
 
 pc 10
 esba
+pc 11
+esba
+pr 3
+pr 1
 halt
 
 

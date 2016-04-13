@@ -28,6 +28,11 @@ module MemoryModel(
    wire [16:0] mem0xFFE;
    wire [16:0] mem0xFFD;
    wire [16:0] mem0xFFC;
+   wire [16:0] mem0xFFB;
+   wire [16:0] mem0xFFA;
+   wire [16:0] mem0xFF0;
+   wire [16:0] mem0xFEF;
+   wire [16:0] mem0xFEE;
    wire [16:0] mem0x90;
    wire [16:0] mem0x91;
    wire [16:0] mem0x92;
@@ -52,6 +57,11 @@ module MemoryModel(
    assign mem0xFFE = mem['hFFE];
    assign mem0xFFD = mem['hFFD];
    assign mem0xFFC = mem['hFFC];
+   assign mem0xFFB = mem['hFFB];
+   assign mem0xFFA = mem['hFFA];
+   assign mem0xFF0 = mem['hFF0];
+   assign mem0xFEF = mem['hFEF];
+   assign mem0xFEE = mem['hFEE];
    assign mem0x90 = mem['h90];
    assign mem0x91 = mem['h91];
    assign mem0x92 = mem['h92];

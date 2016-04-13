@@ -34,6 +34,7 @@ module S1(
    parameter P_ADDRSEL_READ = 6;
    parameter P_ADDRSEL_POP = 7;
    parameter P_ADDRSEL_VALUEA = 8;
+   parameter P_ADDRSEL_BP = 9;
    
    input        clk;
    input        rstn;
@@ -198,7 +199,7 @@ module S1(
    assign w_ain = (w_decode || w_execute) && (regInstruction == 'hFFFA) ? 1 : 0;
    assign w_uout = (w_decode || w_execute) && (regInstruction == 'hFFF5) ? 1 : 0;
    assign w_hout = (w_decode || w_execute) && (regInstruction == 'hFFF9) ? 1 : 0;
-   assign w_pr = (w_decode || w_execute) && (regInstruction[15:12] == 'h02) ? 1 : 0;
+   assign w_pr = (w_decode || w_execute) && (regInstruction[15:12] == 'h2) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -473,6 +474,11 @@ module S1(
             enValueA = 1;
          end
       end
+      else if (w_pr) begin
+         if (eoDecode) begin
+            enValueA = 1;
+         end
+      end
    end
 
    always @* begin
@@ -689,6 +695,14 @@ module S1(
                end
             end
             else if (w_ain) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_pr) begin
                if (w_executeStart) begin
                   outputWnR <= 1;
                end
@@ -972,6 +986,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_pr) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -1106,6 +1128,14 @@ module S1(
                end
             end
             else if (w_ain) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_pr) begin
                if (w_executeStart) begin
                   outputSelect <= 1;
                end
@@ -1307,6 +1337,11 @@ module S1(
             eoDecode = 1;
          end
       end
+      else if (w_pr) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
    end
 
    always @* begin
@@ -1379,6 +1414,11 @@ module S1(
       end
       else if (w_hout && w_execute) begin
          eoExecute = 1;
+      end
+      else if (w_pr) begin
+         if (inputValid && w_execute) begin
+            eoExecute = 1;
+         end
       end
       else if (inputValid && w_execute) begin 
          eoExecute = 1;
@@ -1541,6 +1581,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_hout && eoExecute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_pr && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -1829,6 +1872,14 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_pr) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -1878,6 +1929,11 @@ module S1(
               P_ADDRSEL_VALUEB: begin
                  if (w_stva) begin
                     outputAddress <= regValueB;
+                 end
+              end
+              P_ADDRSEL_BP: begin
+                 if (w_pr) begin
+                    outputAddress <= regBasePtr + regInstruction[11:0];
                  end
               end
               default: begin
@@ -2004,6 +2060,9 @@ module S1(
          else if (w_hout) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
+         else if (w_pr) begin
+            combAddressSelect = P_ADDRSEL_BP;
+         end
       end
       else if (w_execute) begin
          if (w_push) begin
@@ -2055,6 +2114,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_VALUEA;
          end
          else if (w_ain) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_pr) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
       end
@@ -2283,6 +2345,11 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_pr) begin
+         if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
@@ -2391,6 +2458,11 @@ module S1(
       end
       else if (w_esba) begin
          if (w_decodeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_pr) begin
+         if (w_executeStart) begin
             StackPtrDnI = 1;
          end
       end
@@ -2584,6 +2656,14 @@ module S1(
                   outputWdata <= 0;
                end
             end
+            else if (w_pr) begin
+               if (w_executeStart) begin
+                  outputWdata = regValueA;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
          end
       end
    end
@@ -2682,6 +2762,9 @@ module S1(
       end
       else if (combAddressSelect == P_ADDRSEL_PEAK) begin
          combAddressSelectstr = "addrselpeak";
+      end
+      else if (combAddressSelect == P_ADDRSEL_BP) begin
+         combAddressSelectstr = "addrselbp";
       end
       else begin
          combAddressSelectstr = "addrselerror";
