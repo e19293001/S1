@@ -20,25 +20,25 @@
     semithick
 ]
   \scriptsize clk & 21{C} \\ 
-  outputAddress & 5U 4D{0x00} 4U 4D{0xFFF} 2U 2D{} \\
-  outputWdata & 13U 4D{0x0FF5} 4U\\
+  outputAddress & 5U 4D{0x0000} 4U 4D{0xFFFB} 2U 2D{} \\
+  outputWdata & 13U 4D{0xFFF5} 4U\\
   outputWnR & LLLLLLLLLLLLLHHHHLLLL \\
   outputSelect & LLLLLHH N(A) HHLL LLHHHH LL HH \\
   inputRdata & 7U 2D{0x3005} N(C) 12U \\
   inputValid & LLLLLLLHH N(B) LLLLLL HH LLLL \\
   \\
   regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 2D{\scriptsize $P\_DECODE$} 6D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
-  combAddressSelect & 3D{$NONE$} 6D{$PC$} 8D{$STACK$} 4D{$PC$} \\ 
+  combAddressSelect & 3D{$NONE$} 6D{$PC$} 2D{$NONE$} 6D{$PUSH$} 4D{$PC$} \\ 
   combOutputAddressEn & LLLHHLLLLLLHHLLLLHHLL \\
   enInstruction & LLLLLLLHH 12L \\
   regInstruction & 9U 8D{0x3005} 4U \\
   w\_cora & LLLLLLLLLHHHHHHHHLLLL \\
   \\
   enStackPtr & 11L HH 8L \\
-  regStackPtr & 13D{0xFFF} 8D{0xFFE} \\
+  regStackPtr & 13D{0xFFFC} 8D{0xFFFB} \\
   enPrgCntr & 15L HH 4L \\
   regPrgCntr & 17D{0x00} 4D{0x01} \\
-  regBasePtr & 21D{0xFF0} \\
+  regBasePtr & 21D{0xFFF0} \\
   \extracode
 %  \draw [orange,semithick]
 %  (A.mid) ellipse (.1 and .2)

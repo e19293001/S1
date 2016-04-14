@@ -1,0 +1,76 @@
+[*]
+[*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
+[*] Mon Apr 11 02:01:11 2016
+[*]
+[dumpfile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/sim.vcd"
+[dumpfile_mtime] "Mon Apr 11 01:59:30 2016"
+[dumpfile_size] 127876
+[savefile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/wvs/S1Hout.gtkw"
+[timestart] 128
+[size] 1000 600
+[pos] 496 183
+*-4.346606 137 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TestS1.
+[sst_width] 255
+[signals_width] 310
+[sst_expanded] 1
+[sst_vpaned_height] 206
+@28
+TestS1.dut.clk
+@22
+TestS1.dut.outputAddress[11:0]
+TestS1.dut.outputWdata[15:0]
+@28
+TestS1.dut.outputWnR
+TestS1.dut.outputSelect
+@22
+TestS1.dut.inputRdata[15:0]
+@28
+TestS1.dut.inputValid
+TestS1.dut.outputSelect
+@22
+TestS1.dut.outputVidData[15:0]
+TestS1.dut.outputVidOp[3:0]
+@28
+TestS1.dut.outputVidValid
+TestS1.dut.inputVidAck
+@200
+-
+@29
+TestS1.dut.w_uout
+@28
+TestS1.dut.outputKeyValid
+TestS1.dut.inputKeyAck
+@22
++{TestS1.dut.inputKeyData[15:0]} TestS1.dut.inputKeyData[15:0]
+@200
+-
+@28
+TestS1.dut.w_decodeStart
+TestS1.dut.w_1stDecode
+@820
+TestS1.dut.regStatestr[1024:1]
+TestS1.dut.combAddressSelectstr[1024:1]
+@28
+TestS1.dut.combOutputAddressEn
+@22
+TestS1.dut.regValueA[15:0]
+TestS1.dut.inputRdata[15:0]
+TestS1.dut.regInstruction[15:0]
+@28
+TestS1.dut.StackPtrDnI
+@22
+TestS1.dut.regStackPtr[11:0]
+@28
+TestS1.dut.enStackPtr
+TestS1.dut.eoDecode
+TestS1.dut.w_decodeStart
+@22
+TestS1.mem.mem0xFFC[16:0]
+TestS1.mem.mem0xFFC[16:0]
+TestS1.mem.mem0xFFD[16:0]
+TestS1.mem.mem0xFFE[16:0]
+TestS1.mem.mem0xFFF[16:0]
+TestS1.dut.nextStackPtr[11:0]
+[pattern_trace] 1
+[pattern_trace] 0

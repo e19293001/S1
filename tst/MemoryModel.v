@@ -11,7 +11,7 @@ module MemoryModel(
 
    input        clk;
    input        rstn;
-   input [11:0] inputAddress; // This should be aligned by 2 bytes
+   input [15:0] inputAddress; // This should be aligned by 2 bytes
    input [15:0] inputWdata;   // This should have a byte width only
    input        inputWnR;
    input        inputSelect;

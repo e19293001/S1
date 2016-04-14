@@ -20,12 +20,12 @@
     semithick
 ]
   \scriptsize clk & 25{C} \\ 
-  outputAddress & 5U 4D{0x00} 2U 4D{0xFEE} 2U 4D{0xEFF} 4U \\
+  outputAddress & 5U 4D{0x0000} 2U 4D{0xFEE} 2U 4D{0xEFF} 4U \\
   outputWdata & 17U 4D{0x000A} 4U\\
   outputWnR & 17L 4H 4L \\
-  outputSelect & 5L HH N(A) HHLL HHHH LL HHHH 4L\\
-  inputRdata & 7U 2D{0x2003} N(C) 4U 2D{0x000A} 10U \\
-  inputValid & LLLLLLLHH N(B) LLLL HH LLLL HH 4L \\
+  outputSelect & 5L HH HHLL HHHH LL HHHH 4L\\
+  inputRdata & 7U 2D{0x2003} 4U 2D{0x000A} 10U \\
+  inputValid & LLLLLLLHH LLLL HH LLLL HH 4L \\
   \\
   regState & 3D{$P\_IDLE$} 6D{$P\_FETCH$} 6D{$P\_DECODE$} 6D{$P\_EXECUTE$} 4D{$P\_FETCH$} \\
   combAddressSelect & 3D{$NONE$} 6D{$PC$} 6D{$BP$} 6D{$PUSH$} 4D{$PC$} \\ 
@@ -39,7 +39,7 @@
   enStackPtr & 15L HH 8L \\
   regStackPtr & 17D{0xFFFC} 8D{0xFFFB} \\
   enPrgCntr & 17L HH 6L \\
-  regPrgCntr & 19D{0x00} 6D{0x01} \\
+  regPrgCntr & 19D{0x0000} 6D{0x01} \\
   %enBasePtr & 15L HH 8L \\
   regBasePtr & 25D{0xFFFC} \\
   \extracode

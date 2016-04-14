@@ -34,7 +34,7 @@ end
 	   $dumpvars(-1, TestS1);
    end
    
-   wire [11:0] address;
+   wire [15:0] address;
    wire [15:0] wdata;
    wire [15:0] rdata;
    wire        wnr;

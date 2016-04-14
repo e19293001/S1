@@ -1,0 +1,12 @@
+pc 10
+esba
+esba
+esba
+esba
+esba
+esba
+cora 2
+esba
+cora 3
+pr 1
+halt

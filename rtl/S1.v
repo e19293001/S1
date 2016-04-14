@@ -38,7 +38,7 @@ module S1(
    
    input        clk;
    input        rstn;
-   output reg [11:0] outputAddress;
+   output reg [15:0] outputAddress;
    output reg [15:0] outputWdata;
    output reg        outputWnR;
    output reg        outputSelect;
@@ -47,24 +47,24 @@ module S1(
    input [15:0]      inputRdata;
    input             inputValid;
 
-   reg [11:0]        regPrgCntr;
+   reg [15:0]        regPrgCntr;
    reg               enPrgCntr;
    wire              PrgCntrInD;
    reg	            enJmp;
 
 //   wire [11:0] 		nextStackPtr;
-   reg [11:0]	 		nextStackPtr;
-   reg [11:0]        regStackPtr;
+   reg [15:0]	 		nextStackPtr;
+   reg [15:0]        regStackPtr;
    reg               enStackPtr;
    reg               StackPtrDnI;
    reg					enAddAStackPtr;
    reg [3:0]         combAddressSelect;
 //   reg [15:0] 			combOutputWData;
 
-   reg [11:0]        regBasePtr;
+   reg [15:0]        regBasePtr;
    reg					enBasePtr;
 //   wire [11:0]       nextBasePtr;
-   reg [11:0]       nextBasePtr;
+   reg [15:0]       nextBasePtr;
 
    output reg [15:0]         outputVidData;
    output reg               outputVidValid;
@@ -151,6 +151,7 @@ module S1(
    wire               w_uout;
    wire               w_hout;
    wire               w_pr;
+   wire               w_cora;
 
    reg eoFetch;
    reg eoDecode;
@@ -200,6 +201,7 @@ module S1(
    assign w_uout = (w_decode || w_execute) && (regInstruction == 'hFFF5) ? 1 : 0;
    assign w_hout = (w_decode || w_execute) && (regInstruction == 'hFFF9) ? 1 : 0;
    assign w_pr = (w_decode || w_execute) && (regInstruction[15:12] == 'h2) ? 1 : 0;
+   assign w_cora = (w_decode || w_execute) && (regInstruction[15:12] == 'h3) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -710,6 +712,14 @@ module S1(
                   outputWnR <= 0;
                end
             end
+            else if (w_cora) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
          end
          else begin
             outputWnR <= 0;
@@ -1143,6 +1153,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_cora) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
       end
    end
@@ -1339,6 +1357,11 @@ module S1(
       end
       else if (w_pr) begin
          if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_cora) begin
+         if (w_decode) begin
             eoDecode = 1;
          end
       end
@@ -1584,6 +1607,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_pr && eoExecute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_cora && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -1880,6 +1906,11 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_cora) begin
+         if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -1890,9 +1921,6 @@ module S1(
          if (combOutputAddressEn) begin
             case (combAddressSelect)
               P_ADDRSEL_PC: begin
-//                 if (w_pwc) begin
-//                    outputAddress <= regPrgCntr + 1;
-//                 end
                  if (w_awc | w_pwc) begin
                     outputAddress <= regPrgCntr + 1;
                  end
@@ -2117,6 +2145,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_PUSH;
          end
          else if (w_pr) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_cora) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
       end
@@ -2350,6 +2381,11 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_cora) begin
+         if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
@@ -2462,6 +2498,11 @@ module S1(
          end
       end
       else if (w_pr) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
+      else if (w_cora) begin
          if (w_executeStart) begin
             StackPtrDnI = 1;
          end
@@ -2659,6 +2700,14 @@ module S1(
             else if (w_pr) begin
                if (w_executeStart) begin
                   outputWdata = regValueA;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_cora) begin
+               if (w_executeStart) begin
+                  outputWdata = (regBasePtr + regInstruction[11:0]) & 'hFFF;
                end
                else if (w_execute && inputValid) begin
                   outputWdata <= 0;

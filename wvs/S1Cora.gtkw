@@ -1,0 +1,68 @@
+[*]
+[*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
+[*] Thu Apr 14 00:37:12 2016
+[*]
+[dumpfile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/sim.vcd"
+[dumpfile_mtime] "Thu Apr 14 00:34:09 2016"
+[dumpfile_size] 663043
+[savefile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/wvs/S1Cora.gtkw"
+[timestart] 0
+[size] 1462 679
+[pos] -1 -1
+*-6.163384 49 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TestS1.
+[sst_width] 255
+[signals_width] 282
+[sst_expanded] 1
+[sst_vpaned_height] 249
+@28
+TestS1.dut.clk
+@22
+TestS1.dut.outputAddress[11:0]
+TestS1.dut.outputWdata[15:0]
+@28
+TestS1.dut.outputWnR
+TestS1.dut.outputSelect
+@22
+TestS1.dut.inputRdata[15:0]
+@28
+TestS1.dut.inputValid
+@200
+-
+@820
+TestS1.dut.regStatestr[1024:1]
+TestS1.dut.combAddressSelectstr[1024:1]
+@28
+TestS1.dut.combOutputAddressEn
+@22
+TestS1.dut.inputRdata[15:0]
+TestS1.dut.regInstruction[15:0]
+@28
+TestS1.dut.w_esba
+TestS1.dut.w_pc
+TestS1.dut.w_pr
+@29
+TestS1.dut.w_cora
+@28
+TestS1.dut.enStackPtr
+TestS1.dut.StackPtrDnI
+@22
+TestS1.dut.regStackPtr[11:0]
+TestS1.dut.regBasePtr[11:0]
+@200
+-
+@28
+TestS1.dut.enValueA
+@22
+TestS1.dut.regValueA[15:0]
+TestS1.mem.mem0xFEE[16:0]
+TestS1.mem.mem0xFEF[16:0]
+TestS1.mem.mem0xFF0[16:0]
+TestS1.mem.mem0xFFA[16:0]
+TestS1.mem.mem0xFFB[16:0]
+TestS1.mem.mem0xFFC[16:0]
+TestS1.mem.mem0xFFD[16:0]
+TestS1.mem.mem0xFFE[16:0]
+TestS1.mem.mem0xFFF[16:0]
+[pattern_trace] 1
+[pattern_trace] 0
