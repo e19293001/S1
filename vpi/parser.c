@@ -508,7 +508,7 @@ void program(parserData *lparser) {
     if (lparser->errorcode == -1) {
       return;
     }
-    lparser->addrCntr++;
+    lparser->addrCntr+=2;
     program(lparser);
   }
   else if (lparser->currentToken.kind == DUPE) {
