@@ -44,7 +44,7 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
     printf("+%s    F700\n", cg->symD->programcounter);
     //printf("+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
     //fprintf(cg->fp, "+%04x    0%s\n", (atoi(cg->symD->programcounter)+1), cg->symD->address);
-    fprintf(cg->fp, "+%04x    0%s\n", (int) (strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
+    fprintf(cg->fp, "+%04x    %s\n", (int) (strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
     printf("+%04x    0%s\n", (int)(strtol(cg->symD->programcounter, NULL, 16)+1), cg->symD->address);
   }
   else if (cgt == cgTypeAWC) {

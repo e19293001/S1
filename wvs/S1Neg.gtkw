@@ -1,0 +1,74 @@
+[*]
+[*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
+[*] Sat Apr 16 09:11:47 2016
+[*]
+[dumpfile] "/home/e19293001/codes/github/S1/sim.vcd"
+[dumpfile_mtime] "Sat Apr 16 09:10:35 2016"
+[dumpfile_size] 117678
+[savefile] "/home/e19293001/codes/github/S1/wvs/S1Neg.gtkw"
+[timestart] 0
+[size] 1368 746
+[pos] -1 -1
+*-8.163383 322 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TestS1.
+[sst_width] 255
+[signals_width] 359
+[sst_expanded] 1
+[sst_vpaned_height] 249
+@22
+TestS1.dut.outputAddress[15:0]
+@28
+TestS1.dut.clk
+@22
+TestS1.dut.outputWdata[15:0]
+@28
+TestS1.dut.outputWnR
+TestS1.dut.outputSelect
+@22
+TestS1.dut.inputRdata[15:0]
+@28
+TestS1.dut.inputValid
+@200
+-
+@820
+TestS1.dut.regStatestr[1024:1]
+TestS1.dut.combAddressSelectstr[1024:1]
+@28
+TestS1.dut.combOutputAddressEn
+@22
+TestS1.dut.inputRdata[15:0]
+TestS1.dut.regInstruction[15:0]
+@200
+-
+@28
+TestS1.dut.enStackPtr
+TestS1.dut.StackPtrDnI
+@22
+TestS1.dut.regStackPtr[15:0]
+@200
+-
+@28
+TestS1.dut.enValueA
+@22
+TestS1.dut.regValueA[15:0]
+@28
+TestS1.dut.w_neg
+@22
+TestS1.dut.regPrgCntr[15:0]
+TestS1.mem.mem0xFFEE[16:0]
+TestS1.mem.mem0xFFEF[16:0]
+@23
+TestS1.mem.mem0xFFF5[16:0]
+@22
+TestS1.mem.mem0xFFF6[16:0]
+TestS1.mem.mem0xFFF7[16:0]
+TestS1.mem.mem0xFFF8[16:0]
+TestS1.mem.mem0xFFF9[16:0]
+TestS1.mem.mem0xFFFA[16:0]
+TestS1.mem.mem0xFFFB[16:0]
+TestS1.mem.mem0xFFFC[16:0]
+TestS1.mem.mem0xFFFD[16:0]
+TestS1.mem.mem0xFFFE[16:0]
+TestS1.mem.mem0xFFFF[16:0]
+[pattern_trace] 1
+[pattern_trace] 0

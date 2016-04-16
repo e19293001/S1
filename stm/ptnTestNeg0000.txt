@@ -1,0 +1,17 @@
+pwc 65535
+neg
+pwc 65534
+neg
+pwc 65533
+neg
+pwc 65532
+neg
+pwc 1
+neg
+pwc 2
+neg
+pwc 3
+neg
+pwc 4
+neg
+halt

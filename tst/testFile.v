@@ -310,7 +310,7 @@ end
             //$display("code: %0d addr: %04x datain: %04x", code, addr, datain);
             $display("code: %0d addr: %0d datain: %04x", code, addr, datain);
             if (code == 0) begin
-               $display("invalid input");
+               $display("invalid input code: %0d addr: %0d datain: %04x", code, addr, datain);
                $finish;
             end
             mem.mem[addr] = datain;
