@@ -39,7 +39,8 @@ main=TestAout
 #TSTPATTERN=stm/ptnTestPr0000.txt
 #TSTPATTERN=stm/ptnTestCora0000.txt
 #TSTPATTERN=stm/ptnTestAwc0000.txt
-TSTPATTERN=stm/ptnTestNeg0000.txt
+#TSTPATTERN=stm/ptnTestNeg0000.txt
+TSTPATTERN=stm/ptnTestOr0000.txt
 
 
 #TEST=$(TSTDIR)/TestS1pc.v

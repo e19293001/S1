@@ -1,0 +1,15 @@
+pc 10
+pc 1
+or
+dout
+pc '\n'
+aout
+
+pc 100
+pc 65518
+or
+dout
+pc '\n'
+aout
+
+halt

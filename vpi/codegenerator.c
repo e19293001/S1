@@ -30,8 +30,9 @@ void codeGenEmmitInstruction(codeGen *cg, int cgt, char *instruction) {
   }
   else if (cgt == cgTypePUSHC) {
     //printf("+%s    1%s ; %s %s\n", cg->symD->programcounter, cg->symD->address, instruction, cg->symD->name);
-    fprintf(cg->fp, "+%s    1%s\n", cg->symD->programcounter, cg->symD->address);
-    printf("+%s    1%s\n", cg->symD->programcounter, cg->symD->address);
+    
+    fprintf(cg->fp, "+%s    1%03x\n", cg->symD->programcounter, (strtol(cg->symD->address, NULL, 16)) & 0xFFF);
+    printf("+%s    1%03x\n", cg->symD->programcounter, (strtol(cg->symD->address, NULL, 16)) & 0xFFF);
   }
   else if (cgt == cgTypePUSHR) {
     //printf("+%s    2%03X ; %s %s\n", cg->symD->programcounter, cg->symD->addressInt, instruction, cg->symD->name);

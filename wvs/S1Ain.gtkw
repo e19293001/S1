@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
-[*] Sat Apr  9 14:37:15 2016
+[*] Sun Apr 10 14:08:23 2016
 [*]
 [dumpfile] "/home/e19293001/codes/github/S1/sim.vcd"
-[dumpfile_mtime] "Sat Apr  9 14:30:54 2016"
-[dumpfile_size] 105957
+[dumpfile_mtime] "Sun Apr 10 14:06:45 2016"
+[dumpfile_size] 113724
 [savefile] "/home/e19293001/codes/github/S1/wvs/S1Ain.gtkw"
-[timestart] 191
+[timestart] 128
 [size] 1368 746
 [pos] -1 -1
-*-3.346606 209 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-4.346606 137 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TestS1.
 [sst_width] 255
 [signals_width] 310
@@ -36,11 +36,12 @@ TestS1.dut.outputVidValid
 TestS1.dut.inputVidAck
 @200
 -
+@29
+TestS1.dut.w_uout
 @28
-TestS1.dut.w_ain
 TestS1.dut.outputKeyValid
 TestS1.dut.inputKeyAck
-@23
+@22
 +{TestS1.dut.inputKeyData[15:0]} TestS1.dut.inputKeyData[15:0]
 @200
 -

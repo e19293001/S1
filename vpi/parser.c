@@ -1838,8 +1838,15 @@ void pushr(parserData *lparser) {
 }
 
 void label(parserData *lparser) {
-  assert(consume(lparser, ID) == 0);
-  assert(consume(lparser, COLON) == 0);
+  //assert(consume(lparser, ID) == 0);
+  if (consume(lparser,ID) == 0) {
+    printf("unexpected token\n");
+  }
+  
+  if (consume(lparser, COLON) == 0) {
+    printf("unexpected token\n");
+  }
+  //assert(consume(lparser, COLON) == 0);
 }
 
 void push(parserData *lparser) {
@@ -2046,8 +2053,8 @@ int consume(parserData *lparser, int expected) {
     printf("consume: %s\n", tokenImage[expected]);
     printf("Found token \"%s\", ", lparser->currentToken.image);
     printf("expecting kind of \"%s\"\n", tokenImage[expected]);
-    //exit(-1);
-    return -1;
+    exit(-1);
+    //return -1;
   }
 }
 
