@@ -1,0 +1,60 @@
+pc 10
+pc 1
+and
+dout
+pc '\n'
+aout
+
+pc 100
+pc 65518
+and
+dout
+pc '\n'
+aout
+
+pc _00
+sout
+pc 0
+pc 0
+and
+dout
+pc '\n'
+aout
+
+pc _01
+sout
+pc 0
+pc 1
+and
+dout
+pc '\n'
+aout
+
+pc _10
+sout
+pc 1
+pc 0
+and
+dout
+pc '\n'
+aout
+
+pc _11
+sout
+pc 1
+pc 1
+and
+dout
+pc '\n'
+aout
+
+halt
+
+_00:
+   dw "0 and 0: "
+_01:
+   dw "0 and 1: "
+_10:
+   dw "1 and 0: "
+_11:
+   dw "1 and 1: "
