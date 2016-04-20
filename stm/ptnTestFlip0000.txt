@@ -1,0 +1,57 @@
+pwc 65535
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 65534
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 65533
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 65532
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 1
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 2
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 3
+flip
+
+dout
+pc '\n'
+aout
+
+pwc 4
+flip
+
+dout
+pc '\n'
+aout
+
+halt
