@@ -1,0 +1,18 @@
+pc x
+cali
+x:
+pc _thisisx
+sout
+pc xx
+cali
+xx:
+pc _thisisxx
+sout
+halt
+
+_thisisx:
+;   dw "this is x. now calling xx."
+    dw "this is x now calling xx"
+
+_thisisxx:
+   dw "this is xx"

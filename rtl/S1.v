@@ -151,6 +151,7 @@ module S1(
    wire               w_uout;
    wire               w_hout;
    wire               w_pr;
+   wire               w_neg;
    wire               w_cora;
    wire               w_or;
    wire               w_xor;
@@ -210,6 +211,7 @@ module S1(
    assign w_xor = (w_decode || w_execute) && (regInstruction[15:4] == 'hFF9) ? 1 : 0;
    assign w_and = (w_decode || w_execute) && (regInstruction[15:4] == 'hFFA) ? 1 : 0;
    assign w_flip = (w_decode || w_execute) && (regInstruction[15:4] == 'hFFB) ? 1 : 0;
+   assign w_cali = (w_decode || w_execute) && (regInstruction[15:4] == 'hFFC) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -1135,6 +1137,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_cali) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -1563,6 +1573,11 @@ module S1(
          end
       end
       else if (w_flip) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
+      else if (w_cali) begin
          if (inputValid && w_decode) begin
             eoDecode = 1;
          end
@@ -2177,6 +2192,14 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_cali) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -2372,6 +2395,9 @@ module S1(
          else if (w_flip) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
+         else if (w_cali) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
       end
       else if (w_execute) begin
          if (w_push) begin
@@ -2444,6 +2470,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_PUSH;
          end
          else if (w_flip) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_cali) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
       end
@@ -2724,6 +2753,14 @@ module S1(
          end
       end
       else if (w_flip) begin
+         if (eoDecode) begin // pop
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_cali) begin
          if (eoDecode) begin // pop
             enStackPtr = 1;
          end
