@@ -525,6 +525,11 @@ module S1(
             enValueA = 1;
          end
       end
+      else if (w_cali) begin
+         if (eoDecode) begin
+            enValueA = 1;
+         end
+      end
    end
 
    always @* begin
@@ -806,6 +811,14 @@ module S1(
                end
             end
             else if (w_flip) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_cali) begin
                if (w_executeStart) begin
                   outputWnR <= 1;
                end
@@ -1342,6 +1355,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_cali) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
       end
    end
@@ -1844,6 +1865,9 @@ module S1(
       else if (w_flip && eoExecute) begin
          enPrgCntr = 1;
       end
+      else if (w_cali && eoExecute) begin
+         enPrgCntr = 1;
+      end
    end 
 
    always @* begin
@@ -1905,6 +1929,9 @@ module S1(
             end
             else if (w_ret) begin
                regPrgCntr <= inputRdata;
+            end
+            else if (w_cali) begin
+               regPrgCntr <= regValueA;
             end
             else begin
 //               if (PrgCntrInD) begin
@@ -2914,6 +2941,11 @@ module S1(
             StackPtrDnI = 1;
          end
       end
+      else if (w_cali) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
    end
 
    always @* begin
@@ -3155,6 +3187,14 @@ module S1(
             else if (w_flip) begin
                if (w_executeStart) begin
                   outputWdata = ~regValueA;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_cali) begin
+               if (w_executeStart) begin
+                  outputWdata <= regPrgCntr;
                end
                else if (w_execute && inputValid) begin
                   outputWdata <= 0;

@@ -1,18 +1,34 @@
 pc x
 cali
+pc x
+pc x
+pc x
+pc x
+pc x
 x:
 pc _thisisx
 sout
+pc '\n'
+aout
 pc xx
 cali
+pc _thisnotcall
+sout
+pc '\n'
+aout
 xx:
 pc _thisisxx
 sout
+pc '\n'
+aout
 halt
 
 _thisisx:
-;   dw "this is x. now calling xx."
-    dw "this is x now calling xx"
+   dw "this is x. now calling xx."
+;    dw "this is x now calling xx"
 
 _thisisxx:
    dw "this is xx"
+
+_thisnotcall:
+   dw "this must not be called"
