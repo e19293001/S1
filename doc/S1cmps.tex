@@ -21,7 +21,7 @@
 ]
   \scriptsize clk & 31{C} \\ 
   outputAddress & 5U 4D{0x0000} 2U 4D{0xFFFC} 2U 4D{0xFFFD} 2U 4D{0xFFFD} 2U 2D{} \\
-  outputWdata & 23U 4D{0x0007} 4U\\
+  outputWdata & 23U 4D{0x0004} 4U\\
   outputWnR & LLLLLLLLLLLLLLLLLLLLLLLHHHHLLLL  \\
   outputSelect & 5L 4H 2L 4H LL 4H LL 4H 2L 2H \\
   inputRdata & 7U 2D{0xF100} 4U 2D{0x0003} 4U 2D{0x0004} 10U \\
@@ -37,6 +37,8 @@
   regValueA & 15U 16D{0x0003} \\
   enValueB & 19L 2H 10L \\
   regValueB & 21U 10D{0x0004} \\
+  \\
+  alu & 21U 10D{0x0004} \\
   \\
   enStackPtr & 13L 2H 4L 2H 2H 4L 4L \\
   regStackPtr & 15D{0xFFFC} 6D{0xFFFD} 2D{0xFFFE} 8D{0xFFFD} \\

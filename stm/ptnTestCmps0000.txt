@@ -1,0 +1,35 @@
+pc 2
+pc 1
+cmps 4
+
+pc 1
+pc 2
+cmps 4
+
+pc 1
+pc 2
+cmps 2
+
+pc 4
+pc 4
+cmps 2
+
+pc 3
+pc 9
+cmps 1
+
+pc 9
+pc 3
+cmps 1
+
+; pc 1
+; pc 2
+; cmps 2
+; pc 2
+; pc 1
+; cmps 2
+; pc 3
+; pc 3
+; cmps 1
+
+halt
