@@ -156,6 +156,8 @@ module S1(
    wire               w_or;
    wire               w_xor;
    wire               w_and;
+   wire               w_cmps;
+   wire               w_cmpu;
 
    reg eoFetch;
    reg eoDecode;
@@ -213,6 +215,7 @@ module S1(
    assign w_flip = (w_decode || w_execute) && (regInstruction[15:4] == 'hFFB) ? 1 : 0;
    assign w_cali = (w_decode || w_execute) && (regInstruction[15:4] == 'hFFC) ? 1 : 0;
    assign w_cmps = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFC)) ? 1 : 0;
+   assign w_cmpu = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFD)) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -268,6 +271,23 @@ module S1(
          {carry,alu} = regValueA >> regInstruction[3:0];
       end
       else if (w_cmps) begin
+         if (regInstruction[2] == 1'b1) begin
+            if (regValueA < regValueB) begin
+               alu = 1;
+            end
+         end
+         else if (regInstruction[1] == 1'b1) begin
+            if (regValueA == regValueB) begin
+               alu = 1;
+            end
+         end
+         else if (regInstruction[0] == 1'b1) begin
+            if (regValueA > regValueB) begin
+               alu = 1;
+            end
+         end
+      end
+      else if (w_cmpu) begin
          if (regInstruction[2] == 1'b1) begin
             if (regValueA < regValueB) begin
                alu = 1;
@@ -452,15 +472,11 @@ module S1(
             enValueA = 1;
          end
       end
-//      else if (w_cmps && w_1stDecode) begin
       else if (w_cmps && w_2ndDecode) begin
-//         if (!regValueSelect) begin
             enValueA = 1;
-//         end
-
-//         if (!regValueSelect) begin
-//            enValueA = 1;
-//         end
+      end
+      else if (w_cmpu && w_2ndDecode) begin
+            enValueA = 1;
       end
       else if (w_or && w_1stDecode) begin
          if (!regValueSelect) begin
@@ -565,8 +581,12 @@ module S1(
       if (w_add && w_2ndDecode) begin
             enValueB = 1;
       end
-//      if (w_cmps && w_2ndDecode) begin
       else if (w_cmps && w_1stDecode) begin
+         if (!regValueSelect) begin
+            enValueB = 1;
+         end
+      end
+      else if (w_cmpu && w_1stDecode) begin
          if (!regValueSelect) begin
             enValueB = 1;
          end
@@ -701,6 +721,14 @@ module S1(
                end
             end
             else if (w_cmps) begin
+               if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_cmpu) begin
                if (w_executeStart) begin
                   outputWnR <= 1;
                end
@@ -1016,6 +1044,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_cmpu) begin
+               if (w_decodeStart | w_regValueSelectStart1) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
             else if (w_or) begin
                if (w_decodeStart | w_regValueSelectStart1) begin
                   outputSelect <= 1;
@@ -1235,6 +1271,14 @@ module S1(
                end
             end
             else if (w_cmps) begin
+               if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_cmpu) begin
                if (w_executeStart) begin
                   outputSelect <= 1;
                end
@@ -1504,6 +1548,13 @@ module S1(
          end
       end
       else if (w_cmps) begin
+         if (inputValid && w_decode) begin
+            if (regValueSelect == 1) begin
+               eoDecode = 1;
+            end
+         end
+      end
+      else if (w_cmpu) begin
          if (inputValid && w_decode) begin
             if (regValueSelect == 1) begin
                eoDecode = 1;
@@ -1842,6 +1893,9 @@ module S1(
       else if (w_cmps && eoDecode) begin
          enPrgCntr = 1;
       end
+      else if (w_cmpu && eoDecode) begin
+         enPrgCntr = 1;
+      end
       else if (w_or && eoDecode) begin
          enPrgCntr = 1;
       end
@@ -2057,6 +2111,17 @@ module S1(
          end
       end
       else if (w_cmps) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_regValueSelectStart1) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
+      else if (w_cmpu) begin
          if (w_decodeStart) begin
             combOutputAddressEn = 1;
          end
@@ -2425,6 +2490,9 @@ module S1(
          else if (w_cmps) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
+         else if (w_cmpu) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
          else if (w_or) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
@@ -2516,6 +2584,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_PUSH;
          end
          else if (w_cmps) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_cmpu) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
          else if (w_or) begin
@@ -2676,6 +2747,17 @@ module S1(
          end
       end
       else if (w_cmps) begin
+         if (w_1stDecode) begin
+            enStackPtr = 1;
+         end
+         else if (eoDecode) begin
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_cmpu) begin
          if (w_1stDecode) begin
             enStackPtr = 1;
          end
@@ -2915,6 +2997,11 @@ module S1(
             StackPtrDnI = 1;
          end
       end
+      else if (w_cmpu) begin
+         if (w_executeStart) begin
+            StackPtrDnI = 1;
+         end
+      end
       else if (w_or) begin
          if (w_executeStart) begin
             StackPtrDnI = 1;
@@ -3137,6 +3224,14 @@ module S1(
                end
             end
             else if (w_cmps) begin
+               if (w_executeStart) begin
+                  outputWdata = alu;
+               end
+               else if (w_execute && inputValid) begin
+                  outputWdata <= 0;
+               end
+            end
+            else if (w_cmpu) begin
                if (w_executeStart) begin
                   outputWdata = alu;
                end
