@@ -1,21 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
-[*] Sun Apr 24 05:56:59 2016
+[*] Tue Apr 26 02:13:44 2016
 [*]
-[dumpfile] "/home/e19293001/codes/github/S1/sim.vcd"
-[dumpfile_mtime] "Sun Apr 24 05:55:01 2016"
-[dumpfile_size] 101138
-[savefile] "/home/e19293001/codes/github/S1/wvs/S1Cmps.gtkw"
-[timestart] 8
-[size] 1368 746
-[pos] -5 -143
-*-5.085762 67 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/sim.vcd"
+[dumpfile_mtime] "Tue Apr 26 02:12:28 2016"
+[dumpfile_size] 135749
+[savefile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/wvs/S1Cmps.gtkw"
+[timestart] 0
+[size] 1397 600
+[pos] -1 -1
+*-5.085762 47 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TestS1.
-[sst_width] 255
+[sst_width] 256
 [signals_width] 349
 [sst_expanded] 1
 [sst_vpaned_height] 262
-@23
+@22
 TestS1.dut.outputAddress[15:0]
 @420
 TestS1.dut.outputWdata[15:0]
@@ -105,7 +105,10 @@ TestS1.dut.enValueB
 TestS1.dut.regValueB[15:0]
 @28
 TestS1.dut.w_cmps
-TestS1.dut.w_add
+@29
+TestS1.dut.w_pwc
+@28
+TestS1.dut.w_pc
 TestS1.dut.eoDecode
 @22
 TestS1.dut.alu[15:0]
@@ -237,5 +240,21 @@ TestS1.mem.mem0x0005[16:0]
 @28
 >0
 TestS1.dut.w_jodd
+@22
+TestS1.mem.mem0xFFEE[16:0]
+TestS1.mem.mem0xFFEF[16:0]
+TestS1.mem.mem0xFFF5[16:0]
+TestS1.mem.mem0xFFF6[16:0]
+TestS1.mem.mem0xFFF7[16:0]
+TestS1.mem.mem0xFFF8[16:0]
+TestS1.mem.mem0xFFF9[16:0]
+TestS1.mem.mem0xFFFA[16:0]
+TestS1.mem.mem0xFFFB[16:0]
+TestS1.mem.mem0xFFFC[16:0]
+@420
+TestS1.mem.mem0xFFFD[16:0]
+@24
+TestS1.mem.mem0xFFFE[16:0]
+TestS1.mem.mem0xFFFF[16:0]
 [pattern_trace] 1
 [pattern_trace] 0

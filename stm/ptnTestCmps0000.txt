@@ -1,25 +1,41 @@
-pc 2
+;pc 2
+;pc 1
+;cmps 4
+;
+;pc 1
+;pc 2
+;cmps 4
+;
+;pc 1
+;pc 2
+;cmps 2
+;
+;pc 4
+;pc 4
+;cmps 2
+;
+;pc 3
+;pc 9
+;cmps 1
+;
+;pc 9
+;pc 3
+;cmps 1
+
+pwc 65535
 pc 1
-cmps 4
+cmps 4 ; expect to be 1
 
 pc 1
-pc 2
-cmps 4
+pwc 65535
+cmps 4 ; expect to be 0
+
+pwc 65535
+pc 1
+cmps 1 ; expect to be 0
 
 pc 1
-pc 2
-cmps 2
-
-pc 4
-pc 4
-cmps 2
-
-pc 3
-pc 9
-cmps 1
-
-pc 9
-pc 3
-cmps 1
+pwc 65535
+cmps 1 ; expect to be 1
 
 halt

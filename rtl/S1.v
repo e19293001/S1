@@ -272,34 +272,34 @@ module S1(
       end
       else if (w_cmps) begin
          if (regInstruction[2] == 1'b1) begin
-            if (regValueA < regValueB) begin
+            if (regValueB < regValueA) begin
                alu = 1;
             end
          end
          else if (regInstruction[1] == 1'b1) begin
-            if (regValueA == regValueB) begin
+            if (regValueB == regValueA) begin
                alu = 1;
             end
          end
          else if (regInstruction[0] == 1'b1) begin
-            if (regValueA > regValueB) begin
+            if (regValueB > regValueA) begin
                alu = 1;
             end
          end
       end
       else if (w_cmpu) begin
          if (regInstruction[2] == 1'b1) begin
-            if (regValueA < regValueB) begin
+            if (regValueB < regValueA) begin
                alu = 1;
             end
          end
          else if (regInstruction[1] == 1'b1) begin
-            if (regValueA == regValueB) begin
+            if (regValueB == regValueA) begin
                alu = 1;
             end
          end
          else if (regInstruction[0] == 1'b1) begin
-            if (regValueA > regValueB) begin
+            if (regValueB > regValueA) begin
                alu = 1;
             end
          end
@@ -335,7 +335,7 @@ module S1(
          regValueSelect <= 0;
       end
       else begin
-         if (w_rev && w_execute) begin
+         if ((w_rev || w_pwc) && w_execute) begin
             if (w_1stExecute) begin
                regValueSelect <= 1;
             end
@@ -472,11 +472,15 @@ module S1(
             enValueA = 1;
          end
       end
-      else if (w_cmps && w_2ndDecode) begin
+      else if (w_cmps && w_1stDecode) begin
+         if (!regValueSelect) begin
             enValueA = 1;
+         end
       end
-      else if (w_cmpu && w_2ndDecode) begin
+      else if (w_cmpu && w_1stDecode) begin
+         if (!regValueSelect) begin
             enValueA = 1;
+         end
       end
       else if (w_or && w_1stDecode) begin
          if (!regValueSelect) begin
@@ -581,15 +585,15 @@ module S1(
       if (w_add && w_2ndDecode) begin
             enValueB = 1;
       end
-      else if (w_cmps && w_1stDecode) begin
-         if (!regValueSelect) begin
+      else if (w_cmps && w_2ndDecode) begin
+//         if (!regValueSelect) begin
             enValueB = 1;
-         end
+//         end
       end
-      else if (w_cmpu && w_1stDecode) begin
-         if (!regValueSelect) begin
+      else if (w_cmpu && w_2ndDecode) begin
+//         if (!regValueSelect) begin
             enValueB = 1;
-         end
+//         end
       end
       else if (w_or && w_2ndDecode) begin
             enValueB = 1;
