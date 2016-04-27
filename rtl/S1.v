@@ -272,17 +272,17 @@ module S1(
       end
       else if (w_cmps) begin
          if (regInstruction[2] == 1'b1) begin
-            if (regValueB < regValueA) begin
+            if ((~regValueB)+1 < (~regValueA)+1) begin
                alu = 1;
             end
          end
          else if (regInstruction[1] == 1'b1) begin
-            if (regValueB == regValueA) begin
+            if ((~regValueB)+1 == (~regValueA)+1) begin
                alu = 1;
             end
          end
          else if (regInstruction[0] == 1'b1) begin
-            if (regValueB > regValueA) begin
+            if ((~regValueB)+1 > (~regValueA)+1) begin
                alu = 1;
             end
          end
