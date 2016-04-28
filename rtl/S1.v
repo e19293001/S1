@@ -108,9 +108,11 @@ module S1(
    reg              	regValueSelect;
    reg              	enValueA;
    reg              	enValueB;
+   reg					enCt;
 
    reg [15:0]        regValueA;
    reg [15:0]        regValueB;
+   reg [15:0]        regCt;
 
    reg 					combOutputAddressEn;
 
@@ -158,6 +160,7 @@ module S1(
    wire               w_and;
    wire               w_cmps;
    wire               w_cmpu;
+   wire               w_sct;
 
    reg eoFetch;
    reg eoDecode;
@@ -216,6 +219,7 @@ module S1(
    assign w_cali = (w_decode || w_execute) && (regInstruction[15:4] == 'hFFC) ? 1 : 0;
    assign w_cmps = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFC)) ? 1 : 0;
    assign w_cmpu = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFD)) ? 1 : 0;
+   assign w_sct = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFFD)) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -309,9 +313,36 @@ module S1(
 
    assign PrgCntrInD = 1; // useless ? ? ?
 
+// counter register
+   always @* begin
+      enCt = 0;
+      if (w_sct) begin
+         if (eoDecode) begin
+            enCt = 1;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         regCt <= 0;
+      end
+      else begin
+         if (enCt) begin
+            regCt <= inputRdata;
+         end
+      end
+   end
+
 // some intructions needs to read the memory twice during decode
-   assign w_1stDecode = (regValueSelect == 0 && w_decode && inputValid) ? 1 : 0;
-   assign w_2ndDecode = (regValueSelect == 1 && w_decode && inputValid) ? 1 : 0;
+   wire w_twoDecodes = (w_add | w_cmps | w_cmpu | 
+                        w_or | w_xor | w_and |
+                        w_sub| w_stav | w_stva |
+                        w_load | w_awc | w_pwc |
+                        w_dupe | w_rev) ? 1 : 0;
+   
+   assign w_1stDecode = (regValueSelect == 0 && w_decode && inputValid) && w_twoDecodes ? 1 : 0;
+   assign w_2ndDecode = (regValueSelect == 1 && w_decode && inputValid) && w_twoDecodes ? 1 : 0;
 
    assign w_1stExecute = (regValueSelect == 0 && w_execute && inputValid) ? 1 : 0;
    assign w_2ndExecute = (regValueSelect == 1 && w_execute && inputValid) ? 1 : 0;
@@ -1248,6 +1279,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_sct) begin
+               if (w_decodeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -1723,6 +1762,11 @@ module S1(
             eoDecode = 1;
          end
       end
+      else if (w_sct) begin
+         if (inputValid && w_decode) begin
+            eoDecode = 1;
+         end
+      end
    end
 
    always @* begin
@@ -1800,6 +1844,9 @@ module S1(
          if (inputValid && w_execute) begin
             eoExecute = 1;
          end
+      end
+      else if (w_sct && w_execute) begin
+         eoExecute = 1;
       end
       else if (inputValid && w_execute) begin 
          eoExecute = 1;
@@ -1992,6 +2039,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_cali && eoExecute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_sct && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -2375,6 +2425,14 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_sct) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -2577,6 +2635,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_POP;
          end
          else if (w_cali) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_sct) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
       end
@@ -2974,6 +3035,11 @@ module S1(
             enStackPtr = 1;
          end
          else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
+      else if (w_sct) begin
+         if (eoDecode) begin // pop
             enStackPtr = 1;
          end
       end

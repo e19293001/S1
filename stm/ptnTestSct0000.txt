@@ -1,0 +1,3 @@
+pc 9
+sct
+halt
