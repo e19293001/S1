@@ -47,7 +47,8 @@ main=TestAout
 #TSTPATTERN=stm/ptnTestCali0000.txt
 #TSTPATTERN=stm/ptnTestCmps0000.txt
 #TSTPATTERN=stm/ptnTestCmpu0000.txt
-TSTPATTERN=stm/ptnTestSct0000.txt
+#TSTPATTERN=stm/ptnTestSct0000.txt
+TSTPATTERN=stm/ptnTestRot0000.txt
 
 
 #TEST=$(TSTDIR)/TestS1pc.v

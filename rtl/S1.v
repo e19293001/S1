@@ -96,22 +96,27 @@ module S1(
    reg               r_executePrv;
    wire              w_executeStart;
    wire              w_executeEnd;
-   wire              w_regValueSelectStart1; // should put w_regValueSelectStart2 here for enValueC
+   wire              w_regValueSelectStart1; // should put w_regValueSelectStart2 here for enValueC; done
+   wire              w_regValueSelectStart2;
    reg					prevRegValueSelect;
    wire 					w_1stDecode;
    wire 					w_2ndDecode;
+   wire 					w_3rdDecode;
 
    wire 					w_1stExecute;
    wire 					w_2ndExecute;
+   wire 					w_3rdExecute;
 
    reg					reg_awcSel;
-   reg              	regValueSelect;
+   reg [1:0]        	regValueSelect;
    reg              	enValueA;
    reg              	enValueB;
+   reg              	enValueC;
    reg					enCt;
 
    reg [15:0]        regValueA;
    reg [15:0]        regValueB;
+   reg [15:0]        regValueC;
    reg [15:0]        regCt;
 
    reg 					combOutputAddressEn;
@@ -161,6 +166,7 @@ module S1(
    wire               w_cmps;
    wire               w_cmpu;
    wire               w_sct;
+   wire               w_rot;
 
    reg eoFetch;
    reg eoDecode;
@@ -220,6 +226,7 @@ module S1(
    assign w_cmps = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFC)) ? 1 : 0;
    assign w_cmpu = ((w_decode || w_execute) && (regInstruction[15:8] == 'hFD)) ? 1 : 0;
    assign w_sct = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFFD)) ? 1 : 0;
+   assign w_rot = ((w_decode || w_execute) && (regInstruction[15:4] == 'hFFE)) ? 1 : 0;
 
 // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
 // [         ][          ][          ]
@@ -339,7 +346,7 @@ module S1(
                         w_or | w_xor | w_and |
                         w_sub| w_stav | w_stva |
                         w_load | w_awc | w_pwc |
-                        w_dupe | w_rev) ? 1 : 0;
+                        w_dupe | w_rev | w_rot) ? 1 : 0;
    
    assign w_1stDecode = (regValueSelect == 0 && w_decode && inputValid) && w_twoDecodes ? 1 : 0;
    assign w_2ndDecode = (regValueSelect == 1 && w_decode && inputValid) && w_twoDecodes ? 1 : 0;
@@ -374,9 +381,16 @@ module S1(
                regValueSelect <= 0;
             end
          end
+         else if (w_rot && w_execute) begin
+            if (w_1stExecute) begin
+            end
+         end
          else begin
             if (w_1stDecode) begin
                regValueSelect <= 1;
+            end
+            else if (w_2ndDecode) begin
+               regValueSelect <= 2;
             end
             else if (eoDecode) begin
                regValueSelect <= 0;
@@ -385,7 +399,8 @@ module S1(
       end
    end
 
-   assign w_regValueSelectStart1 = (regValueSelect && !prevRegValueSelect) ? 1 : 0;
+   assign w_regValueSelectStart1 = (regValueSelect == 1 && prevRegValueSelect == 0) ? 1 : 0;
+   assign w_regValueSelectStart2 = (regValueSelect == 2 && prevRegValueSelect == 1) ? 1 : 0;
 
    always @(posedge clk) begin
       if (!rstn) begin
@@ -609,6 +624,11 @@ module S1(
             enValueA = 1;
          end
       end
+      else if (w_rot) begin
+         if (regValueSelect == 0 && inputValid) begin
+            enValueA = 1;
+         end
+      end
    end
 
    always @* begin
@@ -653,6 +673,20 @@ module S1(
       else if (w_rev && w_2ndDecode) begin
             enValueB = 1;
       end
+      else if (w_rot) begin
+         if (regValueSelect == 1 && inputValid) begin
+            enValueB = 1;
+         end
+      end
+   end
+
+   always @* begin
+      enValueC = 0;
+      if (w_rot) begin
+         if (regValueSelect == 2 && inputValid) begin
+            enValueC = 1;
+         end
+      end
    end
    
    always @(posedge clk) begin
@@ -681,6 +715,17 @@ module S1(
       else begin
          if (enValueB) begin
             regValueB <= inputRdata;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         regValueC <= 0;
+      end
+      else begin
+         if (enValueC) begin
+            regValueC <= inputRdata;
          end
       end
    end
@@ -943,7 +988,6 @@ module S1(
    assign w_fetch = (regState == P_FETCH) ? 1 : 0;
    assign w_decode = (regState == P_DECODE) ? 1 : 0;
    assign w_execute = (regState == P_EXECUTE) ? 1 : 0;
-
 
    // state enable 
    assign w_fetchEn = (w_fetch && !r_fetchPrv) ? 1 : 0;
@@ -1287,6 +1331,14 @@ module S1(
                   outputSelect <= 0;
                end
             end
+            else if (w_rot) begin
+               if (w_decodeStart | w_regValueSelectStart1 | w_regValueSelectStart2) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
          end
          else if (w_execute) begin
             if (w_pc) begin
@@ -1502,6 +1554,14 @@ module S1(
             end
             else if (w_cali) begin
                if (w_executeStart) begin
+                  outputSelect <= 1;
+               end
+               else if (inputValid) begin
+                  outputSelect <= 0;
+               end
+            end
+            else if (w_rot) begin
+               if (w_executeStart | w_regValueSelectStart1 | w_regValueSelectStart2) begin
                   outputSelect <= 1;
                end
                else if (inputValid) begin
@@ -1767,6 +1827,13 @@ module S1(
             eoDecode = 1;
          end
       end
+      else if (w_rot) begin
+         if (inputValid && w_decode) begin
+            if (regValueSelect == 2) begin
+               eoDecode = 1;
+            end
+         end
+      end
    end
 
    always @* begin
@@ -1847,6 +1914,13 @@ module S1(
       end
       else if (w_sct && w_execute) begin
          eoExecute = 1;
+      end
+      else if (w_rev) begin
+         if (inputValid && w_execute) begin
+            if (regValueSelect == 2) begin
+               eoExecute = 1;
+            end
+         end
       end
       else if (inputValid && w_execute) begin 
          eoExecute = 1;
@@ -2433,6 +2507,20 @@ module S1(
             combOutputAddressEn = 1;
          end
       end
+      else if (w_rot) begin
+         if (w_decodeStart) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_regValueSelectStart1) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_regValueSelectStart2) begin
+            combOutputAddressEn = 1;
+         end
+         else if (w_executeStart) begin
+            combOutputAddressEn = 1;
+         end
+      end
    end
 
    always @(posedge clk) begin
@@ -2638,6 +2726,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_POP;
          end
          else if (w_sct) begin
+            combAddressSelect = P_ADDRSEL_POP;
+         end
+         else if (w_rot) begin
             combAddressSelect = P_ADDRSEL_POP;
          end
       end
@@ -3043,6 +3134,20 @@ module S1(
             enStackPtr = 1;
          end
       end
+      else if (w_rot) begin // 2 pops
+         if (w_1stDecode) begin
+            enStackPtr = 1;
+         end
+         if (w_2ndDecode) begin
+            enStackPtr = 1;
+         end
+         else if (eoDecode) begin
+            enStackPtr = 1;
+         end
+         else if (w_executeStart) begin
+            enStackPtr = 1;
+         end
+      end
    end
 
    always @* begin
@@ -3202,6 +3307,13 @@ module S1(
       else if (w_cali) begin
          if (w_executeStart) begin
             StackPtrDnI = 1;
+         end
+      end
+      else if (w_rot) begin
+         if (w_execute) begin
+            if (w_executeStart | w_regValueSelectStart1) begin
+               StackPtrDnI = 1;
+            end
          end
       end
    end

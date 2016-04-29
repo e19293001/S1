@@ -1,0 +1,5 @@
+pc 3
+pc 2
+pc 1
+rot
+halt
