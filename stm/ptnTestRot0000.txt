@@ -2,4 +2,12 @@ pc 3
 pc 2
 pc 1
 rot
+p x
+p y
+p z
+rot
 halt
+x: dw 9
+y: dw 8
+z: dw 7
+
