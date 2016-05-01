@@ -5,9 +5,13 @@ rot
 p x
 p y
 p z
+p x
+pc yy
+p z
 rot
 halt
 x: dw 9
 y: dw 8
+yy: dw 6
 z: dw 7
 
