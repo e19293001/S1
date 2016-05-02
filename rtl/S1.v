@@ -119,6 +119,9 @@ module S1(
    reg [15:0]        regValueC;
    reg [15:0]        regCt;
 
+   reg [3:0]         regExecCntrSelect;
+   reg [3:0]         prvRegExecCntrSelect;
+
    reg 					combOutputAddressEn;
 
    reg [15:0]        regInstruction;
@@ -625,7 +628,7 @@ module S1(
          end
       end
       else if (w_rot) begin
-         if (regValueSelect == 0 && inputValid) begin
+         if (regValueSelect == 0 && inputValid && w_decode) begin
             enValueA = 1;
          end
       end
@@ -970,6 +973,14 @@ module S1(
             end
             else if (w_cali) begin
                if (w_executeStart) begin
+                  outputWnR <= 1;
+               end
+               else if (inputValid) begin
+                  outputWnR <= 0;
+               end
+            end
+            else if (w_rot) begin
+               if (w_executeStart || (prvRegExecCntrSelect != regExecCntrSelect)) begin
                   outputWnR <= 1;
                end
                else if (inputValid) begin
@@ -1561,7 +1572,7 @@ module S1(
                end
             end
             else if (w_rot) begin
-               if (w_executeStart | w_regValueSelectStart1 | w_regValueSelectStart2) begin
+               if (w_executeStart || (regExecCntrSelect != prvRegExecCntrSelect)) begin
                   outputSelect <= 1;
                end
                else if (inputValid) begin
@@ -1922,6 +1933,11 @@ module S1(
             end
          end
       end
+      else if (w_rot) begin
+         if (regExecCntrSelect == 2 && inputValid) begin
+            eoExecute = 1;
+         end
+      end
       else if (inputValid && w_execute) begin 
          eoExecute = 1;
       end
@@ -2116,6 +2132,9 @@ module S1(
          enPrgCntr = 1;
       end
       else if (w_sct && eoExecute) begin
+         enPrgCntr = 1;
+      end
+      else if (w_rot && eoExecute) begin
          enPrgCntr = 1;
       end
    end 
@@ -2520,6 +2539,11 @@ module S1(
          else if (w_executeStart) begin
             combOutputAddressEn = 1;
          end
+         else if (w_execute) begin
+            if (regExecCntrSelect != prvRegExecCntrSelect) begin
+               combOutputAddressEn = 1;
+            end
+         end
       end
    end
 
@@ -2812,6 +2836,9 @@ module S1(
             combAddressSelect = P_ADDRSEL_PUSH;
          end
          else if (w_cali) begin
+            combAddressSelect = P_ADDRSEL_PUSH;
+         end
+         else if (w_rot) begin
             combAddressSelect = P_ADDRSEL_PUSH;
          end
       end
@@ -3144,7 +3171,7 @@ module S1(
          else if (eoDecode) begin
             enStackPtr = 1;
          end
-         else if (w_executeStart) begin
+         else if (w_executeStart || prvRegExecCntrSelect != regExecCntrSelect) begin
             enStackPtr = 1;
          end
       end
@@ -3311,7 +3338,7 @@ module S1(
       end
       else if (w_rot) begin
          if (w_execute) begin
-            if (w_executeStart | w_regValueSelectStart1) begin
+            if (w_executeStart | regExecCntrSelect != prvRegExecCntrSelect) begin
                StackPtrDnI = 1;
             end
          end
@@ -3354,6 +3381,29 @@ module S1(
          if (enStackPtr) begin
             regStackPtr <= nextStackPtr;
          end            
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         regExecCntrSelect <= 0;
+      end
+      else begin
+         if (eoExecute) begin
+            regExecCntrSelect <= 0;
+         end
+         else if (w_rot && w_execute && inputValid) begin
+            regExecCntrSelect <= regExecCntrSelect + 1;
+         end
+      end
+   end
+
+   always @(posedge clk) begin
+      if (!rstn) begin
+         prvRegExecCntrSelect <= 0;
+      end
+      else begin
+         prvRegExecCntrSelect <= regExecCntrSelect;
       end
    end
 
@@ -3584,6 +3634,19 @@ module S1(
                end
                else if (w_execute && inputValid) begin
                   outputWdata <= 0;
+               end
+            end
+            else if (w_rot) begin
+               if (inputValid) begin
+                  outputWdata <= 0;
+               end
+               else begin
+                  case (regExecCntrSelect)
+                    0:outputWdata <= regValueB;
+                    1:outputWdata <= regValueA;
+                    2:outputWdata <= regValueC;
+                    default: outputWdata <= 0;
+                  endcase
                end
             end
          end
