@@ -1,0 +1,10 @@
+pc x
+p x
+p y
+add
+stav
+p x
+dout
+halt
+x: dw 0
+y: dw 77

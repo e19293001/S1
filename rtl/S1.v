@@ -388,6 +388,9 @@ module S1(
             if (w_1stExecute) begin
             end
          end
+         else if (eoExecute) begin
+            regValueSelect <= 0;
+         end
          else begin
             if (w_1stDecode) begin
                regValueSelect <= 1;
@@ -2576,7 +2579,7 @@ module S1(
               end
               P_ADDRSEL_VALUEA: begin
                  if (w_stav) begin
-                    outputAddress <= regValueA;
+                    outputAddress <= regValueB;
                  end
                  else if (w_dupe) begin
                     outputAddress <= regValueA;
@@ -3505,7 +3508,7 @@ module S1(
             end
             else if (w_stav) begin
                if (w_executeStart) begin
-                  outputWdata = regValueB;
+                  outputWdata = regValueA;
                end
                else if (w_execute && inputValid) begin
                   outputWdata <= 0;
