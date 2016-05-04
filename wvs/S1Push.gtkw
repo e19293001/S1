@@ -1,24 +1,25 @@
 [*]
 [*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
-[*] Sun Jul 26 11:47:36 2015
+[*] Wed May  4 01:57:25 2016
 [*]
-[dumpfile] "/home/e19293001/codes/projects/verilog/s1/S1/sim.vcd"
-[dumpfile_mtime] "Sun Jul 26 11:40:45 2015"
-[dumpfile_size] 94925
-[savefile] "/home/e19293001/codes/projects/verilog/s1/S1/S1Push.gtkw"
+[dumpfile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/sim.vcd"
+[dumpfile_mtime] "Wed May  4 01:56:49 2016"
+[dumpfile_size] 818776
+[savefile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/wvs/S1Push.gtkw"
 [timestart] 0
-[size] 1305 592
-[pos] -223 -1
-*-4.449769 23 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1610 871
+[pos] 37 -21
+*-4.449769 21 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TestS1.
 [sst_width] 255
 [signals_width] 282
 [sst_expanded] 1
-[sst_vpaned_height] 144
+[sst_vpaned_height] 235
 @28
 TestS1.dut.clk
+@23
+TestS1.dut.outputAddress[15:0]
 @22
-TestS1.dut.outputAddress[11:0]
 TestS1.dut.outputWdata[15:0]
 @28
 TestS1.dut.outputWnR
@@ -36,7 +37,6 @@ TestS1.dut.combAddressSelectstr[1024:1]
 TestS1.dut.combOutputAddressEn
 @22
 TestS1.dut.inputRdata[15:0]
-@23
 TestS1.dut.regInstruction[15:0]
 [pattern_trace] 1
 [pattern_trace] 0

@@ -10,8 +10,8 @@ obj=obj
 COPTS=-g -Wall -I$(IVERILOG_INCLUDE_PATH) -L$(IVERILOG_LIB_PATH)
 
 #all: mkdirs compile runsim #running $s1Assember in Verilog
-#all: mkdirs testParser runTest #running testParser in C
-all: mkdirs testGetInput runGetInputsim
+all: mkdirs testParser runTest #running testParser in C
+#all: mkdirs testGetInput runGetInputsim
 
 
 

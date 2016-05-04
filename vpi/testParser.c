@@ -560,6 +560,14 @@ void TestParser0065() { // test for noop
   ParserDelete(&parser);
 }
 
+void TestParser00066() {
+  parserData *parser;
+  char data[] = "tst/ptnTestFunctionCall0000.txt";
+  parser = ParserNew(data);
+  result(ParserStart(parser) == 0);
+  ParserDelete(&parser);
+}
+
 int main() {
 //  TestParser0000();
 //  TestParser0001();
@@ -619,7 +627,7 @@ int main() {
 //  TestParser0055(); // test for bcpy
 //  TestParser0056(); // test for uout
 //  TestParser0057(); // test for sin
-  TestParser0058(); // test for sout
+//  TestParser0058(); // test for sout
 //  TestParser0059(); // test for hin
 //  TestParser0060(); // test for hout
 //  TestParser0061(); // test for ain
@@ -627,6 +635,8 @@ int main() {
 //  TestParser0063(); // test for din
 //  TestParser0064(); // test for dout
 //  TestParser0065(); // test for noop
+
+  TestParser00066(); // test for function call
 
   success();
 

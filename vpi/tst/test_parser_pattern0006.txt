@@ -1,15 +1,25 @@
-pc dd
-pc x
-y:
-pc xx
-pc x
-pc x
-pc x
-pc x
-pc x
-pc y
-xx:
-xxx:
+call d
+d:
+
+pc hello
+
 halt
-dd:
-x: dw 98
+
+hello: dw "hello world"
+
+
+;pc dd
+;pc x
+;y:
+;pc xx
+;pc x
+;pc x
+;pc x
+;pc x
+;pc x
+;pc y
+;xx:
+;xxx:
+;halt
+;dd:
+;x: dw 98

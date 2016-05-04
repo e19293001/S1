@@ -118,10 +118,7 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
                lparser->currentToken.kind == SUB ||
                lparser->currentToken.kind == STVA ||
                lparser->currentToken.kind == LOAD ||
-               lparser->currentToken.kind == DUPE ||
-               lparser->currentToken.kind == ESBA ||
-               lparser->currentToken.kind == REBA ||
-               lparser->currentToken.kind == ZSP) {
+               lparser->currentToken.kind == DUPE) {
         Token cmdToken;
         ParserSymbolsAdvance(lparser); // cmd
         cmdToken = lparser->currentToken;
@@ -169,6 +166,11 @@ tstrie* ParseSymbols(char *s, int *errorcode) {
                lparser->currentToken.kind == DIV ||
                lparser->currentToken.kind == MULT ||
                lparser->currentToken.kind == NEG ||
+
+               lparser->currentToken.kind == ESBA ||
+               lparser->currentToken.kind == REBA ||
+               lparser->currentToken.kind == ZSP ||
+
                lparser->currentToken.kind == HALT) {
         Token haltToken;
         haltToken = lparser->currentToken;
@@ -1839,11 +1841,11 @@ void pushr(parserData *lparser) {
 
 void label(parserData *lparser) {
   //assert(consume(lparser, ID) == 0);
-  if (consume(lparser,ID) == 0) {
+  if (consume(lparser,ID) != 0) {
     printf("unexpected token\n");
   }
   
-  if (consume(lparser, COLON) == 0) {
+  if (consume(lparser, COLON) != 0) {
     printf("unexpected token\n");
   }
   //assert(consume(lparser, COLON) == 0);

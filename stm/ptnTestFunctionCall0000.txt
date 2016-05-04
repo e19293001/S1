@@ -1,0 +1,26 @@
+call main
+halt
+
+main:
+   esba
+   pwc 2
+   p y
+   p y
+   pwc 3
+   add
+   call f
+   asp 3
+   reba
+   ret
+
+f:
+   esba
+   pc h
+;   sout
+   reba
+   ret
+
+x: dw 0
+y: dw 1
+h: dw 0
+
