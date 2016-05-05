@@ -3252,11 +3252,11 @@ module S1(
             StackPtrDnI = 1;
          end
       end
-      else if (w_reba) begin
-         if (w_executeEnd) begin
-            StackPtrDnI = 1;
-         end
-      end
+//      else if (w_reba) begin
+//         if (w_executeEnd) begin
+//            StackPtrDnI = 1;
+//         end
+//      end
       else if (w_rev) begin
          if (w_execute) begin
             if (w_executeStart | w_regValueSelectStart1) begin
@@ -3364,7 +3364,7 @@ module S1(
       else if (StackPtrDnI) begin
          nextStackPtr = regStackPtr - 1;
       end
-      else if (w_reba) begin
+      else if (w_reba && w_decode) begin
          nextStackPtr = regBasePtr;
       end
       else if (w_zsp) begin

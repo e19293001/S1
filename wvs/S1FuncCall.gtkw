@@ -1,14 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.3.65 (w)1999-2015 BSI
-[*] Wed May  4 02:02:06 2016
+[*] Thu May  5 08:55:39 2016
 [*]
 [dumpfile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/sim.vcd"
-[dumpfile_mtime] "Wed May  4 01:56:49 2016"
-[dumpfile_size] 818776
+[dumpfile_mtime] "Thu May  5 08:54:37 2016"
+[dumpfile_size] 143784
 [savefile] "/mnt/home/silladore/nwr/codes/verilog/github/S1/wvs/S1FuncCall.gtkw"
 [timestart] 0
 [size] 1610 871
-[pos] 37 -21
+[pos] -1 -1
 *-5.937215 139 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TestS1.
 [sst_width] 255
@@ -42,10 +42,10 @@ TestS1.dut.w_call
 TestS1.dut.w_esba
 TestS1.dut.w_pwc
 TestS1.dut.w_push
-@29
 TestS1.dut.w_add
-@22
+@25
 TestS1.dut.regPrgCntr[15:0]
+@22
 TestS1.dut.regStackPtr[15:0]
 TestS1.dut.regBasePtr[15:0]
 @200

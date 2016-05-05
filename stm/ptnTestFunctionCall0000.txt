@@ -1,8 +1,13 @@
+
 call main
 halt
 
 main:
    esba
+   pc 1
+   pc 2
+   pc 3
+   asp 3
    pwc 2
    p y
    p y
@@ -16,11 +21,13 @@ main:
 f:
    esba
    pc h
-;   sout
+   sout
+   pc '\n'
+   aout
    reba
    ret
 
 x: dw 0
 y: dw 1
-h: dw 0
+h: dw "hello world"
 
